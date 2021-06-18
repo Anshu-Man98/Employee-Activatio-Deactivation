@@ -16,7 +16,37 @@ namespace EmployeeDeactivation.BusinessLayer
             _context = context;
         }
 
-    public string GetReportingManagerEmailId(string teamName)
+        public bool AddEmployeeData(EmployeeDetails employeeDetails, bool isDeactivatedWorkFlow)
+        {
+            if (isDeactivatedWorkFlow)
+            {
+                var deactivatedEmployees = _context.DeactivationWorkflow.ToList();
+                foreach (var deactivatedEmployee in deactivatedEmployees)
+                {
+                    if (deactivatedEmployee.GId == employeeDetails.GId)
+                    {
+                        _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            else
+            {
+                var activatedEmployees = _context.ActivationWorkflow.ToList();
+                foreach (var activatedEmployee in activatedEmployees)
+                {
+                    if (activatedEmployee.GId == employeeDetails.GId)
+                    {
+                        _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            _context.Add(employeeDetails);
+            return _context.SaveChanges() == 1;
+        }
+
+        public string GetReportingManagerEmailId(string teamName)
         {
             var teamDetails = RetrieveAllSponsorDetails();
             foreach (var item in teamDetails)
@@ -113,77 +143,10 @@ namespace EmployeeDeactivation.BusinessLayer
             return activationDetails;
         }
 
-        public async Task<bool> AddEmployeeData(string firstName, string lastName, string gId, string email, DateTime lastWorkingDate, string teamsName, string sponsorName, string sponsorEmailId, string sponsorDepartment ,string sponsorGID)
-        //review change make parameters as class
-        {
-            bool databaseUpdateStatus = false;
-            EmployeeDetails employee = new EmployeeDetails()
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                GId = gId,
-                EmailID = email,
-                LastWorkingDate = lastWorkingDate,
-                TeamName = teamsName,
-                SponsorName = sponsorName,
-                SponsorEmailID = sponsorEmailId,
-                SponsorDepartment = sponsorDepartment,
-                SponsorGId = sponsorGID
-            };
-            var check = _context.DeactivationWorkflow.ToList();
-            foreach (var i in check)
-            {
-                if (i.GId == gId)
-                {
-                    _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == gId));
-                    _context.SaveChanges();
-                }
-            }
-
-            _context.Add(employee);
-            databaseUpdateStatus = _context.SaveChanges() == 1 ? true : false;
-            return databaseUpdateStatus;
-        }
+        
 
 
-        public async Task<bool> AddActivationEmployeeData(string firstName, string lastName, string siemensEmailId, string siemensgId, string team, string sponsorName, string sponsorEmailId, string sponsordepartment, string sponsorGID, string reportingManagerEmailId, string employeeRole, string gender, DateTime dob, string pob, string address, string phoneNo, string nationality)
-        //review change make parameters as class
-        {
-            bool databaseUpdateStatus = false;
-            EmployeeDetails employeeActivate = new EmployeeDetails()
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                EmailID = siemensEmailId,
-                GId = siemensgId,
-                TeamName = team,
-                SponsorName = sponsorName,
-                SponsorEmailID = sponsorEmailId,
-                SponsorGId= sponsorGID,
-                SponsorDepartment = sponsordepartment,
-                ReportingManagerEmail = reportingManagerEmailId,
-                Role= employeeRole,
-                Gender = gender,
-                DateOfBirth = dob,
-                PlaceOfBirth = pob,
-                Address = address,
-                PhoneNo = phoneNo,
-                Nationality = nationality
-            };
-            var check = _context.ActivationWorkflow.ToList();
-            foreach (var i in check)
-            {
-                if (i.SponsorGId == siemensgId)
-                {
-                    _context.Remove(_context.ActivationWorkflow.Single(a => a.SponsorGId == siemensgId));
-                    _context.SaveChanges();
-                }
-            }
-
-            _context.Add(employeeActivate);
-            databaseUpdateStatus = _context.SaveChanges() == 1 ? true : false;
-            return databaseUpdateStatus;
-        }
+        
 
         public EmployeeDetails RetrieveEmployeeDataBasedOnGid(string gId)
         {

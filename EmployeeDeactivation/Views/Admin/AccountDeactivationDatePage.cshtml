@@ -1,5 +1,5 @@
 ﻿@using EmployeeDeactivation.Models;
-@model IEnumerable<DeactivatedEmployeeDetails>
+@model IEnumerable<EmployeeDetails>
 
 
 
@@ -127,20 +127,20 @@
                     <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Department</th>
                 </tr>
             </thead>
-            @foreach (DeactivatedEmployeeDetails employeeData in Model)
+            @foreach (EmployeeDetails employeeData in Model)
             {
                 <tbody>
 
                     <tr class=item>
 
-                        <td>@employeeData.Firstname @employeeData.Lastname</td>
-                        <td>@employeeData.Email</td>
+                        <td>@employeeData.FirstName @employeeData.LastName</td>
+                        <td>@employeeData.EmailID</td>
                         <td>@employeeData.GId</td>
-                        <td>@employeeData.Date.Day - @employeeData.Date.Month - @employeeData.Date.Year</td>
+                        <td>@employeeData.LastWorkingDate.Day - @employeeData.LastWorkingDate.Month - @employeeData.LastWorkingDate.Year</td>
                         <td>@employeeData.TeamName</td>
                         <td>@employeeData.SponsorName</td>
                         <td>@employeeData.SponsorEmailID</td>
-                        <td>@employeeData.Department</td>
+                        <td>@employeeData.SponsorDepartment</td>
                     </tr>
                 </tbody>
             }

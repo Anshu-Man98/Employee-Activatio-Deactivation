@@ -1,4 +1,4 @@
-﻿@model EmployeeDeactivation.Models.DeactivatedEmployeeDetails
+﻿@model EmployeeDeactivation.Models.EmployeeDetails
 @using System.Security.Principal
 @using System.Security.Claims
 @if (User.Identity.IsAuthenticated)
@@ -104,12 +104,25 @@
             })
         });
 
-        $(document).on("click", "#submitButton", function (e) {
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddDetails", "Employees")',
-                dataType: "json",
-                data: { 'firstName': $('#employeeFirstName').val(), 'lastName': $('#employeeLastName').val(), 'gId': $('#employeeGid').val(), 'email': $('#employeeEmail').val(), 'lastWorkingDate': $('#employeeLastWorkingdate').val(), 'teamsName': $('#teamNames').val(), 'sponsorName': $('#sponsorFirstName').val(), 'sponsorEmailId': $('#sponsorEmail').val(), 'sponsorDepartment': $('#sponsorDepartment').val(), 'sponsorGID': $('#sponsorGid').val() },
+            $(document).on("click", "#submitButton", function () {
+                fileData = new FormData();
+                fileData.append('FirstName', $('#employeeFirstName').val());
+                fileData.append('LastName', $('#employeeLastName').val());
+                fileData.append('GId', $('#employeeGid').val());
+                fileData.append('EmailID', $('#employeeEmail').val());
+                fileData.append('LastWorkingDate', $('#employeeLastWorkingdate').val());
+                fileData.append('TeamName', $('#teamNames').val());
+                fileData.append('SponsorName', $('#sponsorFirstName').val());
+                fileData.append('SponsorEmailID', $('#sponsorEmail').val());
+                fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
+                fileData.append('SponsorGId', $('#sponsorGid').val());
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddDetailsToDatabase", "Employees")',
+                    dataType: "json",
+                    data: {
+                        fileData, 'isDeactivatedWorkFlow': true
+                    },
                 success: function (response) {
                     if (response) {
                         $.ajax({

@@ -1,7 +1,4 @@
-﻿@model EmployeeDeactivation.Models.DeactivatedEmployeeDetails
-@using System.Security.Principal
-@using System.Security.Claims
-
+﻿@model EmployeeDeactivation.Models.EmployeeDetails
     <head>
 
 
@@ -27,7 +24,7 @@
         function GetTeamNames() {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetSponsorDetails", "Employees")',
+                url: '@Url.Action("GetSponsorDetails", "Teams")',
                 dataType: "json",
                 success: function (response) {
                     $('#teamNames').append(
@@ -48,7 +45,7 @@
             var teamName = $('#teamNames').val();
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("GetSponsorDetails", "Employees")',
+                url: '@Url.Action("GetSponsorDetails", "Teams")',
                 dataType: "json",
                 success: function (response) {
 
@@ -72,7 +69,7 @@
         $(document).on("click", "#submitButton", function (e) {
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("AddActivationDetails", "Employees")',
+                url: '@Url.Action("AddDetailsToDatabase", "Employees")',
                 dataType: "json",
                 data: { 'firstName': $('#siemensFirstName').val(), 'lastName': $('#siemensLastName').val(), 'siemensEmailId': $('#siemensEmail').val(), 'siemensgId': $('#siemensGid').val(), 'team': $('#teamNames').val(), 'sponsorName': $('#sponsorFirstName').val(), 'sponsorEmailId': $('#sponsorEmail').val(), 'sponsordepartment': $('#sponsorDepartment').val(), 'sponsorGID': $('#sponsorGid').val(), 'reportingManagerEmailId': $('#reportingManagerEmail').val(), 'employeeRole': $('#role').val(), 'gender': $('#gender').val(), 'dob': $('#dateOfBirth').val(), 'pob': $('#placeOfBirth').val(), 'address': $('#address').val(), 'phoneNo': $('#phoneNo').val(), 'nationality': $('#nationality').val() },
                 success: function (response) {
