@@ -1,7 +1,4 @@
-﻿@model EmployeeDeactivation.Models.DeactivatedEmployeeDetails
-@using System.Security.Principal
-@using System.Security.Claims
-
+﻿
 <head>
     <script src="~/js/Toastr.js"></script>
 
@@ -118,6 +115,7 @@
                                 }
                             });
 
+                        }
                     }
 
 
@@ -134,7 +132,7 @@
                     url: '@Url.Action("AddSponsorDetails", "Admin")',
                     dataType: "json",
                     data: { 'teamName': $('#teamName').val(), 'sponsorFirstName': $('#sponsorFirstName').val(), 'sponsorLastName': $('#sponsorLastName').val(), 'sponsorGid': $('#sponsorGid').val(), 'sponsorEmail': $('#sponsorEmail').val(), 'sponsorDepartment': $('#sponsorDepartment').val(), 'reportingManagerEmail': $('#reportingManEmail').val() },
-                    success: 
+                    success:
                         function (response) {
                             if (response) {
                                 bootbox.alert({
@@ -144,7 +142,8 @@
                                     }
                                 });
 
-                    }
+                            }
+                        }
                 });
             });
         });

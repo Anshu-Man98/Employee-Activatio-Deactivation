@@ -13,9 +13,9 @@ namespace EmployeeDeactivation.Data
         {
             Database.EnsureCreated();
         }
-        public DbSet<Models.DeactivatedEmployeeDetails> DeactivationWorkflow { get; set; }
+        public DbSet<Models.EmployeeDetails> DeactivationWorkflow { get; set; }
         public DbSet<Models.Teams> Teams { get; set; }
         public DbSet<Models.ManagerApprovalStatus> ManagerApprovalStatus { get; set; }
-        public DbSet<Models.ActivationWorkflowModel> ActivationWorkflow { get; set; }
+        public DbSet<Models.EmployeeDetails> ActivationWorkflow { get; set; }
     }
 }

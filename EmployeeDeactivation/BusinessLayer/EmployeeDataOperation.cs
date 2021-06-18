@@ -23,7 +23,7 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if(item.TeamName == teamName)
                 {
-                    return item.ReportingManagerEmail;
+                    return item.ReportingManagerEmailID;
                 }
             }
             return "";      
@@ -36,7 +36,7 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if (item.GId == gid)
                 {
-                    return item.Email;
+                    return item.EmailID;
                 }
             }
             return "";
@@ -55,23 +55,23 @@ namespace EmployeeDeactivation.BusinessLayer
             return "";
         }
 
-        public  List<DeactivatedEmployeeDetails> SavedEmployeeDetails()
+        public  List<EmployeeDetails> SavedEmployeeDetails()
         {
-            List<DeactivatedEmployeeDetails> userDetails = new List<DeactivatedEmployeeDetails>();
+            List<EmployeeDetails> userDetails = new List<EmployeeDetails>();
             var info =  _context.DeactivationWorkflow.ToList();
             foreach (var item in info)
             {
-                userDetails.Add(new DeactivatedEmployeeDetails
+                userDetails.Add(new EmployeeDetails
                 {
-                    Firstname = item.Firstname,
-                    Lastname = item.Lastname,
-                    Email = item.Email,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    EmailID = item.EmailID,
                     GId = item.GId,
-                    Date = item.Date,
+                    LastWorkingDate = item.LastWorkingDate,
                     TeamName = item.TeamName,
                     SponsorName =item.SponsorName,
                     SponsorEmailID =item.SponsorEmailID,
-                    Department = item.Department,
+                    SponsorDepartment = item.SponsorDepartment,
                     SponsorGId = item.SponsorGId
                 });
             }
@@ -92,21 +92,21 @@ namespace EmployeeDeactivation.BusinessLayer
                     SponsorLastName = item.SponsorLastName,
                     SponsorEmailID = item.SponsorEmailID,
                     Department = item.Department,
-                    ReportingManagerEmail = item.ReportingManagerEmail
+                    ReportingManagerEmailID = item.ReportingManagerEmailID
                 });
             }
             return teamDetails;
         }
 
-        public List<ActivationWorkflowModel> RetrieveAllActivationGid()
+        public List<EmployeeDetails> RetrieveAllActivationGid()
         {
-            List<ActivationWorkflowModel> activationDetails = new List<ActivationWorkflowModel>();
+            List<EmployeeDetails> activationDetails = new List<EmployeeDetails>();
             var details = _context.ActivationWorkflow.ToList();
             foreach (var item in details)
             {
-                activationDetails.Add(new ActivationWorkflowModel
+                activationDetails.Add(new EmployeeDetails
                 {
-                    SiemensGID = item.SiemensGID,
+                    GId = item.GId,
                     
                 });
             }
@@ -117,17 +117,17 @@ namespace EmployeeDeactivation.BusinessLayer
         //review change make parameters as class
         {
             bool databaseUpdateStatus = false;
-            DeactivatedEmployeeDetails employee = new DeactivatedEmployeeDetails()
+            EmployeeDetails employee = new EmployeeDetails()
             {
-                Firstname = firstName,
-                Lastname = lastName,
+                FirstName = firstName,
+                LastName = lastName,
                 GId = gId,
-                Email = email,
-                Date = lastWorkingDate,
+                EmailID = email,
+                LastWorkingDate = lastWorkingDate,
                 TeamName = teamsName,
                 SponsorName = sponsorName,
                 SponsorEmailID = sponsorEmailId,
-                Department = sponsorDepartment,
+                SponsorDepartment = sponsorDepartment,
                 SponsorGId = sponsorGID
             };
             var check = _context.DeactivationWorkflow.ToList();
@@ -150,22 +150,22 @@ namespace EmployeeDeactivation.BusinessLayer
         //review change make parameters as class
         {
             bool databaseUpdateStatus = false;
-            ActivationWorkflowModel employeeActivate = new ActivationWorkflowModel()
+            EmployeeDetails employeeActivate = new EmployeeDetails()
             {
                 FirstName = firstName,
                 LastName = lastName,
-                SiemensEmailId = siemensEmailId,
-                SiemensGID = siemensgId,
-                Team = team,
+                EmailID = siemensEmailId,
+                GId = siemensgId,
+                TeamName = team,
                 SponsorName = sponsorName,
-                SponsorEmail = sponsorEmailId,
-                SponsorGid= sponsorGID,
+                SponsorEmailID = sponsorEmailId,
+                SponsorGId= sponsorGID,
                 SponsorDepartment = sponsordepartment,
                 ReportingManagerEmail = reportingManagerEmailId,
                 Role= employeeRole,
                 Gender = gender,
                 DateOfBirth = dob,
-                PlaceofBirth = pob,
+                PlaceOfBirth = pob,
                 Address = address,
                 PhoneNo = phoneNo,
                 Nationality = nationality
@@ -173,9 +173,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var check = _context.ActivationWorkflow.ToList();
             foreach (var i in check)
             {
-                if (i.SiemensGID == siemensgId)
+                if (i.SponsorGId == siemensgId)
                 {
-                    _context.Remove(_context.ActivationWorkflow.Single(a => a.SiemensGID == siemensgId));
+                    _context.Remove(_context.ActivationWorkflow.Single(a => a.SponsorGId == siemensgId));
                     _context.SaveChanges();
                 }
             }
@@ -185,7 +185,7 @@ namespace EmployeeDeactivation.BusinessLayer
             return databaseUpdateStatus;
         }
 
-        public DeactivatedEmployeeDetails RetrieveEmployeeDataBasedOnGid(string gId)
+        public EmployeeDetails RetrieveEmployeeDataBasedOnGid(string gId)
         {
             var details = _context.DeactivationWorkflow.ToList();
             foreach (var item in details)
@@ -195,21 +195,21 @@ namespace EmployeeDeactivation.BusinessLayer
                     return item;
                 }
             }
-            return new DeactivatedEmployeeDetails();
+            return new EmployeeDetails();
 
         }
 
-        public ActivationWorkflowModel RetrieveActivationDataBasedOnGid(string gId)
+        public EmployeeDetails RetrieveActivationDataBasedOnGid(string gId)
         {
             var details = _context.ActivationWorkflow.ToList();
             foreach (var item in details)
             {
-                if (item.SiemensGID == gId)
+                if (item.GId == gId)
                 {
                     return item;
                 }
             }
-            return new ActivationWorkflowModel();
+            return new EmployeeDetails();
 
         }
 
@@ -219,9 +219,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var check = _context.ActivationWorkflow.ToList();
             foreach (var i in check)
             {
-                if (i.SiemensGID == gid)
+                if (i.GId == gid)
                 {
-                    i.PdfData = pdf;
+                    i.ActivationWorkFlowPdfAttachment = pdf;
                     _context.SaveChanges();
                     return true;
                 }

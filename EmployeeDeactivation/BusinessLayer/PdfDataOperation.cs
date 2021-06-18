@@ -31,17 +31,17 @@ namespace EmployeeDeactivation.BusinessLayer
             FileStream docStream = new FileStream("DeactivationFormPDF.pdf", FileMode.Open, FileAccess.Read);
             PdfLoadedDocument loadedDocument = new PdfLoadedDocument(docStream);
             PdfLoadedForm form = loadedDocument.Form;
-            (form.Fields[11] as PdfLoadedTextBoxField).Text = employeeData.Firstname;
-            (form.Fields[10] as PdfLoadedTextBoxField).Text = employeeData.Lastname;
-            (form.Fields[13] as PdfLoadedTextBoxField).Text = employeeData.Email;
+            (form.Fields[11] as PdfLoadedTextBoxField).Text = employeeData.FirstName;
+            (form.Fields[10] as PdfLoadedTextBoxField).Text = employeeData.LastName;
+            (form.Fields[13] as PdfLoadedTextBoxField).Text = employeeData.EmailID;
             (form.Fields[12] as PdfLoadedTextBoxField).Text = employeeData.GId;
-            (form.Fields[4] as PdfLoadedTextBoxField).Text = employeeData.Date.ToString();
+            (form.Fields[4] as PdfLoadedTextBoxField).Text = employeeData.LastWorkingDate.ToString();
             string sponsorFullName = employeeData.SponsorName;
             string[] splitsponsorFullName = sponsorFullName.Split(' ');
             (form.Fields[16] as PdfLoadedTextBoxField).Text = splitsponsorFullName[0];
             (form.Fields[17] as PdfLoadedTextBoxField).Text = splitsponsorFullName[1];
             (form.Fields[18] as PdfLoadedTextBoxField).Text = employeeData.SponsorGId;
-            (form.Fields[19] as PdfLoadedTextBoxField).Text = employeeData.Department;
+            (form.Fields[19] as PdfLoadedTextBoxField).Text = employeeData.SponsorDepartment;
             MemoryStream stream = new MemoryStream();
             loadedDocument.Save(stream);
             stream.Position = 0;
@@ -68,12 +68,12 @@ namespace EmployeeDeactivation.BusinessLayer
             (form.Fields[10] as PdfLoadedTextBoxField).Text = activationEmployeeData.LastName;
             (form.Fields[11] as PdfLoadedTextBoxField).Text = activationEmployeeData.FirstName;
             (form.Fields[12] as PdfLoadedTextBoxField).Text = activationEmployeeData.Address;
-            (form.Fields[13] as PdfLoadedTextBoxField).Text = activationEmployeeData.PlaceofBirth;
+            (form.Fields[13] as PdfLoadedTextBoxField).Text = activationEmployeeData.PlaceOfBirth;
             string sponsorFullName = activationEmployeeData.SponsorName;
             string[] splitsponsorFullName = sponsorFullName.Split(' ');
             (form.Fields[16] as PdfLoadedTextBoxField).Text = splitsponsorFullName[0];
             (form.Fields[17] as PdfLoadedTextBoxField).Text = splitsponsorFullName[1];
-            (form.Fields[18] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorGid;
+            (form.Fields[18] as PdfLoadedTextBoxField).Text = activationEmployeeData.GId;
             (form.Fields[19] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorDepartment;
             MemoryStream stream = new MemoryStream();
             loadedDocument.Save(stream);
@@ -122,11 +122,11 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeDetails = _managerApprovalOperation.GetAllPendingDeactivationWorkflows();
             foreach (var item in employeeDetails)
             {
-                string iDate = item.LastworkingDate;
+                string iDate = item.EmployeeLastWorkingDate;
                 DateTime date = Convert.ToDateTime(iDate);
                 if (DateTime.Today == date || DateTime.Today > date)
                 {
-                    MemoryStream stream = new MemoryStream(item.PdfAttachment);
+                    MemoryStream stream = new MemoryStream(item.DeactivationWorkFlowPdfAttachment);
                     Attachment file = new Attachment(stream, "Deactivation workflow_" + item.EmployeeName + ".pdf", "application/pdf");
                     SendEmail(item.ReportingManagerEmail, item.EmployeeName, true , false , false, file);
                 }  
@@ -135,13 +135,13 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeData = _employeeDataOperation.SavedEmployeeDetails();            
             foreach (var item in approvedEmployeeDetails)
             {
-                if (DateTime.Today.ToString() == item.LastworkingDate)
+                if (DateTime.Today.ToString() == item.EmployeeLastWorkingDate)
                 {
                     foreach (var employee in employeeData)
                     {
-                        if(employee.GId == item.GId)
+                        if(employee.GId == item.EmployeeGId)
                         {
-                            MemoryStream stream = new MemoryStream(item.PdfAttachment);
+                            MemoryStream stream = new MemoryStream(item.DeactivationWorkFlowPdfAttachment);
                             Attachment file = new Attachment(stream, "Deactivation workflow_" + item.EmployeeName + ".pdf", "application/pdf");
                             SendEmail(employee.SponsorEmailID, item.EmployeeName, true,false,false, file);
                         }

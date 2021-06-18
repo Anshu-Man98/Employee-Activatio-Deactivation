@@ -33,7 +33,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     SponsorLastName = item.SponsorLastName,
                     SponsorEmailID = item.SponsorEmailID,
                     Department = item.Department,
-                    ReportingManagerEmail = item.ReportingManagerEmail
+                    ReportingManagerEmailID = item.ReportingManagerEmailID
                 });
             }
             return teamDetails;
@@ -51,7 +51,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 SponsorGID = sponsorGid,
                 SponsorEmailID = sponsorEmail,
                 Department = sponsorDepartment,
-                ReportingManagerEmail = reportingManagerEmail,
+                ReportingManagerEmailID = reportingManagerEmail,
                 
             };
             var check = _context.Teams.ToList();
@@ -87,39 +87,39 @@ namespace EmployeeDeactivation.BusinessLayer
             return databaseUpdateStatus;
         }
 
-        public List<DeactivatedEmployeeDetails> RetrieveEmployeeDetails()
+        public List<EmployeeDetails> RetrieveEmployeeDetails()
         {
-            List<DeactivatedEmployeeDetails> employeeDetails = new List<DeactivatedEmployeeDetails>();
+            List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
             var details = _context.DeactivationWorkflow.ToList();
-            var sortedDetails = from p in details orderby p.Date select p;
+            var sortedDetails = from p in details orderby p.LastWorkingDate select p;
             foreach (var item in sortedDetails)
             {
                
-                employeeDetails.Add(new DeactivatedEmployeeDetails
+                employeeDetails.Add(new EmployeeDetails
                 {
-                    Firstname = item.Firstname,
-                    Lastname = item.Lastname,
-                    Email = item.Email,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    EmailID = item.EmailID,
                     GId = item.GId,
-                    Date = item.Date,
+                    LastWorkingDate = item.LastWorkingDate,
                     TeamName = item.TeamName,
                     SponsorName = item.SponsorName,
                     SponsorEmailID = item.SponsorEmailID,
-                    Department = item.Department,
+                    SponsorDepartment = item.SponsorDepartment,
                 });
             }
             return employeeDetails;
         }
 
-        public List<DeactivatedEmployeeDetails> DeactivationEmployeeData()//Refactoring
+        public List<EmployeeDetails> DeactivationEmployeeData()//Refactoring
         {
-            List<DeactivatedEmployeeDetails> deactivationEmployeeData = (from deactivationEmployee in this._context.DeactivationWorkflow.Take(30000)select deactivationEmployee).ToList();
+            List<EmployeeDetails> deactivationEmployeeData = (from deactivationEmployee in this._context.DeactivationWorkflow.Take(30000)select deactivationEmployee).ToList();
             return deactivationEmployeeData;
         }
 
-        public List<ActivationWorkflowModel> ActivationEmployeeData()
+        public List<EmployeeDetails> ActivationEmployeeData()
         {
-            List<ActivationWorkflowModel> activationEmployeeData = (from activationEmployee in this._context.ActivationWorkflow.Take(30000) select activationEmployee).ToList();
+            List<EmployeeDetails> activationEmployeeData = (from activationEmployee in this._context.ActivationWorkflow.Take(30000) select activationEmployee).ToList();
             return activationEmployeeData;
         }
 

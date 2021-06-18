@@ -24,13 +24,13 @@ namespace EmployeeDeactivation.BusinessLayer
             ManagerApprovalStatus ManagerApprovalStatus = new ManagerApprovalStatus()
             {
                 EmployeeName = employeeName,
-                GId = gId,
-                LastworkingDate = lastWorkingDatee,
-                TeamName = teamName,
+                EmployeeGId = gId,
+                EmployeeLastWorkingDate = lastWorkingDatee,
+                EmployeeTeamName = teamName,
                 SponsorName = sponsorName,
-                PdfAttachment = bytes,
+                DeactivationWorkFlowPdfAttachment = bytes,
                 ReportingManagerEmail= reportingManagerEmail,
-                Status="pending"
+                WorkFlowStatus = "pending"
             };
             _context.Add(ManagerApprovalStatus);
             _context.SaveChanges();
@@ -46,14 +46,13 @@ namespace EmployeeDeactivation.BusinessLayer
                     deactivationDetails.Add(new ManagerApprovalStatus
                 {
                     EmployeeName = item.EmployeeName,
-                    LastworkingDate = item.LastworkingDate,
-                    GId = item.GId,
-                    TeamName = item.TeamName,
+                    EmployeeLastWorkingDate = item.EmployeeLastWorkingDate,
+                    EmployeeGId = item.EmployeeGId,
+                    EmployeeTeamName = item.EmployeeTeamName,
                     SponsorName = item.SponsorName,
-                    PdfAttachment = item.PdfAttachment,
+                    DeactivationWorkFlowPdfAttachment = item.DeactivationWorkFlowPdfAttachment,
                     ReportingManagerEmail = item.ReportingManagerEmail,
-                    Status = item.Status
-
+                    WorkFlowStatus = item.WorkFlowStatus
                 });
             }
             return deactivationDetails;
@@ -64,9 +63,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var DDetails = RetrieveDeactivationDetailss();
             foreach (var item in DDetails)
             {
-                if (item.GId == GId)
+                if (item.EmployeeGId == GId)
                 {
-                    byte[] be = item.PdfAttachment;
+                    byte[] be = item.DeactivationWorkFlowPdfAttachment;
                     return be;
                 }
             }
@@ -81,7 +80,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
             foreach (var item in allDeactivationWorkfolw)
             {
-                if (item.Status.ToLower() == "pending" && item.ReportingManagerEmail == userEmail)
+                if (item.WorkFlowStatus.ToLower() == "pending" && item.ReportingManagerEmail == userEmail)
                 {
                     pendingDeactivationWorkflows.Add(item);
                 }
@@ -97,7 +96,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
             foreach (var item in allDeactivationWorkfolw)
             {
-                if (item.Status.ToLower() == "pending")
+                if (item.WorkFlowStatus.ToLower() == "pending")
                 {
                     pendingDeactivationWorkflows.Add(item);
                 }
@@ -113,7 +112,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
             foreach (var item in allDeactivationWorkfolw)
             {
-                if (item.Status.ToLower() == "approve")
+                if (item.WorkFlowStatus.ToLower() == "approve")
                 {
                     approvedDeactivationWorkflows.Add(item);
                 }
@@ -129,7 +128,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
             foreach (var item in allDeactivationWorkfolw)
             {
-                if (item.Status.ToLower() == "denied")
+                if (item.WorkFlowStatus.ToLower() == "denied")
                 {
                     declinedDeactivationWorkflows.Add(item);
                 }
@@ -143,9 +142,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var check = _context.ManagerApprovalStatus.ToList();
             foreach (var i in check)
             {
-                if (i.GId == gId && i.Status.ToLower() == "pending")
+                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
                 {
-                    i.Status = "approve";
+                    i.WorkFlowStatus = "approve";
                     _context.SaveChanges();
                     return true;          
                 }
@@ -158,9 +157,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var check = _context.ManagerApprovalStatus.ToList();
             foreach (var i in check)
             {
-                if (i.GId == gId && i.Status.ToLower() == "pending")
+                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
                 {
-                    i.Status = "denied";
+                    i.WorkFlowStatus = "denied";
                     _context.SaveChanges();
                     return true;
                 }
