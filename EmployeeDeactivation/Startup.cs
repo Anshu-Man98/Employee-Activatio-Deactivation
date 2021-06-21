@@ -104,7 +104,7 @@ namespace EmployeeDeactivation
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Employees}/{action=Create}/{id?}");
+                    template: "{controller=Employees}/{action=EmployeeDeactivationForm}/{id?}");
             });
         }
     }
