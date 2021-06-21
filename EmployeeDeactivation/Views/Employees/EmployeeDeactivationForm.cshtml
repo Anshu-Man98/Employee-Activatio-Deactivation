@@ -52,7 +52,7 @@
         function Reminder() {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("SendReminder", "Pdf")',
+                url: '@Url.Action("SendReminder", "Email")',
                 success: function (response) {
 
                 }
@@ -127,7 +127,7 @@
                     if (response) {
                         $.ajax({
                             type: "GET",
-                            url: '@Url.Action("Index", "Pdf")',
+                            url: '@Url.Action("CreateDeactivationPdf", "Pdf")',
                             data: { 'gId': $('#employeeGid').val() },
                             dataType: "json",
                             success: function (response) {
@@ -153,8 +153,8 @@
                                                 if (result) {
                                                     $.ajax({
                                                         type: "POST",
-                                                        url: '@Url.Action("PdfAttachment", "Pdf")',
-                                                        data: { 'memoryStream': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val()},
+                                                        url: '@Url.Action("PdfAttachmentEmail", "Email")',
+                                                        data: { 'memoryStream': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
                                                         success: function (s) {  
                                                             
                                                     $.ajax({

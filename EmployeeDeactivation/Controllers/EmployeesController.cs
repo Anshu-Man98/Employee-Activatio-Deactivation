@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using EmployeeDeactivation.Interface;
 using Microsoft.AspNetCore.Authorization;
 using EmployeeDeactivation.Models;
@@ -34,6 +33,12 @@ namespace EmployeeDeactivation.Controllers
         public JsonResult AddDetails(EmployeeDetails employeeDetails,bool isDeactivatedWorkFlow)
         {
             return Json( _employeeDataOperation.AddEmployeeData(employeeDetails, isDeactivatedWorkFlow));
+        }
+        [HttpPost]
+        [Route("Employees/AddActivationPdfToDatabase")]
+        public JsonResult AddActivationPdfToDatabase(byte[] pdf, string gId)
+        {
+            return Json(_employeeDataOperation.SavePdfToDatabase(pdf, gId));
         }
     }
 }

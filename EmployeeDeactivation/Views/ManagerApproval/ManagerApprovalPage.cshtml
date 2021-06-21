@@ -95,8 +95,8 @@
                                     window.location.reload(); 
                                     $.ajax({
                                 type: "POST",
-                                url: '@Url.Action("DeclineEmail", "Pdf")',
-                                data: { 'gid': $tds, 'employeeName': $tdss },
+                                url: '@Url.Action("DeclineEmail", "Email")',
+                                data: { 'gId': $tds, 'employeeName': $tdss },
                                 dataType: "json",
                                 success:function (f) {
                                      

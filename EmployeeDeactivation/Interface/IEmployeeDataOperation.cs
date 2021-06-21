@@ -9,14 +9,15 @@ namespace EmployeeDeactivation.Interface
 {
     public interface IEmployeeDataOperation
     {
-        List<Teams> RetrieveAllSponsorDetails();
         bool AddEmployeeData(EmployeeDetails employeeDetails, bool isDeactivatedWorkFlow);
-        EmployeeDetails RetrieveEmployeeDataBasedOnGid(string gId);
+        List<EmployeeDetails> RetrieveAllDeactivatedEmployees();
+        EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId);
+        string GetDeactivatedEmployeeEmailId(string gid);
+        List<EmployeeDetails> RetrieveAllActivationWorkFlow();
         EmployeeDetails RetrieveActivationDataBasedOnGid(string gId);
         string GetReportingManagerEmailId(string teamName);
-        string GetSponsorEmailId(string SponsorGid);
-        List<EmployeeDetails> SavedEmployeeDetails();
-        bool savepdf(byte[] pdf, string gid);
-        string GetEmployeeEmailId(string gid);
+        string GetSponsorEmailId(string sponsorGid);
+        List<Teams> RetrieveAllSponsorDetails();
+        bool SavePdfToDatabase(byte[] pdf, string gId);
     }
 }
