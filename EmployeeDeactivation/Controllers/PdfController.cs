@@ -26,5 +26,6 @@ namespace EmployeeDeactivation.Controllers
         {
             return Json("data:application/pdf;base64," + Convert.ToBase64String(_pdfDataOperation.FillActivationPdfForm(gId)));
         }
+        
     }
 }

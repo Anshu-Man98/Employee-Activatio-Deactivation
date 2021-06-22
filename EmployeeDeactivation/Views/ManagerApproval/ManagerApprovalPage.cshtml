@@ -1,5 +1,4 @@
-﻿
-@model EmployeeDeactivation.Models.ManagerApprovalStatus
+﻿@model EmployeeDeactivation.Models.ManagerApprovalStatus
 @using System.Security.Principal
 @using System.Security.Claims
 
@@ -22,7 +21,7 @@
 
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("DeactivationDetails","ManagerApproval")',
+                url: '@Url.Action("GetPendingDeactivationWorkflowForParticularManager", "ManagerApproval")',
                 dataType: "json",
                 success: function (response) {
                     var row;
@@ -52,8 +51,8 @@
                 $tds = $row.find("td:nth-child(2)").text();
                             $.ajax({
                                 type: "GET",
-                                url: '@Url.Action("PdfDetails", "ManagerApproval")',
-                                data: {'GId': $tds},
+                                url: '@Url.Action("DownloadDeactivationPdf", "ManagerApproval")',
+                                data: {'gId': $tds},
                                 dataType: "json",
                                 success:
                                     function (result) {
@@ -70,7 +69,7 @@
                 $tds = $row.find("td:nth-child(2)").text();
                             $.ajax({
                                 type: "GET",
-                                url: '@Url.Action("RequestApprove", "ManagerApproval")',
+                                url: '@Url.Action("AddApprovedDeactivationRequestToDatabase", "ManagerApproval")',
                                 data: {'GId': $tds},
                                 dataType: "json",
                                 success: function (res) {
@@ -88,7 +87,7 @@
                 $tdss = $row.find("td:nth-child(1)").text();
                             $.ajax({
                                 type: "GET",
-                                url: '@Url.Action("RequestDenied", "ManagerApproval")',
+                                url: '@Url.Action("AddDeniedDeactivationRequestToDatabase", "ManagerApproval")',
                                 data: {'GId': $tds},
                                 dataType: "json",
                                 success: function (r) {

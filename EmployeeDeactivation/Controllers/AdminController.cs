@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EmployeeDeactivation.Interface;
+﻿using EmployeeDeactivation.Interface;
+using EmployeeDeactivation.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,12 +24,10 @@ namespace EmployeeDeactivation.Controllers
             return View(_adminDataOperation.DeactivationEmployeeData());
         }
         
-
         public IActionResult AccountActivationDetailsPage()
         {
             return View(_adminDataOperation.ActivationEmployeeData());
         }
-
 
         [HttpGet]
         [Route("Admin/SponsorDetails")]
@@ -42,29 +37,19 @@ namespace EmployeeDeactivation.Controllers
         }
 
         [HttpPost]
-        [Route("Admin/AddSponsorDetails")]
-        public JsonResult AddSponsorDetails(string teamName, string sponsorFirstName, string sponsorLastName, string sponsorGid, string sponsorEmail, string sponsorDepartment, string reportingManagerEmail)
+        [Route("Admin/AddSponsorDetailsToDatabase")]
+        public JsonResult AddSponsorDetailsToDatabase(Teams team)
         {
-            var updateStatus = _adminDataOperation.AddSponsorData(teamName, sponsorFirstName, sponsorLastName, sponsorGid, sponsorEmail, sponsorDepartment, reportingManagerEmail);
-
-            return Json(true);
+            return Json(_adminDataOperation.AddSponsorData(team));
         }
 
         [HttpPost]
         [Route("Admin/DeleteSponsorDetail")]
         public JsonResult DeleteSponsorDetails(string gId)
-        {
-            
-
+        { 
             return Json(_adminDataOperation.DeleteSponsorData(gId));
         }
 
-        [HttpGet]
-        [Route("Admin/EmployeeDetails")]
-        public JsonResult EmployeeDetails()
-        {
-            return Json(_adminDataOperation.RetrieveEmployeeDetails());
-        }
 
     }
 }

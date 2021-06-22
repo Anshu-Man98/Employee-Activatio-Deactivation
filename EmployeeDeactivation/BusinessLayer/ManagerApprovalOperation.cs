@@ -18,83 +18,83 @@ namespace EmployeeDeactivation.BusinessLayer
             _context = context;
         }
 
-        public void PdfAttachment(string employeeName, string lastWorkingDatee, string gId, string teamName, string sponsorName, string memoryStream, string reportingManagerEmail)
+        public void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus)
         {
-            byte[] bytes = System.Convert.FromBase64String(memoryStream);
             ManagerApprovalStatus ManagerApprovalStatus = new ManagerApprovalStatus()
             {
-                EmployeeName = employeeName,
-                EmployeeGId = gId,
-                EmployeeLastWorkingDate = lastWorkingDatee,
-                EmployeeTeamName = teamName,
-                SponsorName = sponsorName,
-                DeactivationWorkFlowPdfAttachment = bytes,
-                ReportingManagerEmail= reportingManagerEmail,
+                EmployeeName = managerApprovalStatus.EmployeeName,
+                EmployeeGId = managerApprovalStatus.EmployeeGId,
+                EmployeeLastWorkingDate = managerApprovalStatus.EmployeeLastWorkingDate,
+                EmployeeTeamName = managerApprovalStatus.EmployeeTeamName,
+                SponsorName = managerApprovalStatus.SponsorName,
+                DeactivationWorkFlowPdfAttachment = managerApprovalStatus.DeactivationWorkFlowPdfAttachment,
+                ReportingManagerEmail= managerApprovalStatus.WorkFlowStatus,
                 WorkFlowStatus = "pending"
             };
             _context.Add(ManagerApprovalStatus);
             _context.SaveChanges();
-
         }
-
-        public List<ManagerApprovalStatus> RetrieveDeactivationDetailss()
-        {
-            List<ManagerApprovalStatus> deactivationDetails = new List<ManagerApprovalStatus>();
-            var infoo = _context.ManagerApprovalStatus.ToList();
-            foreach (var item in infoo)
-            {
-                    deactivationDetails.Add(new ManagerApprovalStatus
-                {
-                    EmployeeName = item.EmployeeName,
-                    EmployeeLastWorkingDate = item.EmployeeLastWorkingDate,
-                    EmployeeGId = item.EmployeeGId,
-                    EmployeeTeamName = item.EmployeeTeamName,
-                    SponsorName = item.SponsorName,
-                    DeactivationWorkFlowPdfAttachment = item.DeactivationWorkFlowPdfAttachment,
-                    ReportingManagerEmail = item.ReportingManagerEmail,
-                    WorkFlowStatus = item.WorkFlowStatus
-                });
-            }
-            return deactivationDetails;
-        }
-
-        public byte[] Getpdf(string GId)
-        {
-            var DDetails = RetrieveDeactivationDetailss();
-            foreach (var item in DDetails)
-            {
-                if (item.EmployeeGId == GId)
-                {
-                    byte[] be = item.DeactivationWorkFlowPdfAttachment;
-                    return be;
-                }
-            }
-            byte[] bb = null;
-            return bb;
-        }
-
         public List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail)
         {
-            
             List<ManagerApprovalStatus> pendingDeactivationWorkflows = new List<ManagerApprovalStatus>();
-            var allDeactivationWorkfolw = RetrieveDeactivationDetailss();
-            foreach (var item in allDeactivationWorkfolw)
+            var allDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var item in allDeactivationWorkflow)
             {
                 if (item.WorkFlowStatus.ToLower() == "pending" && item.ReportingManagerEmail == userEmail)
                 {
                     pendingDeactivationWorkflows.Add(item);
                 }
-
             }
             return pendingDeactivationWorkflows;
         }
 
+        public byte[] DownloadDeactivationPdfFromDatabase(string gId)
+        {
+            byte[] pdf = null;
+            var allDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var item in allDeactivationWorkflow)
+            {
+                if (item.EmployeeGId == gId)
+                {
+                   return item.DeactivationWorkFlowPdfAttachment;
+                }
+            }
+            return pdf;
+        }
+        public bool ApproveRequest(string gId)
+        {
+            var allDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var i in allDeactivationWorkflow)
+            {
+                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                {
+                    i.WorkFlowStatus = "approve";
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool DeclineRequest(string gId)
+        {
+            var allDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var i in allDeactivationWorkflow)
+            {
+                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                {
+                    i.WorkFlowStatus = "denied";
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public List<ManagerApprovalStatus> GetAllPendingDeactivationWorkflows()
         {
-
             List<ManagerApprovalStatus> pendingDeactivationWorkflows = new List<ManagerApprovalStatus>();
-            var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
-            foreach (var item in allDeactivationWorkfolw)
+            var allDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var item in allDeactivationWorkflow)
             {
                 if (item.WorkFlowStatus.ToLower() == "pending")
                 {
@@ -107,26 +107,23 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public List<ManagerApprovalStatus> GetAllApprovedDeactivationWorkflows()
         {
-
             List<ManagerApprovalStatus> approvedDeactivationWorkflows = new List<ManagerApprovalStatus>();
-            var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
-            foreach (var item in allDeactivationWorkfolw)
+            var allDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var item in allDeactivationWorkflow)
             {
                 if (item.WorkFlowStatus.ToLower() == "approve")
                 {
                     approvedDeactivationWorkflows.Add(item);
                 }
-
             }
             return approvedDeactivationWorkflows;
         }
 
         public List<ManagerApprovalStatus> GetAllDeclinedDeactivationWorkflows()
         {
-
             List<ManagerApprovalStatus> declinedDeactivationWorkflows = new List<ManagerApprovalStatus>();
-            var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
-            foreach (var item in allDeactivationWorkfolw)
+            var allDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var item in allDeactivationWorkflow)
             {
                 if (item.WorkFlowStatus.ToLower() == "denied")
                 {
@@ -136,35 +133,25 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             return declinedDeactivationWorkflows;
         }
-
-        public bool ApproveRequest(string gId)
+        private List<ManagerApprovalStatus> RetrieveDeactivationDetails()
         {
-            var check = _context.ManagerApprovalStatus.ToList();
-            foreach (var i in check)
+            List<ManagerApprovalStatus> deactivationDetails = new List<ManagerApprovalStatus>();
+            var allDeactivatedRequestsStatus = _context.ManagerApprovalStatus.ToList();
+            foreach (var item in allDeactivatedRequestsStatus)
             {
-                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                deactivationDetails.Add(new ManagerApprovalStatus
                 {
-                    i.WorkFlowStatus = "approve";
-                    _context.SaveChanges();
-                    return true;          
-                }
+                    EmployeeName = item.EmployeeName,
+                    EmployeeLastWorkingDate = item.EmployeeLastWorkingDate,
+                    EmployeeGId = item.EmployeeGId,
+                    EmployeeTeamName = item.EmployeeTeamName,
+                    SponsorName = item.SponsorName,
+                    DeactivationWorkFlowPdfAttachment = item.DeactivationWorkFlowPdfAttachment,
+                    ReportingManagerEmail = item.ReportingManagerEmail,
+                    WorkFlowStatus = item.WorkFlowStatus
+                });
             }
-            return false;
-        }
-
-        public bool DeclineRequest(string gId)
-        {
-            var check = _context.ManagerApprovalStatus.ToList();
-            foreach (var i in check)
-            {
-                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
-                {
-                    i.WorkFlowStatus = "denied";
-                    _context.SaveChanges();
-                    return true;
-                }
-            }
-            return false;
+            return deactivationDetails;
         }
 
     }

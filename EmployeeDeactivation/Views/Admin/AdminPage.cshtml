@@ -101,9 +101,20 @@
 
             openForm1();
             $(document).on("click", "#submit2", function (e) {
+                //fileData = new FormData();
+                //fileData.append('FirstName', $('#employeeFirstName').val());
+                //fileData.append('LastName', $('#employeeLastName').val());
+                //fileData.append('GId', $('#employeeGid').val());
+                //fileData.append('EmailID', $('#employeeEmail').val());
+                //fileData.append('LastWorkingDate', $('#employeeLastWorkingdate').val());
+                //fileData.append('TeamName', $('#teamNames').val());
+                //fileData.append('SponsorName', $('#sponsorFirstName').val());
+                //fileData.append('SponsorEmailID', $('#sponsorEmail').val());
+                //fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
+                //fileData.append('SponsorGId', $('#sponsorGid').val());
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("AddSponsorDetails", "Admin")',
+                    url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
                     dataType: "json",
                     data: { 'teamName': $('#editTeamName').val(), 'sponsorFirstName': $('#editFirstName').val(), 'sponsorLastName': $('#editLastName').val(), 'sponsorGid': $('#editgid').val(), 'sponsorEmail': $('#editEmail').val(), 'sponsorDepartment': $('#editDepartment').val(), 'reportingManagerEmail': $('#editRmEmail').val() },
                     success: function (response) {
@@ -129,7 +140,7 @@
             $(document).on("click", "#submit1", function (e) {
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("AddSponsorDetails", "Admin")',
+                    url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
                     dataType: "json",
                     data: { 'teamName': $('#teamName').val(), 'sponsorFirstName': $('#sponsorFirstName').val(), 'sponsorLastName': $('#sponsorLastName').val(), 'sponsorGid': $('#sponsorGid').val(), 'sponsorEmail': $('#sponsorEmail').val(), 'sponsorDepartment': $('#sponsorDepartment').val(), 'reportingManagerEmail': $('#reportingManEmail').val() },
                     success:
