@@ -64,6 +64,7 @@ namespace EmployeeDeactivation
             {
                 options.AddPolicy("Manager", policyBuilder => policyBuilder.RequireClaim("groups", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc"));
                 options.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim("groups", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"));
+                options.AddPolicy("Admin&Manager", policyBuilder => policyBuilder.RequireClaim("groups", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc"));
             });
 
 

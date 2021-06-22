@@ -111,9 +111,9 @@ namespace EmployeeDeactivation.BusinessLayer
             return employeeDetails;
         }
 
-        public List<EmployeeDetails> DeactivationEmployeeData()//Refactoring
+        public List<EmployeeDetails> DeactivationEmployeeData()
         {
-            List<EmployeeDetails> deactivationEmployeeData = (from deactivationEmployee in this._context.DeactivationWorkflow.Take(30000)select deactivationEmployee).ToList();
+            var deactivationEmployeeData = (from deactivationEmployee in this._context.DeactivationWorkflow.Take(30000)select deactivationEmployee).ToList();
             return deactivationEmployeeData;
         }
 

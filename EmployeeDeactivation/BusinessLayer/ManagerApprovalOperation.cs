@@ -77,7 +77,7 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             
             List<ManagerApprovalStatus> pendingDeactivationWorkflows = new List<ManagerApprovalStatus>();
-            var allDeactivationWorkfolw = (RetrieveDeactivationDetailss());
+            var allDeactivationWorkfolw = RetrieveDeactivationDetailss();
             foreach (var item in allDeactivationWorkfolw)
             {
                 if (item.WorkFlowStatus.ToLower() == "pending" && item.ReportingManagerEmail == userEmail)

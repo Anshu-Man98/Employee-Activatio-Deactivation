@@ -166,13 +166,13 @@
             document.getElementById("myForm").style.display = "none";
         }
 
-        window.onclick = function (event) {
-            if (event.target == myForm)
-            {
-                document.getElementById("myForm").style.display = "none";
-            }
+        //window.onclick = function (event) {
+        //    if (event.target == myForm)
+        //    {
+        //        document.getElementById("myForm").style.display = "none";
+        //    }
 
-        }
+        //}
     </script>
     <style>
         .tablee {
@@ -285,7 +285,7 @@
     <div class="header">
         <h2> Sponsor Details </h2>
     </div>
-    <button type="button" id="backButton" class="btn btn-outline-secondary" onclick="window.open('@Url.Action("Create", "Employees")', '_self')">Back</button>
+    <button type="button" id="backButton" class="btn btn-outline-secondary" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")', '_self')">Back</button>
     <div class="tablee">
 
         <table id="tbldata" class="table table-bordered ">

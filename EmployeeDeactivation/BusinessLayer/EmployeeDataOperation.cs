@@ -135,7 +135,7 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         public List<Teams> RetrieveAllSponsorDetails()
         {
-           return( _context.Teams.ToList());
+           return _context.Teams.ToList();
         }
 
         #endregion

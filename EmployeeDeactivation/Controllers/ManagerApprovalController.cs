@@ -20,7 +20,7 @@ namespace EmployeeDeactivation.Controllers
             _managerAprovalOperation = managerAprovalOperation;
         }
 
-        [Authorize("Manager")]
+        [Authorize("Admin&Manager")]
         public IActionResult ManagerApprovalPage()
         {
             return View();

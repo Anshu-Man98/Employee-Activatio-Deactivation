@@ -34,11 +34,11 @@
                     $('#text').hide();
 
                     $.each(response, function (i, item) {
-                        var dateTime = item.lastworkingDate;
+                        var dateTime = item.employeeLastWorkingDate;
                         var splitDateTime = dateTime.split(" ");
                         var date = splitDateTime[0];
 
-                        row += "<tbody><tr class=item><td id=team >" + item.employeeName + "</td><td id=fn>" + item.gId + "</td><td id=ln>" + date + "</td><td id=em>" + item.teamName + "</td><td id=dep>" + item.sponsorName + "</td><td id=rm>" + item.reportingManagerEmail + "</td><td><span id=approve class='glyphicon glyphicon-ok cursor' style='font-size:30px;color:green'></span><span id=decline class='glyphicon glyphicon-remove' style='font-size:30px;color:red'></span><span id=download  class='glyphicon glyphicon-download-alt' style='font-size:30px;color:blue'></span></td></tr></tbody>"
+                        row += "<tbody><tr class=item><td id=team >" + item.employeeName + "</td><td id=fn>" + item.employeeGId + "</td><td id=ln>" + date + "</td><td id=em>" + item.employeeTeamName + "</td><td id=dep>" + item.sponsorName + "</td><td id=rm>" + item.reportingManagerEmail + "</td><td><span id=approve class='glyphicon glyphicon-ok cursor' style='font-size:30px;color:green'></span><span id=decline class='glyphicon glyphicon-remove' style='font-size:30px;color:red'></span><span id=download  class='glyphicon glyphicon-download-alt' style='font-size:30px;color:blue'></span></td></tr></tbody>"
 
                     });
                     $("#tbldata").append(row);

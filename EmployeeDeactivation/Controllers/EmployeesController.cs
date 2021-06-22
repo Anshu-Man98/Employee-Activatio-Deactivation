@@ -15,7 +15,9 @@ namespace EmployeeDeactivation.Controllers
             _employeeDataOperation = employeeDataOperation;
         }
 
-        [Authorize(Roles ="Manager,Admin")]
+        [Authorize(Roles = "Manager,Admin")]
+        [Authorize("Admin&Manager")]
+
         [HttpGet]
         public IActionResult EmployeeActivationForm()
         {
@@ -30,7 +32,7 @@ namespace EmployeeDeactivation.Controllers
 
         [HttpPost]
         [Route("Employees/AddDetailsToDatabase")]
-        public JsonResult AddDetails(EmployeeDetails employeeDetails,bool isDeactivatedWorkFlow)
+        public JsonResult AddDetailsToDatabase(EmployeeDetails employeeDetails,bool isDeactivatedWorkFlow)
         {
             return Json( _employeeDataOperation.AddEmployeeData(employeeDetails, isDeactivatedWorkFlow));
         }

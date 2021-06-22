@@ -385,10 +385,10 @@
         <h2> Employee Activation Form</h2>
 
         <div class="regular-field">
-            <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("Create", "Employees")','_self')" />
+            <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
             <label for="radio-seven">Deactivation Form</label>
 
-            <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("Activationpage", "Employees")','_self')" />
+            <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
             <label for="radio-six" id="radio-1-txt">Activation Form</label>
 
         </div>
@@ -522,7 +522,7 @@
                         Date Of Birth:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="date" class="form-control" id="dateOfBirth" onchange="checkDate()" />
+                        <input type="date" class="form-control" id="dateOfBirth" onchange="checkDate()" min="1940-05-01" max=" 2015-01-01"/>
                     </div>
                 </div>
                 <div class="form-group row">
