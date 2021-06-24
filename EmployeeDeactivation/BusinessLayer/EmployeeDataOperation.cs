@@ -1,6 +1,7 @@
 ﻿using EmployeeDeactivation.Data;
 using EmployeeDeactivation.Interface;
 using EmployeeDeactivation.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,8 @@ namespace EmployeeDeactivation.BusinessLayer
                         _context.SaveChanges();
                     }
                 }
+                DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                _context.Add(employeeDetail);
             }
             else
             {
@@ -41,29 +44,22 @@ namespace EmployeeDeactivation.BusinessLayer
                         _context.SaveChanges();
                     }
                 }
+            ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                _context.Add(employeeDetail);
             }
-            _context.Add(employeeDetails);
+           
             return _context.SaveChanges() == 1;
         }
 
         public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()
         {
+
             var deactivatedEmployees = _context.DeactivationWorkflow.ToList();
-            EmployeeDetails employee = new EmployeeDetails();
             List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
             foreach (var item in deactivatedEmployees)
             {
-                employee.FirstName = item.FirstName;
-                employee.LastName = item.LastName;
-                employee.EmailID = item.EmailID;
-                employee.GId = item.GId;
-                employee.LastWorkingDate = item.LastWorkingDate;
-                employee.TeamName = item.TeamName;
-                employee.SponsorName = item.SponsorName;
-                employee.SponsorEmailID = item.SponsorEmailID;
-                employee.SponsorDepartment = item.SponsorDepartment;
-                employee.SponsorGId = item.SponsorGId;
-                employeeDetails.Add(employee);
+                EmployeeDetails employeeDetail = JsonConvert.DeserializeObject<EmployeeDetails>(JsonConvert.SerializeObject(item));
+                employeeDetails.Add(employeeDetail);
             }
             return employeeDetails;
         }
@@ -71,29 +67,11 @@ namespace EmployeeDeactivation.BusinessLayer
         public List<EmployeeDetails> RetrieveAllActivationWorkFlow()
         {
             var activatedEmployees = _context.ActivationWorkflow.ToList();
-            EmployeeDetails employee = new EmployeeDetails();
             List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
             foreach (var item in activatedEmployees)
             {
-                employee.FirstName = item.FirstName;
-                employee.LastName = item.LastName;
-                employee.EmailID = item.EmailID;
-                employee.GId = item.GId;
-                employee.TeamName = item.TeamName;
-                employee.SponsorName = item.SponsorName;
-                employee.SponsorEmailID = item.SponsorEmailID;
-                employee.SponsorGId = item.SponsorGId;
-                employee.SponsorDepartment = item.SponsorDepartment;
-                employee.ReportingManagerEmail = item.ReportingManagerEmail;
-                employee.Role = item.Role;
-                employee.Gender = item.Gender;
-                employee.DateOfBirth = item.DateOfBirth;
-                employee.PlaceOfBirth = item.PlaceOfBirth;
-                employee.Address = item.Address;
-                employee.PhoneNo = item.PhoneNo;
-                employee.Nationality = item.Nationality;
-
-                employeeDetails.Add(employee);
+                EmployeeDetails employeeDetail = JsonConvert.DeserializeObject<EmployeeDetails>(JsonConvert.SerializeObject(item));
+                employeeDetails.Add(employeeDetail);
             }
             return employeeDetails;
         }

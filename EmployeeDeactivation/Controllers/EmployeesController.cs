@@ -15,7 +15,7 @@ namespace EmployeeDeactivation.Controllers
             _employeeDataOperation = employeeDataOperation;
         }
 
-        [Authorize(Roles = "Manager,Admin")]
+        
         [Authorize("Admin&Manager")]
 
         [HttpGet]

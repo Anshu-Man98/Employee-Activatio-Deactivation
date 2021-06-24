@@ -12,16 +12,11 @@ namespace EmployeeDeactivation.BusinessLayer
     public class AdminDataOperation : IAdminDataOperation
     {
         private readonly IEmployeeDataOperation _employeeDataOperation;
+        private readonly EmployeeDeactivationContext _context;
 
-        public AdminDataOperation(IEmployeeDataOperation employeeDataOperation)
+        public AdminDataOperation(IEmployeeDataOperation employeeDataOperation , EmployeeDeactivationContext context)
         {
             _employeeDataOperation = employeeDataOperation;
-
-        }
-
-        private readonly EmployeeDeactivationContext _context;
-        public AdminDataOperation(EmployeeDeactivationContext context)
-        {
             _context = context;
         }
 
@@ -57,6 +52,7 @@ namespace EmployeeDeactivation.BusinessLayer
             databaseUpdateStatus = _context.SaveChanges() == 1;
             return databaseUpdateStatus;
         }
+
         public bool DeleteSponsorData(string gId)
         {
             var teamDetails = _context.Teams.ToList();
@@ -66,15 +62,19 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     _context.Remove(_context.Teams.Single(a => a.SponsorGID == gId));
                     return _context.SaveChanges() == 1;
+                    
                 }
             }
             return true;
 
         }
+
         public List<EmployeeDetails> DeactivationEmployeeData()
         {
             return _employeeDataOperation.RetrieveAllDeactivatedEmployees();
         }
+
+
 
         public List<EmployeeDetails> ActivationEmployeeData()
         {
