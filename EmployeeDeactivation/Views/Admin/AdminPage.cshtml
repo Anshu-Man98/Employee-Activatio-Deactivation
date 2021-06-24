@@ -154,8 +154,19 @@
                                 });
 
                             };
+                            
 
-                        }
+                        },
+                    error: function (response) {
+                        if (response) {
+                            bootbox.alert("Sponsor detail sucessfully added", function () {
+                                window.location.reload();
+                            });
+
+                        };
+
+
+                    }
                 });
             });
         });
