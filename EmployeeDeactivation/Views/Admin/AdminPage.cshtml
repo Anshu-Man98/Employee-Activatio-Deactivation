@@ -25,7 +25,7 @@
                     var row;
                     $.each(response, function (i, item) {
 
-                        row += "<tbody><tr class=item><td id=team >" + item.teamName + "</td><td id=fn>" + item.sponsorFirstName + " " + item.sponsorLastName + "</td><td id=ln>" + item.sponsorGID + "</td><td id=em>" + item.sponsorEmailID + "</td><td id=dep>" + item.department + "</td><td id=rm>" + item.reportingManagerEmail + "</td><td><span id=edit class='glyphicon glyphicon-pencil cursor' style='font-size:30px;color:blue'></span><span id=delete class='glyphicon glyphicon-remove cursor' style='font-size:30px;color:red'></span></td></tr></tbody>"
+                        row += "<tbody><tr class=item><td id=team >" + item.teamName + "</td><td id=fn>" + item.sponsorFirstName + " " + item.sponsorLastName + "</td><td id=ln>" + item.sponsorGID + "</td><td id=em>" + item.sponsorEmailID + "</td><td id=dep>" + item.department + "</td><td id=rm>" + item.reportingManagerEmailID + "</td><td><span id=edit class='glyphicon glyphicon-pencil cursor' style='font-size:30px;color:blue'></span><span id=delete class='glyphicon glyphicon-remove cursor' style='font-size:30px;color:red'></span></td></tr></tbody>"
 
                     });
                     $("#tbldata").append(row);
@@ -48,15 +48,12 @@
                                 url: '@Url.Action("DeleteSponsorDetails", "Admin")',
                                 data: { 'gId': $tds },
                                 dataType: "json",
-                                success:
-                                    function (response) {
-                                        if (response) {
-                                            bootbox.alert({
-                                                messsage: "Sponsor details has been sucessfully deleted",
-                                                callback: function () {
-                                                    window.location.reload();
-                                                }
-                                            });
+                                success: function (response) {
+                                    if (response) {
+                                        bootbox.alert("Sponsor detail sucessfully deleted", function () {
+                                            window.location.reload();
+                                        });
+                                          
                                     };
 
                                 }
@@ -101,29 +98,25 @@
 
             openForm1();
             $(document).on("click", "#submit2", function (e) {
-                //fileData = new FormData();
-                //fileData.append('FirstName', $('#employeeFirstName').val());
-                //fileData.append('LastName', $('#employeeLastName').val());
-                //fileData.append('GId', $('#employeeGid').val());
-                //fileData.append('EmailID', $('#employeeEmail').val());
-                //fileData.append('LastWorkingDate', $('#employeeLastWorkingdate').val());
-                //fileData.append('TeamName', $('#teamNames').val());
-                //fileData.append('SponsorName', $('#sponsorFirstName').val());
-                //fileData.append('SponsorEmailID', $('#sponsorEmail').val());
-                //fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
-                //fileData.append('SponsorGId', $('#sponsorGid').val());
+                fileData = new FormData();
+                fileData.append('TeamName', $('#editTeamName').val());
+                fileData.append('SponsorFirstName', $('#editFirstName').val());
+                fileData.append('SponsorLastName', $('#editLastName').val());
+                fileData.append('SponsorEmailID', $('#editEmail').val());
+                fileData.append('SponsorGID', $('#editgid').val());
+                fileData.append('Department', $('#editDepartment').val());
+                fileData.append('ReportingManagerEmailID', $('#editRmEmail').val());
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
                     dataType: "json",
-                    data: { 'teamName': $('#editTeamName').val(), 'sponsorFirstName': $('#editFirstName').val(), 'sponsorLastName': $('#editLastName').val(), 'sponsorGid': $('#editgid').val(), 'sponsorEmail': $('#editEmail').val(), 'sponsorDepartment': $('#editDepartment').val(), 'reportingManagerEmail': $('#editRmEmail').val() },
+                    data:fileData,
+                    processData: false,
+                    contentType: false,
                     success: function (response) {
                         if (response) {
-                            bootbox.alert({
-                                messsage: "Sponsor details has been sucessfully edited",
-                                callback: function () {
-                                    window.location.reload();
-                                }
+                            bootbox.alert("Sponsor detail sucessfully edited", function () {
+                                window.location.reload();
                             });
 
                         }
@@ -138,19 +131,26 @@
         $(document).on("click", "#addButton", function (e) {
             openForm();
             $(document).on("click", "#submit1", function (e) {
+                fileData = new FormData();
+                fileData.append('TeamName', $('#teamName').val());
+                fileData.append('SponsorFirstName', $('#sponsorFirstName').val());
+                fileData.append('SponsorLastName', $('#sponsorLastName').val());
+                fileData.append('SponsorEmailID', $('#sponsorEmail').val());
+                fileData.append('SponsorGID', $('#sponsorGid').val());
+                fileData.append('Department', $('#sponsorDepartment').val());
+                fileData.append('ReportingManagerEmailID', $('#reportingManEmail').val());
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
                     dataType: "json",
-                    data: { 'teamName': $('#teamName').val(), 'sponsorFirstName': $('#sponsorFirstName').val(), 'sponsorLastName': $('#sponsorLastName').val(), 'sponsorGid': $('#sponsorGid').val(), 'sponsorEmail': $('#sponsorEmail').val(), 'sponsorDepartment': $('#sponsorDepartment').val(), 'reportingManagerEmail': $('#reportingManEmail').val() },
+                    data:  fileData ,
+                    processData: false,
+                    contentType:false,
                     success:
                         function (response) {
                             if (response) {
-                                bootbox.alert({
-                                    messsage: "Sponsor details has been sucessfully added",
-                                    callback: function () {
-                                        window.location.reload();
-                                    }
+                                bootbox.alert("Sponsor detail sucessfully added", function () {
+                                    window.location.reload();
                                 });
 
                             }
@@ -176,14 +176,6 @@
         {
             document.getElementById("myForm").style.display = "none";
         }
-
-        //window.onclick = function (event) {
-        //    if (event.target == myForm)
-        //    {
-        //        document.getElementById("myForm").style.display = "none";
-        //    }
-
-        //}
     </script>
     <style>
         .tablee {

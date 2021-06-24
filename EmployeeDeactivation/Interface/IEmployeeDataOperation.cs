@@ -9,7 +9,7 @@ namespace EmployeeDeactivation.Interface
 {
     public interface IEmployeeDataOperation
     {
-        bool AddEmployeeData(EmployeeDetails employeeDetails, bool isDeactivatedWorkFlow);
+        bool AddEmployeeData(EmployeeDetails employeeDetails);
         List<EmployeeDetails> RetrieveAllDeactivatedEmployees();
         EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId);
         string GetDeactivatedEmployeeEmailId(string gid);

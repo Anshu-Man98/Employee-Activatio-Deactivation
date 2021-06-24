@@ -7,8 +7,8 @@ namespace EmployeeDeactivation.Interface
    public interface IAdminDataOperation
     {
         List<Teams> RetrieveSponsorDetails();
-        Task<bool> AddSponsorData(Teams team);
-        Task<bool> DeleteSponsorData(string gId);
+        bool AddSponsorData(Teams team);
+        bool DeleteSponsorData(string gId);
         List<EmployeeDetails> DeactivationEmployeeData();
         List<EmployeeDetails> ActivationEmployeeData();
     }

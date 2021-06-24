@@ -11,6 +11,13 @@ namespace EmployeeDeactivation.BusinessLayer
 {
     public class AdminDataOperation : IAdminDataOperation
     {
+        private readonly IEmployeeDataOperation _employeeDataOperation;
+
+        public AdminDataOperation(IEmployeeDataOperation employeeDataOperation)
+        {
+            _employeeDataOperation = employeeDataOperation;
+
+        }
 
         private readonly EmployeeDeactivationContext _context;
         public AdminDataOperation(EmployeeDeactivationContext context)
@@ -50,7 +57,7 @@ namespace EmployeeDeactivation.BusinessLayer
             databaseUpdateStatus = _context.SaveChanges() == 1;
             return databaseUpdateStatus;
         }
-        public async Task<bool> DeleteSponsorData(string gId)
+        public bool DeleteSponsorData(string gId)
         {
             var teamDetails = _context.Teams.ToList();
             foreach (var teams in teamDetails)
@@ -58,23 +65,21 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (teams.SponsorGID == gId)
                 {
                     _context.Remove(_context.Teams.Single(a => a.SponsorGID == gId));
-                    _context.SaveChanges();
+                    return _context.SaveChanges() == 1;
                 }
             }
-            var databaseUpdateStatus = await _context.SaveChangesAsync() == 1;
-            return databaseUpdateStatus;
+            return true;
+
         }
         public List<EmployeeDetails> DeactivationEmployeeData()
         {
-            var deactivationEmployeeData = (from deactivationEmployee in this._context.DeactivationWorkflow.Take(30000)select deactivationEmployee).ToList();
-            return deactivationEmployeeData;
+            return _employeeDataOperation.RetrieveAllDeactivatedEmployees();
         }
 
         public List<EmployeeDetails> ActivationEmployeeData()
         {
-            List<EmployeeDetails> activationEmployeeData = (from activationEmployee in this._context.ActivationWorkflow.Take(30000) select activationEmployee).ToList();
-            return activationEmployeeData;
+            return _employeeDataOperation.RetrieveAllActivationWorkFlow();
         }
 
-    }   
+    }
 }

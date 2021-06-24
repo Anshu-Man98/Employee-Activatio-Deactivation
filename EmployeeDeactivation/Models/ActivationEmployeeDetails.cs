@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.Models
 {
-    public class EmployeeDetails
+    public class ActivationEmployeeDetails
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EmailID { get; set; }
         [Key]
         public string GId { get; set; }
-        public DateTime LastWorkingDate { get; set; }
         public string TeamName { get; set; }
         public string SponsorName { get; set; }
         public string SponsorEmailID { get; set; }
-        public string SponsorDepartment { get; set; }
         public string SponsorGId { get; set; }
+        public string SponsorDepartment { get; set; }
         public string ReportingManagerEmail { get; set; }
         public string Role { get; set; }
         public string Gender { get; set; }
@@ -28,6 +27,5 @@ namespace EmployeeDeactivation.Models
         public string PhoneNo { get; set; }
         public string Nationality { get; set; }
         public byte[] ActivationWorkFlowPdfAttachment { get; set; }
-        public bool isDeactivatedWorkFlow { get; set; }
     }
 }

@@ -32,9 +32,9 @@ namespace EmployeeDeactivation.Controllers
 
         [HttpPost]
         [Route("Employees/AddDetailsToDatabase")]
-        public JsonResult AddDetailsToDatabase(EmployeeDetails employeeDetails,bool isDeactivatedWorkFlow)
+        public JsonResult AddDetailsToDatabase(EmployeeDetails employeeDetails)
         {
-            return Json( _employeeDataOperation.AddEmployeeData(employeeDetails, isDeactivatedWorkFlow));
+            return Json( _employeeDataOperation.AddEmployeeData(employeeDetails));
         }
         [HttpPost]
         [Route("Employees/AddActivationPdfToDatabase")]

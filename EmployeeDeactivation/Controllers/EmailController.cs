@@ -13,7 +13,7 @@ namespace EmployeeDeactivation.Controllers
         }
         [HttpPost]
         [Route("Email/PdfAttachmentEmail")]
-        public void PdfAttachment(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPDf)
+        public void PdfAttachmentEmail(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPDf)
         {
             _emailOperation.SendPDfAsEmailAttachment(memoryStream, employeeName, teamName, sponsorGID, isActivationPDf);
         }

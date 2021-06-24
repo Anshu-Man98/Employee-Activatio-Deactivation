@@ -63,12 +63,33 @@
             })
         });
 
-        $(document).on("click", "#submitButton", function (e) {
+            $(document).on("click", "#submitButton", function (e) {
+                fileData = new FormData();
+                fileData.append('FirstName', $('#siemensFirstName').val());
+                fileData.append('LastName', $('#siemensLastName').val());
+                fileData.append('GId', $('#siemensGid').val());
+                fileData.append('EmailID', $('#siemensEmail').val());
+                fileData.append('TeamName', $('#teamNames').val());
+                fileData.append('SponsorName', $('#sponsorFirstName').val());
+                fileData.append('SponsorEmailID', $('#sponsorEmail').val());
+                fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
+                fileData.append('SponsorGId', $('#sponsorGid').val());
+                fileData.append('ReportingManagerEmail', $('#reportingManagerEmailId').val());
+                fileData.append('Role', $('#role').val());
+                fileData.append('Gender', $('#gender').val());
+                fileData.append('DateOfBirth', $('#dateOfBirth').val());
+                fileData.append('PlaceOfBirth', $('#placeOfBirth').val());
+                fileData.append('Address', $('#address').val());
+                fileData.append('PhoneNo', $('#phoneNo').val());
+                fileData.append('Nationality', $('#nationality').val());
+                
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("AddDetailsToDatabase", "Employees")',
                 dataType: "json",
-                data: { 'firstName': $('#siemensFirstName').val(), 'lastName': $('#siemensLastName').val(), 'siemensEmailId': $('#siemensEmail').val(), 'siemensgId': $('#siemensGid').val(), 'team': $('#teamNames').val(), 'sponsorName': $('#sponsorFirstName').val(), 'sponsorEmailId': $('#sponsorEmail').val(), 'sponsordepartment': $('#sponsorDepartment').val(), 'sponsorGID': $('#sponsorGid').val(), 'reportingManagerEmailId': $('#reportingManagerEmail').val(), 'employeeRole': $('#role').val(), 'gender': $('#gender').val(), 'dob': $('#dateOfBirth').val(), 'pob': $('#placeOfBirth').val(), 'address': $('#address').val(), 'phoneNo': $('#phoneNo').val(), 'nationality': $('#nationality').val() },
+                data: fileData,
+                processData: false,
+                contentType: false,
                 success: function (response) {
                     if (response) {
                         $.ajax({

@@ -16,11 +16,11 @@ namespace EmployeeDeactivation.BusinessLayer
             _context = context;
         }
         #region Employee Data
-        public bool AddEmployeeData(EmployeeDetails employeeDetails, bool isDeactivatedWorkFlow)
+        public bool AddEmployeeData(EmployeeDetails employeeDetails)
         {
-            if (isDeactivatedWorkFlow)
+            if (employeeDetails.isDeactivatedWorkFlow)
             {
-                var deactivatedEmployees = _context.DeactivationWorkflow.ToList();
+                var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
                 foreach (var deactivatedEmployee in deactivatedEmployees)
                 {
                     if (deactivatedEmployee.GId == employeeDetails.GId)
@@ -32,7 +32,7 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             else
             {
-                var activatedEmployees = _context.ActivationWorkflow.ToList();
+                var activatedEmployees = RetrieveAllActivationWorkFlow();
                 foreach (var activatedEmployee in activatedEmployees)
                 {
                     if (activatedEmployee.GId == employeeDetails.GId)
@@ -45,8 +45,63 @@ namespace EmployeeDeactivation.BusinessLayer
             _context.Add(employeeDetails);
             return _context.SaveChanges() == 1;
         }
+
+        public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()
+        {
+            var deactivatedEmployees = _context.DeactivationWorkflow.ToList();
+            EmployeeDetails employee = new EmployeeDetails();
+            List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
+            foreach (var item in deactivatedEmployees)
+            {
+                employee.FirstName = item.FirstName;
+                employee.LastName = item.LastName;
+                employee.EmailID = item.EmailID;
+                employee.GId = item.GId;
+                employee.LastWorkingDate = item.LastWorkingDate;
+                employee.TeamName = item.TeamName;
+                employee.SponsorName = item.SponsorName;
+                employee.SponsorEmailID = item.SponsorEmailID;
+                employee.SponsorDepartment = item.SponsorDepartment;
+                employee.SponsorGId = item.SponsorGId;
+                employeeDetails.Add(employee);
+            }
+            return employeeDetails;
+        }
+
+        public List<EmployeeDetails> RetrieveAllActivationWorkFlow()
+        {
+            var activatedEmployees = _context.ActivationWorkflow.ToList();
+            EmployeeDetails employee = new EmployeeDetails();
+            List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
+            foreach (var item in activatedEmployees)
+            {
+                employee.FirstName = item.FirstName;
+                employee.LastName = item.LastName;
+                employee.EmailID = item.EmailID;
+                employee.GId = item.GId;
+                employee.TeamName = item.TeamName;
+                employee.SponsorName = item.SponsorName;
+                employee.SponsorEmailID = item.SponsorEmailID;
+                employee.SponsorGId = item.SponsorGId;
+                employee.SponsorDepartment = item.SponsorDepartment;
+                employee.ReportingManagerEmail = item.ReportingManagerEmail;
+                employee.Role = item.Role;
+                employee.Gender = item.Gender;
+                employee.DateOfBirth = item.DateOfBirth;
+                employee.PlaceOfBirth = item.PlaceOfBirth;
+                employee.Address = item.Address;
+                employee.PhoneNo = item.PhoneNo;
+                employee.Nationality = item.Nationality;
+
+                employeeDetails.Add(employee);
+            }
+            return employeeDetails;
+        }
+
+
         public bool SavePdfToDatabase(byte[] pdf, string gId)
         {
+
             var activationWorkflows = _context.ActivationWorkflow.ToList();
             foreach (var activatedWorkflow in activationWorkflows)
             {
@@ -59,14 +114,10 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             return false;
         }
-        public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()
-        {
-            return( _context.DeactivationWorkflow.ToList());
-            
-        }
+     
         public EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId)
         {
-            var employeeDetails = _context.DeactivationWorkflow.ToList();
+            var employeeDetails = RetrieveAllDeactivatedEmployees();
             foreach (var employee in employeeDetails)
             {
                 if (employee.GId == gId)
@@ -88,10 +139,7 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             return "";
         }
-        public List<EmployeeDetails> RetrieveAllActivationWorkFlow()
-        {
-            return (_context.ActivationWorkflow.ToList());
-        }
+
         public EmployeeDetails RetrieveActivationDataBasedOnGid(string gId)
         {
             var allActivatedWorkFlows = RetrieveAllActivationWorkFlow();
