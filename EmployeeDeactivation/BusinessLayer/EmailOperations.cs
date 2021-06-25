@@ -16,8 +16,9 @@ namespace EmployeeDeactivation.BusinessLayer
             _employeeDataOperation = employeeDataOperation;
             _managerApprovalOperation = managerApprovalOperation;
         }
-        public void SendPDfAsEmailAttachment(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPdf)
+        public bool SendPDfAsEmailAttachment(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPdf)
         {
+
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
             var reportingManagerEmailId = _employeeDataOperation.GetReportingManagerEmailId(teamName);
             MemoryStream stream = new MemoryStream(Convert.FromBase64String(memoryStream));
@@ -29,6 +30,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 SendEmail(sponsorEmailId, employeeName, false, false, true, file);
                 SendEmail("1by16cs072@bmsit.in", employeeName, false, false, true, file);
             }
+            return true;
         }
         public void SendEmailDeclined(string gId, string employeeName)
         {

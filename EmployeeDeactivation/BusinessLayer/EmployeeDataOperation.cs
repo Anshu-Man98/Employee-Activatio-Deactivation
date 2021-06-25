@@ -110,11 +110,16 @@ namespace EmployeeDeactivation.BusinessLayer
             var deactivationDetails = RetrieveAllDeactivatedEmployees();
             foreach (var item in deactivationDetails)
             {
-                if (item.GId == gid)
+                var i = item.GId;
+                if (i == gid)
                 {
-                    return item.EmailID;
+                    string ss = item.EmailID;
+                    return ss;
+                    
                 }
+                
             }
+
             return "";
         }
 

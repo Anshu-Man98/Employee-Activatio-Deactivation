@@ -113,12 +113,10 @@
                     data:fileData,
                     processData: false,
                     contentType: false,
-                    success: function (response) {
+                    success:
+                        function (response) {
                         if (response) {
-                            bootbox.alert("Sponsor detail sucessfully edited", function () {
-                                window.location.reload();
-                            });
-
+                          
                         }
                     }
 
@@ -146,26 +144,11 @@
                     data:  fileData ,
                     processData: false,
                     contentType:false,
-                    success:
-                        function (response) {
-                            if (response) {
-                                bootbox.alert("Sponsor detail sucessfully added", function () {
-                                    window.location.reload();
-                                });
-
-                            };
-                            
-
-                        },
-                    error: function (response) {
+                    success: function (response)
+                    {
                         if (response) {
-                            bootbox.alert("Sponsor detail sucessfully added", function () {
-                                window.location.reload();
-                            });
 
-                        };
-
-
+                        }
                     }
                 });
             });

@@ -28,7 +28,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 EmployeeTeamName = managerApprovalStatus.EmployeeTeamName,
                 SponsorName = managerApprovalStatus.SponsorName,
                 DeactivationWorkFlowPdfAttachment = managerApprovalStatus.DeactivationWorkFlowPdfAttachment,
-                ReportingManagerEmail= managerApprovalStatus.WorkFlowStatus,
+                ReportingManagerEmail= managerApprovalStatus.ReportingManagerEmail,
                 WorkFlowStatus = "pending"
             };
             _context.Add(ManagerApprovalStatus);
@@ -69,8 +69,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
                 {
                     i.WorkFlowStatus = "approve";
-                    _context.SaveChanges();
-                    return true;
+                    return _context.SaveChanges() ==1 ;
                 }
             }
             return false;
@@ -83,8 +82,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
                 {
                     i.WorkFlowStatus = "denied";
-                    _context.SaveChanges();
-                    return true;
+                    return _context.SaveChanges() ==1;
                 }
             }
             return false;
@@ -137,21 +135,8 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             List<ManagerApprovalStatus> deactivationDetails = new List<ManagerApprovalStatus>();
             var allDeactivatedRequestsStatus = _context.ManagerApprovalStatus.ToList();
-            foreach (var item in allDeactivatedRequestsStatus)
-            {
-                deactivationDetails.Add(new ManagerApprovalStatus
-                {
-                    EmployeeName = item.EmployeeName,
-                    EmployeeLastWorkingDate = item.EmployeeLastWorkingDate,
-                    EmployeeGId = item.EmployeeGId,
-                    EmployeeTeamName = item.EmployeeTeamName,
-                    SponsorName = item.SponsorName,
-                    DeactivationWorkFlowPdfAttachment = item.DeactivationWorkFlowPdfAttachment,
-                    ReportingManagerEmail = item.ReportingManagerEmail,
-                    WorkFlowStatus = item.WorkFlowStatus
-                });
-            }
-            return deactivationDetails;
+            return allDeactivatedRequestsStatus;
+            ;
         }
 
     }

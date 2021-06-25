@@ -55,7 +55,7 @@
                             $('#sponsorEmail').val(item.sponsorEmailID);
                             $('#sponsorDepartment').val(item.department);
                             $('#sponsorGid').val(item.sponsorGID);
-                            $('#reportingManagerEmail').val(item.reportingManagerEmail);
+                            $('#reportingManagerEmail').val(item.reportingManagerEmailID);
                             $('#sponsorDetails').show();
                         }
                     });
@@ -74,7 +74,7 @@
                 fileData.append('SponsorEmailID', $('#sponsorEmail').val());
                 fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
                 fileData.append('SponsorGId', $('#sponsorGid').val());
-                fileData.append('ReportingManagerEmail', $('#reportingManagerEmailId').val());
+                fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
                 fileData.append('Role', $('#role').val());
                 fileData.append('Gender', $('#gender').val());
                 fileData.append('DateOfBirth', $('#dateOfBirth').val());
@@ -116,6 +116,7 @@
                                                 }
                                             },
                                             callback: function (result) {
+                                                alert("jgdsjgd")
                                                 if (result) {
                                                     $.ajax({
                                                         type: "POST",

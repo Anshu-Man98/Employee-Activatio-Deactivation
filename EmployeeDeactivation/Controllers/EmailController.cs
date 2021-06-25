@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeDeactivation.Controllers
 {
-    public class EmailController
+    public class EmailController : Controller
     {
         private readonly IEmailOperation _emailOperation;
 
@@ -13,9 +13,9 @@ namespace EmployeeDeactivation.Controllers
         }
         [HttpPost]
         [Route("Email/PdfAttachmentEmail")]
-        public void PdfAttachmentEmail(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPDf)
+        public JsonResult PdfAttachmentEmail(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPDf)
         {
-            _emailOperation.SendPDfAsEmailAttachment(memoryStream, employeeName, teamName, sponsorGID, isActivationPDf);
+           return Json(_emailOperation.SendPDfAsEmailAttachment(memoryStream, employeeName, teamName, sponsorGID, isActivationPDf));
         }
 
         [HttpGet]

@@ -28,17 +28,17 @@ namespace EmployeeDeactivation.BusinessLayer
         public bool AddSponsorData(Teams team)
         {
             bool databaseUpdateStatus = false;
-            Teams sponsor = new Teams()
-            {
-                TeamName = team.TeamName,
-                SponsorFirstName = team.SponsorFirstName,
-                SponsorLastName = team.SponsorLastName,
-                SponsorGID = team.SponsorGID,
-                SponsorEmailID = team.SponsorEmailID,
-                Department = team.Department,
-                ReportingManagerEmailID = team.ReportingManagerEmailID,
+            //Teams sponsor = new Teams()
+            //{
+            //    TeamName = team.TeamName,
+            //    SponsorFirstName = team.SponsorFirstName,
+            //    SponsorLastName = team.SponsorLastName,
+            //    SponsorGID = team.SponsorGID,
+            //    SponsorEmailID = team.SponsorEmailID,
+            //    Department = team.Department,
+            //    ReportingManagerEmailID = team.ReportingManagerEmailID,
 
-            };
+            //};
             var teamDetails = _context.Teams.ToList();
             foreach (var teams in teamDetails)
             {
@@ -48,7 +48,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     _context.SaveChanges();
                 }
             }
-            _context.Add(sponsor);
+            _context.Add(team);
             databaseUpdateStatus = _context.SaveChanges() == 1;
             return databaseUpdateStatus;
         }

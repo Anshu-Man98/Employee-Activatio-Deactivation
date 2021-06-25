@@ -10,6 +10,6 @@ namespace EmployeeDeactivation.Interface
     {
         void SendReminderEmail();
         void SendEmailDeclined(string gId, string employeeName);
-        void SendPDfAsEmailAttachment(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPdf);
+        bool SendPDfAsEmailAttachment(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPdf);
     }
 }

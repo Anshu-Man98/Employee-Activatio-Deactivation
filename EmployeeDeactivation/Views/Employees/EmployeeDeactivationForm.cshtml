@@ -1,5 +1,4 @@
-﻿@model EmployeeDeactivation.Models.EmployeeDetails
-@using System.Security.Principal
+﻿
 @using System.Security.Claims
 @if (User.Identity.IsAuthenticated)
 
@@ -96,7 +95,7 @@
                             $('#sponsorEmail').val(item.sponsorEmailID);
                             $('#sponsorDepartment').val(item.department);
                             $('#sponsorGid').val(item.sponsorGID);
-                            $('#reportingManagerEmail').val(item.reportingManagerEmail);
+                            $('#reportingManagerEmail').val(item.reportingManagerEmailID);
                             $('#sponsorDetails').show();
 
                         }
@@ -154,19 +153,19 @@
                                             },
                                             callback: function (result) {
                                                 if (result) {
-                                                    $.ajax({
+                                                   $.ajax({
                                                         type: "POST",
                                                         url: '@Url.Action("PdfAttachmentEmail", "Email")',
                                                         data: { 'memoryStream': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
                                                         dataType: "json",
-                                                        success: function (s) {
-                                                            if (s) {
+                                                        success: function (result) {
+                                                            if (result) {
                                                             fileData = new FormData();
                                                             fileData.append('EmployeeName', $('#employeeFirstName').val() + " " + $('#employeeLastName').val());
                                                             fileData.append('EmployeeLastWorkingDate', $('#employeeLastWorkingdate').val());
                                                             fileData.append('EmployeeGId', $('#employeeGid').val());
                                                             fileData.append('EmployeeTeamName', $('#teamNames').val());
-                                                            fileData.append('SponsorName', $('#employeeLastWorkingdate').val());
+                                                            fileData.append('SponsorName', $('#sponsorFirstName').val());
                                                             fileData.append('DeactivationWorkFlowPdfAttachment', response.toString().replace('data:application/pdf;base64,', ''));
                                                             fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
                                                             fileData.append('WorkFlowStatus', "Pending");
@@ -189,6 +188,8 @@
                                                         }
                                                     });
                                                 }
+                                                   
+                                                
                                             }
                                         });
                                 }

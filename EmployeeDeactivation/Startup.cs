@@ -53,6 +53,7 @@ namespace EmployeeDeactivation
             services.AddScoped<IPdfDataOperation, PdfDataOperation>();
             services.AddScoped<IAdminDataOperation, AdminDataOperation>();
             services.AddScoped<IManagerApprovalOperation, ManagerApprovalOperation>();
+            services.AddScoped<IEmailOperation, EmailOperations>();
             services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
              {
                  options.Authority = options.Authority + "/v2.0/";

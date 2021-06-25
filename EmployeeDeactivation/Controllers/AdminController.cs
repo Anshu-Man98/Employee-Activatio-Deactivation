@@ -40,9 +40,8 @@ namespace EmployeeDeactivation.Controllers
         [Route("Admin/AddSponsorDetailsToDatabase")]
         public JsonResult AddSponsorDetailsToDatabase(Teams team)
         {
-            
-            var gg = _adminDataOperation.AddSponsorData(team);
-            return Json(gg);
+
+            return Json( _adminDataOperation.AddSponsorData(team));
         }
 
         [HttpPost]
