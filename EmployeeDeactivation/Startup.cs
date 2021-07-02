@@ -42,13 +42,23 @@ namespace EmployeeDeactivation
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            var server = Configuration["DBServer"] ?? "localhost";
+            var port = Configuration["DBPort"] ?? "1433";
+            var user = Configuration["DBUser"] ?? "SA";
+            var password = Configuration["DBPassword"] ?? "1234@Abcd";
+            var database = Configuration["Database"] ?? "EmployeeDeactivationContext-ad1fce0f-4b85-42a1-9c48-4572137b7d8d";
+
+
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme).AddAzureAD(options => Configuration.Bind("AzureAd", options)).AddCookie();
 
             services.AddDbContext<EmployeeDeactivationContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
-           
+            //options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
+            options.UseSqlServer($"Server={server},{port};Intitial Catalog={database};User ID ={user};Password={password}"));
+
+
             services.AddScoped<IEmployeeDataOperation, EmployeeDataOperation>();
             services.AddScoped<IPdfDataOperation, PdfDataOperation>();
             services.AddScoped<IAdminDataOperation, AdminDataOperation>();
