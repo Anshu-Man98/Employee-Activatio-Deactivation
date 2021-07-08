@@ -7,12 +7,22 @@ services:
       SA_PASSWORD: "1234@Abcd"
       MSSQL_PID: Express
     ports:
-      - "1433:1433"
+    - "1433:1433"
 
   employeedeactivation:
     build: .
+    ports:
+    - "8080:80"
+    - "8081:443"
     environment:
       DBServer: "ms-sql-server"
-    ports:
-      - "8080:80"
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "8081"
+      ASPNETCORE_ENVIRONMENT: "Development"
+    volumes:
+      - ${APPDATA}\microsoft\UserSecrets\:/root/.microsoft/usersecrets
+      - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https/
+
+    
+
     

@@ -1,15 +1,19 @@
-FROM microsoft/dotnet:2.1-sdk AS build-env
+
+# syntax=docker/dockerfile:1
+FROM mcr.microsoft.com/dotnet/sdk:2.1 AS build-env
 WORKDIR /app
 
+# Copy csproj and restore as distinct layers
+COPY . .
 COPY *.csproj ./
 RUN dotnet restore
 
-COPY . ./
-RUN dotnet publish -c Release  -o out
+# Copy everything else and build
+RUN dotnet publish -c Release -o out
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.1
-
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:2.1
 WORKDIR /app
-EXPOSE 80
 COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet","EmployeeDeactivation.dll"]
+COPY ["*.pdf","./"]
+ENTRYPOINT ["dotnet", "EmployeeDeactivation.dll"]

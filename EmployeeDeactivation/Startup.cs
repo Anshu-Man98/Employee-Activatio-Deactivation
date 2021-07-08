@@ -56,7 +56,7 @@ namespace EmployeeDeactivation
 
             services.AddDbContext<EmployeeDeactivationContext>(options =>
             //options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
-            options.UseSqlServer($"Server={server},{port};Intitial Catalog={database};User ID ={user};Password={password}"));
+            options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID ={user};Password={password}"));
 
 
             services.AddScoped<IEmployeeDataOperation, EmployeeDataOperation>();

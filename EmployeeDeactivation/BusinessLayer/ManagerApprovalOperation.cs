@@ -29,7 +29,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 SponsorName = managerApprovalStatus.SponsorName,
                 DeactivationWorkFlowPdfAttachment = managerApprovalStatus.DeactivationWorkFlowPdfAttachment,
                 ReportingManagerEmail= managerApprovalStatus.ReportingManagerEmail,
-                WorkFlowStatus = "pending"
+                WorkFlowStatus = managerApprovalStatus.WorkFlowStatus
             };
             _context.Add(ManagerApprovalStatus);
             _context.SaveChanges();

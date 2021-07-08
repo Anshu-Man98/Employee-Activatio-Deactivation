@@ -116,7 +116,6 @@
                                                 }
                                             },
                                             callback: function (result) {
-                                                alert("jgdsjgd")
                                                 if (result) {
                                                     $.ajax({
                                                         type: "POST",
@@ -324,9 +323,11 @@
                 margin-top: 0px;
                 padding: 20px;
                 text-align: left;
-                background-color: black;
                 color: white;
                 font-size: 30px;
+                margin-bottom: 30px;
+                background-color: black;
+                height: 17%;
                 text-align: center;
             }
 
@@ -358,6 +359,10 @@
             .ErrorView {
                 color: red;
                 margin-left: 183px;
+            }
+
+            #radio-1-txt {
+                margin-right: 10px;
             }
 
             #submitButton:hover {
@@ -404,7 +409,7 @@
 
         <div class="regular-field">
             <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
-            <label for="radio-seven">Deactivation Form</label>
+            <label for="radio-seven" id="radio-1-txt">Deactivation Form</label>
 
             <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
             <label for="radio-six" id="radio-1-txt">Activation Form</label>
