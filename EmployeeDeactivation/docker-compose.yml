@@ -3,18 +3,9 @@ services:
   ms-sql-server:
     build:
       context: .
-      dockerfile: SqlDockerfile
+      dockerfile: build/Dockerfile
+    image: siemensregistry.azurecr.io/sqlserver:latest
     container_name: ms-sql-server
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "1234@Abcd"
-      MSSQL_PID: Express
-    ports:
-    - "1433:1433"
-    volumes:
-      - "./data:/data"
-
- 
 
   employeedeactivation:
     build: .
