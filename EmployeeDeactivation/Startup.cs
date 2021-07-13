@@ -108,6 +108,10 @@ namespace EmployeeDeactivation
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.Use((context, next) => {
+                context.Request.Scheme = "https";
+                return next();
+            });
             app.UseAuthentication();
             app.UseCookiePolicy();
 
