@@ -11,7 +11,7 @@ services:
 
   employeedeactivation:
     build: .
-    image: siemensregistry.azurecr.io/employeedeactivation:latest
+    image: siemensregistry.azurecr.io/employeedeactivation
     ports:
     # - "8080:80"
     # - "8081:443"
