@@ -1,9 +1,7 @@
 version: '3.9'
 services:
   ms-sql-server:
-    build:
-      context: .
-      dockerfile: SqlDockerfile
+    image: siemenstestintern.azurecr.io/sql-server-interndata:latest
     container_name: ms-sql-server
     environment:
       ACCEPT_EULA: "Y"
@@ -11,8 +9,6 @@ services:
       MSSQL_PID: Express
     ports:
     - "1433:1433"
-    volumes:
-      - "./data:/data"
 
  
 
@@ -23,6 +19,7 @@ services:
     image: siemenstestintern.azurecr.io/employeedeactivation
     ports:
      - "80:80"
+
     depends_on:
       - ms-sql-server
     environment:
