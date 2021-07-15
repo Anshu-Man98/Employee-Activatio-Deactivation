@@ -55,8 +55,8 @@ namespace EmployeeDeactivation
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme).AddAzureAD(options => Configuration.Bind("AzureAd", options)).AddCookie();
 
             services.AddDbContext<EmployeeDeactivationContext>(options =>
-            //options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
-            options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID ={user};Password={password}"));
+            options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
+            //options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID ={user};Password={password}"));
 
 
             services.AddScoped<IEmployeeDataOperation, EmployeeDataOperation>();
