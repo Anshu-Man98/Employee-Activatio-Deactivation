@@ -14,16 +14,9 @@ namespace EmployeeDeactivation.BusinessLayer
     public class EmployeeDataOperation : IEmployeeDataOperation
     {
         private readonly EmployeeDeactivationContext _context;
-
-        private readonly string instrumentationKey;
-        private readonly TelemetryClient _telemetryClient;
         public EmployeeDataOperation(EmployeeDeactivationContext context, IConfiguration configuration, TelemetryClient telemetryClient)
         {
             _context = context;
-            instrumentationKey = configuration["ApplicationInsights:InstrumentationKey"];
-            _telemetryClient = telemetryClient;
-            _telemetryClient.InstrumentationKey = instrumentationKey;
-            _telemetryClient.Context.InstrumentationKey = instrumentationKey;
         }
         #region Employee Data
         public bool AddEmployeeData(EmployeeDetails employeeDetails)
@@ -175,18 +168,7 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         public List<Teams> RetrieveAllSponsorDetails()
         {
-            try
-            {
-                _telemetryClient.TrackEvent("Entering");
-                var c= _context.Teams.ToList();
-                _telemetryClient.TrackEvent(c.Count.ToString());
-                return c;
-            }
-            catch(Exception ex)
-            {
-                _telemetryClient.TrackException(ex);
-                return new List<Teams>();
-            }
+            return (_context.Teams.ToList());
             
         }
 
