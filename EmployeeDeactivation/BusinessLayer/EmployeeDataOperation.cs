@@ -14,7 +14,7 @@ namespace EmployeeDeactivation.BusinessLayer
     public class EmployeeDataOperation : IEmployeeDataOperation
     {
         private readonly EmployeeDeactivationContext _context;
-        public EmployeeDataOperation(EmployeeDeactivationContext context, IConfiguration configuration, TelemetryClient telemetryClient)
+        public EmployeeDataOperation(EmployeeDeactivationContext context)
         {
             _context = context;
         }

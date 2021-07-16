@@ -97,12 +97,12 @@ namespace EmployeeDeactivation.BusinessLayer
             }
 
             message.IsBodyHtml = false;
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587)
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com")
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("dontreplydeactivationworkflow@gmail.com", "Siemens@Banglore98"),
-                DeliveryMethod = SmtpDeliveryMethod.Network
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Credentials = new NetworkCredential("dontreplydeactivationworkflow@gmail.com", "Siemens@Banglore98")
             };
             smtp.Send(message);
 
