@@ -1,8 +1,12 @@
 ﻿using EmployeeDeactivation.Interface;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.BusinessLayer
 {
@@ -22,21 +26,28 @@ namespace EmployeeDeactivation.BusinessLayer
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
             var reportingManagerEmailId = _employeeDataOperation.GetReportingManagerEmailId(teamName);
             MemoryStream stream = new MemoryStream(Convert.FromBase64String(memoryStream));
-            Attachment file = new Attachment(stream, fileName + employeeName + ".pdf", "application/pdf");
-            SendEmail(reportingManagerEmailId, employeeName, false, false, true, file);
+            SendGrid.Helpers.Mail.Attachment file = new SendGrid.Helpers.Mail.Attachment
+            {
+                Filename = fileName + employeeName + ".pdf",
+                Content = Encoding.UTF8.GetString((stream).ToArray()),
+                Type = "application/pdf",
+                ContentId = "ContentId"
+            };
+
+            _ = SendEmail(reportingManagerEmailId, employeeName, false, false, true, file);
             if (isActivationPdf)
             {
                 var sponsorEmailId = _employeeDataOperation.GetSponsorEmailId(sponsorGID);
-                SendEmail(sponsorEmailId, employeeName, false, false, true, file);
-                SendEmail("1by16cs072@bmsit.in", employeeName, false, false, true, file);
+                _ = SendEmail(sponsorEmailId, employeeName, false, false, true, file);
+                _ = SendEmail("1by16cs072@bmsit.in", employeeName, false, false, true, file);
             }
             return true;
         }
         public void SendEmailDeclined(string gId, string employeeName)
         {
             var employeeManagerEmailId = _employeeDataOperation.GetDeactivatedEmployeeEmailId(gId);
-            Attachment file = null;
-            SendEmail(employeeManagerEmailId, employeeName, false, true, false, file);
+            SendGrid.Helpers.Mail.Attachment file = null;
+            _ = SendEmail(employeeManagerEmailId, employeeName, false, true, false, file);
 
         }
         public void SendReminderEmail()
@@ -48,8 +59,14 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (DateTime.Today == date || DateTime.Today > date)
                 {
                     MemoryStream stream = new MemoryStream(employee.DeactivationWorkFlowPdfAttachment);
-                    Attachment file = new Attachment(stream, "Deactivation workflow_" + employee.EmployeeName + ".pdf", "application/pdf");
-                    SendEmail(employee.ReportingManagerEmail, employee.EmployeeName, true, false, false, file);
+                    SendGrid.Helpers.Mail.Attachment file = new SendGrid.Helpers.Mail.Attachment
+                    {
+                        Filename = "Deactivation workflow_" + employee.EmployeeName + ".pdf",
+                        Content = Encoding.UTF8.GetString((stream).ToArray()),
+                        Type = "application/pdf",
+                        ContentId = "ContentId"
+                    };
+                    _ = SendEmail(employee.ReportingManagerEmail, employee.EmployeeName, true, false, false, file);
                 }
             }
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
@@ -63,48 +80,46 @@ namespace EmployeeDeactivation.BusinessLayer
                         if (employee.GId == approvedEmployee.EmployeeGId)
                         {
                             MemoryStream stream = new MemoryStream(approvedEmployee.DeactivationWorkFlowPdfAttachment);
-                            Attachment file = new Attachment(stream, "Deactivation workflow_" + approvedEmployee.EmployeeName + ".pdf", "application/pdf");
-                            SendEmail(employee.SponsorEmailID, approvedEmployee.EmployeeName, true, false, false, file);
+                            SendGrid.Helpers.Mail.Attachment file = new SendGrid.Helpers.Mail.Attachment
+                            {
+                                Filename = "Deactivation workflow_" + approvedEmployee.EmployeeName + ".pdf",
+                                Content = Encoding.UTF8.GetString((stream).ToArray()),
+                                Type = "application/pdf",
+                                ContentId = "ContentId"
+                            };
+                            _ = SendEmail(employee.SponsorEmailID, approvedEmployee.EmployeeName, true, false, false, file);
                         }
                     }
                 }
             }
         }
-        private void SendEmail(string emailId, string employeeName, bool isReminderEmail, bool isDeclinedEmail, bool workFlowInitiatedEmail, Attachment file)
+        private async Task SendEmail(string emailId, string employeeName, bool isReminderEmail, bool isDeclinedEmail, bool workFlowInitiatedEmail, SendGrid.Helpers.Mail.Attachment file)
         {
-            MailMessage message = new MailMessage
-            {
-                From = new MailAddress("dontreplydeactivationworkflow@gmail.com"),
-                Sender = new MailAddress("dontreplydeactivationworkflow@gmail.com")
-            };
-            message.To.Add(emailId);
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("sonalisingh7639@gmail.com", "Example User");
+            var subject = "";
+            var to = new EmailAddress(emailId, "Example User");
+            var plainTextContent = "";
+            var htmlContent = "<strong>Workflow</strong>";
             if (isDeclinedEmail)
             {
-                message.Subject = "Deactivation workflow declined";
-                message.Body = employeeName + " your account deactivation form has been declined";
+                subject = "Deactivation workflow declined";
+                plainTextContent = employeeName + " your account deactivation form has been declined";
 
             }
             if (workFlowInitiatedEmail)
             {
-                message.Subject = "Workflow initiated";
-                message.Attachments.Add(file);
+                subject = "Workflow initiated";
             }
             if (isReminderEmail)
             {
-                message.Subject = "Deactivation workflow";
-                message.Body = "Today is " + employeeName + "'s last working day please check if you have approved the deactivation workflow";
-                message.Attachments.Add(file);
+                subject = "Deactivation workflow";
+                plainTextContent = "Today is " + employeeName + "'s last working day please check if you have approved the deactivation workflow";
             }
-
-            message.IsBodyHtml = false;
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com")
-            {
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Credentials = new NetworkCredential("dontreplydeactivationworkflow@gmail.com", "Siemens@Banglore98")
-            };
-            smtp.Send(message);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            msg.AddAttachment(file);
+            _ = await client.SendEmailAsync(msg);
 
         }
         
