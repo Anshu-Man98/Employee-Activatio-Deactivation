@@ -133,10 +133,9 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         private List<ManagerApprovalStatus> RetrieveDeactivationDetails()
         {
-            List<ManagerApprovalStatus> deactivationDetails = new List<ManagerApprovalStatus>();
+            _ = new List<ManagerApprovalStatus>();
             var allDeactivatedRequestsStatus = _context.ManagerApprovalStatus.ToList();
             return allDeactivatedRequestsStatus;
-            ;
         }
 
     }
