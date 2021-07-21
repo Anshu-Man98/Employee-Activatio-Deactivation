@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeDeactivation.Controllers
 {
-    [Authorize("Admin")]
+    [Authorize("Admin&Manager")]
     public class AdminController : Controller 
     {
         private readonly IAdminDataOperation _adminDataOperation;

@@ -5,7 +5,7 @@ using EmployeeDeactivation.Models;
 
 namespace EmployeeDeactivation.Controllers
 {
-    [Authorize]
+    [Authorize("Admin&Manager")]
     public class EmployeesController : Controller
     {
         private readonly IEmployeeDataOperation _employeeDataOperation;
@@ -15,8 +15,6 @@ namespace EmployeeDeactivation.Controllers
             _employeeDataOperation = employeeDataOperation;
         }
 
-        
-        [Authorize("Admin&Manager")]
 
         [HttpGet]
         public IActionResult EmployeeActivationForm()
@@ -24,6 +22,7 @@ namespace EmployeeDeactivation.Controllers
             return View();
         }
 
+        
         [HttpGet]
         public IActionResult EmployeeDeactivationForm()
         {
