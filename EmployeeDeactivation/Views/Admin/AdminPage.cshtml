@@ -1,7 +1,4 @@
-﻿@model EmployeeDeactivation.Models.DeactivatedEmployeeDetails
-@using System.Security.Principal
-@using System.Security.Claims
-
+﻿
 <head>
     <script src="~/js/Toastr.js"></script>
 
@@ -28,7 +25,7 @@
                     var row;
                     $.each(response, function (i, item) {
 
-                        row += "<tbody><tr class=item><td id=team >" + item.teamName + "</td><td id=fn>" + item.sponsorFirstName + " " + item.sponsorLastName + "</td><td id=ln>" + item.sponsorGID + "</td><td id=em>" + item.sponsorEmailID + "</td><td id=dep>" + item.department + "</td><td id=rm>" + item.reportingManagerEmail + "</td><td><span id=edit class='glyphicon glyphicon-pencil cursor' style='font-size:30px;color:blue'></span><span id=delete class='glyphicon glyphicon-remove cursor' style='font-size:30px;color:red'></span></td></tr></tbody>"
+                        row += "<tbody><tr class=item><td id=team >" + item.teamName + "</td><td id=fn>" + item.sponsorFirstName + " " + item.sponsorLastName + "</td><td id=ln>" + item.sponsorGID + "</td><td id=em>" + item.sponsorEmailID + "</td><td id=dep>" + item.department + "</td><td id=rm>" + item.reportingManagerEmailID + "</td><td><span id=edit class='glyphicon glyphicon-pencil cursor' style='font-size:30px;color:blue'></span><span id=delete class='glyphicon glyphicon-remove cursor' style='font-size:30px;color:red'></span></td></tr></tbody>"
 
                     });
                     $("#tbldata").append(row);
@@ -51,15 +48,12 @@
                                 url: '@Url.Action("DeleteSponsorDetails", "Admin")',
                                 data: { 'gId': $tds },
                                 dataType: "json",
-                                success:
-                                    function (response) {
-                                        if (response) {
-                                            bootbox.alert({
-                                                messsage: "Sponsor details has been sucessfully deleted",
-                                                callback: function () {
-                                                    window.location.reload();
-                                                }
-                                            });
+                                success: function (response) {
+                                    if (response) {
+                                        bootbox.alert("Sponsor detail sucessfully deleted", function () {
+                                            window.location.reload();
+                                        });
+                                          
                                     };
 
                                 }
@@ -104,20 +98,26 @@
 
             openForm1();
             $(document).on("click", "#submit2", function (e) {
+                fileData = new FormData();
+                fileData.append('TeamName', $('#editTeamName').val());
+                fileData.append('SponsorFirstName', $('#editFirstName').val());
+                fileData.append('SponsorLastName', $('#editLastName').val());
+                fileData.append('SponsorEmailID', $('#editEmail').val());
+                fileData.append('SponsorGID', $('#editgid').val());
+                fileData.append('Department', $('#editDepartment').val());
+                fileData.append('ReportingManagerEmailID', $('#editRmEmail').val());
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("AddSponsorDetails", "Admin")',
+                    url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
                     dataType: "json",
-                    data: { 'teamName': $('#editTeamName').val(), 'sponsorFirstName': $('#editFirstName').val(), 'sponsorLastName': $('#editLastName').val(), 'sponsorGid': $('#editgid').val(), 'sponsorEmail': $('#editEmail').val(), 'sponsorDepartment': $('#editDepartment').val(), 'reportingManagerEmail': $('#editRmEmail').val() },
-                    success: function (response) {
+                    data:fileData,
+                    processData: false,
+                    contentType: false,
+                    success:
+                        function (response) {
                         if (response) {
-                            bootbox.alert({
-                                messsage: "Sponsor details has been sucessfully edited",
-                                callback: function () {
-                                    window.location.reload();
-                                }
-                            });
-
+                          
+                        }
                     }
 
 
@@ -129,21 +129,26 @@
         $(document).on("click", "#addButton", function (e) {
             openForm();
             $(document).on("click", "#submit1", function (e) {
+                fileData = new FormData();
+                fileData.append('TeamName', $('#teamName').val());
+                fileData.append('SponsorFirstName', $('#sponsorFirstName').val());
+                fileData.append('SponsorLastName', $('#sponsorLastName').val());
+                fileData.append('SponsorEmailID', $('#sponsorEmail').val());
+                fileData.append('SponsorGID', $('#sponsorGid').val());
+                fileData.append('Department', $('#sponsorDepartment').val());
+                fileData.append('ReportingManagerEmailID', $('#reportingManEmail').val());
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("AddSponsorDetails", "Admin")',
+                    url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
                     dataType: "json",
-                    data: { 'teamName': $('#teamName').val(), 'sponsorFirstName': $('#sponsorFirstName').val(), 'sponsorLastName': $('#sponsorLastName').val(), 'sponsorGid': $('#sponsorGid').val(), 'sponsorEmail': $('#sponsorEmail').val(), 'sponsorDepartment': $('#sponsorDepartment').val(), 'reportingManagerEmail': $('#reportingManEmail').val() },
-                    success: 
-                        function (response) {
-                            if (response) {
-                                bootbox.alert({
-                                    messsage: "Sponsor details has been sucessfully added",
-                                    callback: function () {
-                                        window.location.reload();
-                                    }
-                                });
+                    data:  fileData ,
+                    processData: false,
+                    contentType:false,
+                    success: function (response)
+                    {
+                        if (response) {
 
+                        }
                     }
                 });
             });
@@ -165,14 +170,6 @@
         function closeForm()
         {
             document.getElementById("myForm").style.display = "none";
-        }
-
-        window.onclick = function (event) {
-            if (event.target == myForm)
-            {
-                document.getElementById("myForm").style.display = "none";
-            }
-
         }
     </script>
     <style>
@@ -218,7 +215,7 @@
             position: fixed;
             bottom: 0;
             z-index: 1;
-            top: 4%;
+            top: 3%;
             left: 0;
             width: 100%;
             height: 100%;
@@ -236,7 +233,8 @@
             margin: auto;
         }
 
-            .form-container input[type=text], .form-container input[type=password], .form-container input[type=email] {
+            .form-container input[type=text], .form-container input[type=password], .form-container input[type=email] 
+            {
                 width: 100%;
                 padding: 3px;
                 margin: 2px 0 4px 0;
@@ -246,14 +244,16 @@
 
 
 
-                .form-container input[type=text]:focus, .form-container input[type=password]:focus, .form-container input[type=email]:focus {
+                .form-container input[type=text]:focus, .form-container input[type=password]:focus, .form-container input[type=email]:focus 
+                {
                     background-color: #ddd;
                     outline: none;
                 }
 
 
 
-            .form-container .btn {
+            .form-container .btn 
+            {
                 background-color: #04AA6D;
                 color: white;
                 padding: 5px 8px;
@@ -265,19 +265,23 @@
             }
 
 
-            .form-container .cancel {
+            .form-container .cancel 
+            {
                 background-color: red;
             }
 
 
-            .form-container .btn:hover, .open-button:hover {
+            .form-container .btn:hover, .open-button:hover 
+            {
                 opacity: 1;
             }
 
-        h3 {
+        h3 
+        {
             font-weight: bold;
         }
-        #backButton {
+        #backButton 
+        {
             margin-left: 55px;
         }
     </style>
@@ -286,7 +290,7 @@
     <div class="header">
         <h2> Sponsor Details </h2>
     </div>
-    <button type="button" id="backButton" class="btn btn-outline-secondary" onclick="window.open('@Url.Action("Create", "Employees")', '_self')">Back</button>
+    <button type="button" id="backButton" class="btn btn-outline-secondary" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")', '_self')">Back</button>
     <div class="tablee">
 
         <table id="tbldata" class="table table-bordered ">

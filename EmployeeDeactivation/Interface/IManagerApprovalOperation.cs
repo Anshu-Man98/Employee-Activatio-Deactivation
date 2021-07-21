@@ -8,9 +8,8 @@ namespace EmployeeDeactivation.Interface
 {
     public interface IManagerApprovalOperation
     {
-        void PdfAttachment(string employeeName, string lastWorkingDatee, string gId, string teamName, string sponsorName, string memoryStream, string reportingManagerEmail);
-        List<ManagerApprovalStatus> RetrieveDeactivationDetailss();
-        byte[] Getpdf(string GId);
+        void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus);
+        byte[] DownloadDeactivationPdfFromDatabase(string gId);
         List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail);
         List<ManagerApprovalStatus> GetAllPendingDeactivationWorkflows();
         List<ManagerApprovalStatus> GetAllApprovedDeactivationWorkflows();

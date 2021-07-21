@@ -9,13 +9,13 @@ namespace EmployeeDeactivation.Models
     public class ManagerApprovalStatus
     {
         public string EmployeeName { get; set; }
-        public string LastworkingDate { get; set; }
+        public string EmployeeLastWorkingDate { get; set; }
         [Key]
-        public string GId { get; set; }
-        public string TeamName { get; set; }
+        public string EmployeeGId { get; set; }
+        public string EmployeeTeamName { get; set; }
         public string SponsorName { get; set; }
-        public byte[] PdfAttachment { get; set; }
+        public byte[] DeactivationWorkFlowPdfAttachment { get; set; }
         public string ReportingManagerEmail { get; set; }
-        public string Status { get; set; }
+        public string WorkFlowStatus { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using EmployeeDeactivation.Models;
-@model IEnumerable<ActivationWorkflowModel>
+@model IEnumerable<EmployeeDetails>
 
 
 
@@ -92,7 +92,7 @@
     <div class="header">
         <h2>Activation Accounts Details </h2>
     </div>
-    <button type="button" class="btn btn-outline-secondary" onclick="window.open('@Url.Action("Create", "Employees")', '_self')">Back</button>
+    <button type="button" class="btn btn-outline-secondary" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")', '_self')">Back</button>
 
     <div id="dateInput">
         <div class="col-md-3">
@@ -129,20 +129,20 @@
                     <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Nationality</th>
                 </tr>
             </thead>
-            @foreach (ActivationWorkflowModel details in Model)
+            @foreach (EmployeeDetails details in Model)
             {
                 <tbody>
 
                     <tr class=item>
 
                         <td>@details.FirstName @details.LastName</td>
-                        <td>@details.SiemensEmailId</td>
-                        <td>@details.SiemensGID</td>
-                        <td>@details.Team</td>
+                        <td>@details.EmailID</td>
+                        <td>@details.GId</td>
+                        <td>@details.TeamName</td>
                         <td>@details.Role</td>
                         <td>@details.Gender</td>
                         <td>@details.DateOfBirth.Day - @details.DateOfBirth.Month - @details.DateOfBirth.Year</td>
-                        <td>@details.PlaceofBirth</td>
+                        <td>@details.PlaceOfBirth</td>
                         <td>@details.Address</td>
                         <td>@details.PhoneNo</td>
                         <td>@details.Nationality</td>

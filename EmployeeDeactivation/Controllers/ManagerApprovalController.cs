@@ -20,7 +20,7 @@ namespace EmployeeDeactivation.Controllers
             _managerAprovalOperation = managerAprovalOperation;
         }
 
-        [Authorize("Manager")]
+        [Authorize("Admin&Manager")]
         public IActionResult ManagerApprovalPage()
         {
             return View();
@@ -28,53 +28,51 @@ namespace EmployeeDeactivation.Controllers
 
 
         [HttpPost]
-        [Route("ManagerApproval/PdfDoc")]
-        public void PdfDoc(string employeeName, string lastWorkingDatee, string gId, string teamName, string sponsorName, string memoryStream,string reportingManagerEmail)
+        [Route("ManagerApproval/AddPendingDeactivationRequestToDatabase")]
+        public void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus)
         {
-            _managerAprovalOperation.PdfAttachment(employeeName, lastWorkingDatee, gId, teamName, sponsorName, memoryStream, reportingManagerEmail);
+            _managerAprovalOperation.AddPendingDeactivationRequestToDatabase(managerApprovalStatus);
         }
 
 
         [HttpGet]
-        [Route("ManagerApproval/DeactivationDetails")]
-        public JsonResult DeactivationDetails()
+        [Route("ManagerApproval/GetPendingDeactivationWorkflowForParticularManager")]
+        public JsonResult GetPendingDeactivationWorkflowForParticularManager()
         {
-            var userEmail = "";
+            string userEmail = "";
             if (User.Identity.IsAuthenticated)
             {
                 userEmail = GetUserEmail(User);
             }
-
             return Json(_managerAprovalOperation.GetPendingDeactivationWorkflowForParticularManager(userEmail));
 
         }
 
         [HttpGet]
-        [Route("ManagerApproval/PdfDetails")]
-        public ActionResult PdfDetails(string GId)
+        [Route("ManagerApproval/DownloadDeactivationPdf")]
+        public ActionResult DownloadDeactivationPdf(string gId)
         {
-            byte[] cc =_managerAprovalOperation.Getpdf(GId);
-            return Json("data:application/pdf;base64," + Convert.ToBase64String(cc));
+           return Json("data:application/pdf;base64," + 
+               Convert.ToBase64String(_managerAprovalOperation.DownloadDeactivationPdfFromDatabase(gId)));
 
-        }
-
-        private static string GetUserEmail(ClaimsPrincipal User)
-        {
-            return (User.Identities.FirstOrDefault().Claims.Where(c => c.Type.Equals("preferred_username")).FirstOrDefault().Value);
         }
 
         [HttpGet]
-        [Route("ManagerApproval/RequestApprove")]
-        public JsonResult RequestApprove(string gId)
+        [Route("ManagerApproval/AddApprovedDeactivationRequestToDatabase")]
+        public JsonResult AddApprovedDeactivationRequestToDatabase(string gId)
         {
             return Json(_managerAprovalOperation.ApproveRequest(gId));
         }
 
         [HttpGet]
-        [Route("ManagerApproval/RequestDenied")]
-        public JsonResult RequestDenied(string gId)
+        [Route("ManagerApproval/AddDeniedDeactivationRequestToDatabase")]
+        public JsonResult AddDeniedDeactivationRequestToDatabase(string gId)
         { 
             return Json(_managerAprovalOperation.DeclineRequest(gId));
+        }
+        private static string GetUserEmail(ClaimsPrincipal User)
+        {
+            return User.Identities.FirstOrDefault().Claims.Where(c => c.Type.Equals("preferred_username")).FirstOrDefault().Value;
         }
 
     }

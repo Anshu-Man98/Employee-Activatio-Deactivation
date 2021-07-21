@@ -1,5 +1,4 @@
-﻿
-@model EmployeeDeactivation.Models.ManagerApprovalStatus
+﻿@model EmployeeDeactivation.Models.ManagerApprovalStatus
 @using System.Security.Principal
 @using System.Security.Claims
 
@@ -22,7 +21,7 @@
 
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("DeactivationDetails","ManagerApproval")',
+                url: '@Url.Action("GetPendingDeactivationWorkflowForParticularManager", "ManagerApproval")',
                 dataType: "json",
                 success: function (response) {
                     var row;
@@ -34,11 +33,11 @@
                     $('#text').hide();
 
                     $.each(response, function (i, item) {
-                        var dateTime = item.lastworkingDate;
+                        var dateTime = item.employeeLastWorkingDate;
                         var splitDateTime = dateTime.split(" ");
                         var date = splitDateTime[0];
 
-                        row += "<tbody><tr class=item><td id=team >" + item.employeeName + "</td><td id=fn>" + item.gId + "</td><td id=ln>" + date + "</td><td id=em>" + item.teamName + "</td><td id=dep>" + item.sponsorName + "</td><td id=rm>" + item.reportingManagerEmail + "</td><td><span id=approve class='glyphicon glyphicon-ok cursor' style='font-size:30px;color:green'></span><span id=decline class='glyphicon glyphicon-remove' style='font-size:30px;color:red'></span><span id=download  class='glyphicon glyphicon-download-alt' style='font-size:30px;color:blue'></span></td></tr></tbody>"
+                        row += "<tbody><tr class=item><td id=team >" + item.employeeName + "</td><td id=fn>" + item.employeeGId + "</td><td id=ln>" + date + "</td><td id=em>" + item.employeeTeamName + "</td><td id=dep>" + item.sponsorName + "</td><td id=rm>" + item.reportingManagerEmail + "</td><td><span id=approve class='glyphicon glyphicon-ok cursor' style='font-size:30px;color:green'></span><span id=decline class='glyphicon glyphicon-remove' style='font-size:30px;color:red'></span><span id=download  class='glyphicon glyphicon-download-alt' style='font-size:30px;color:blue'></span></td></tr></tbody>"
 
                     });
                     $("#tbldata").append(row);
@@ -52,8 +51,8 @@
                 $tds = $row.find("td:nth-child(2)").text();
                             $.ajax({
                                 type: "GET",
-                                url: '@Url.Action("PdfDetails", "ManagerApproval")',
-                                data: {'GId': $tds},
+                                url: '@Url.Action("DownloadDeactivationPdf", "ManagerApproval")',
+                                data: {'gId': $tds},
                                 dataType: "json",
                                 success:
                                     function (result) {
@@ -70,7 +69,7 @@
                 $tds = $row.find("td:nth-child(2)").text();
                             $.ajax({
                                 type: "GET",
-                                url: '@Url.Action("RequestApprove", "ManagerApproval")',
+                                url: '@Url.Action("AddApprovedDeactivationRequestToDatabase", "ManagerApproval")',
                                 data: {'GId': $tds},
                                 dataType: "json",
                                 success: function (res) {
@@ -88,24 +87,21 @@
                 $tdss = $row.find("td:nth-child(1)").text();
                             $.ajax({
                                 type: "GET",
-                                url: '@Url.Action("RequestDenied", "ManagerApproval")',
+                                url: '@Url.Action("AddDeniedDeactivationRequestToDatabase", "ManagerApproval")',
                                 data: {'GId': $tds},
                                 dataType: "json",
                                 success: function (r) {
                                     window.location.reload(); 
                                     $.ajax({
                                 type: "POST",
-                                url: '@Url.Action("DeclineEmail", "Pdf")',
-                                data: { 'gid': $tds, 'employeeName': $tdss },
+                                url: '@Url.Action("DeclineEmail", "Email")',
+                                data: { 'gId': $tds, 'employeeName': $tdss },
                                 dataType: "json",
-                                success:function (f) {
-                                     
+                                success:function (f) {   
+                                }
+                            });           
                                 }
                             });
-                                        
-                                }
-                            });
-                   
             });
 
         });

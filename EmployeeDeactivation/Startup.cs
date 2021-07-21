@@ -42,17 +42,28 @@ namespace EmployeeDeactivation
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            var server = Configuration["DBServer"] ?? "localhost";
+            var port = Configuration["DBPort"] ?? "1433";
+            var user = Configuration["DBUser"] ?? "SA";
+            var password = Configuration["DBPassword"] ?? "1234@Abcd";
+            var database = Configuration["Database"] ?? "EmployeeDeactivationContext-ad1fce0f-4b85-42a1-9c48-4572137b7d8d";
+
+
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddAuthentication(AzureADDefaults.AuthenticationScheme).AddAzureAD(options => Configuration.Bind("AzureAd", options)).AddCookie();
 
             services.AddDbContext<EmployeeDeactivationContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
-           
+            options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
+            //options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID ={user};Password={password}"));
+
+
             services.AddScoped<IEmployeeDataOperation, EmployeeDataOperation>();
             services.AddScoped<IPdfDataOperation, PdfDataOperation>();
             services.AddScoped<IAdminDataOperation, AdminDataOperation>();
             services.AddScoped<IManagerApprovalOperation, ManagerApprovalOperation>();
+            services.AddScoped<IEmailOperation, EmailOperations>();
             services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
              {
                  options.Authority = options.Authority + "/v2.0/";
@@ -64,6 +75,7 @@ namespace EmployeeDeactivation
             {
                 options.AddPolicy("Manager", policyBuilder => policyBuilder.RequireClaim("groups", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc"));
                 options.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim("groups", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"));
+                options.AddPolicy("Admin&Manager", policyBuilder => policyBuilder.RequireClaim("groups", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc"));
             });
 
 
@@ -96,6 +108,10 @@ namespace EmployeeDeactivation
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.Use((context, next) => {
+                context.Request.Scheme = "https";
+                return next();
+            });
             app.UseAuthentication();
             app.UseCookiePolicy();
 
@@ -104,7 +120,7 @@ namespace EmployeeDeactivation
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Employees}/{action=Create}/{id?}");
+                    template: "{controller=Employees}/{action=EmployeeDeactivationForm}/{id?}");
             });
         }
     }

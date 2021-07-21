@@ -1,6 +1,9 @@
 ﻿using EmployeeDeactivation.Data;
 using EmployeeDeactivation.Interface;
 using EmployeeDeactivation.Models;
+using Microsoft.ApplicationInsights;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,219 +18,161 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             _context = context;
         }
-
-    public string GetReportingManagerEmailId(string teamName)
+        #region Employee Data
+        public bool AddEmployeeData(EmployeeDetails employeeDetails)
         {
-            var teamDetails = RetrieveAllSponsorDetails();
-            foreach (var item in teamDetails)
+            if (employeeDetails.isDeactivatedWorkFlow)
             {
-                if(item.TeamName == teamName)
+                var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
+                foreach (var deactivatedEmployee in deactivatedEmployees)
                 {
-                    return item.ReportingManagerEmail;
+                    if (deactivatedEmployee.GId == employeeDetails.GId)
+                    {
+                        _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                        _context.SaveChanges();
+                    }
                 }
+                DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                _context.Add(employeeDetail);
             }
-            return "";      
-        }
-
-        public string GetEmployeeEmailId(string gid)
-        {
-            var DeactivationDetails = SavedEmployeeDetails();
-            foreach (var item in DeactivationDetails)
+            else
             {
-                if (item.GId == gid)
+                var activatedEmployees = RetrieveAllActivationWorkFlow();
+                foreach (var activatedEmployee in activatedEmployees)
                 {
-                    return item.Email;
+                    if (activatedEmployee.GId == employeeDetails.GId)
+                    {
+                        _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                        _context.SaveChanges();
+                    }
                 }
+            ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                _context.Add(employeeDetail);
             }
-            return "";
+           
+            return _context.SaveChanges() == 1;
         }
 
-        public string GetSponsorEmailId(string SponsorGid)
+        public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()
         {
-            var teamDetails = RetrieveAllSponsorDetails();
-            foreach (var item in teamDetails)
+
+            var deactivatedEmployees = _context.DeactivationWorkflow.ToList();
+            List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
+            foreach (var item in deactivatedEmployees)
             {
-                if (item.SponsorGID == SponsorGid)
-                {
-                    return item.SponsorEmailID;
-                }
+                EmployeeDetails employeeDetail = JsonConvert.DeserializeObject<EmployeeDetails>(JsonConvert.SerializeObject(item));
+                employeeDetails.Add(employeeDetail);
             }
-            return "";
+            return employeeDetails;
         }
 
-        public  List<DeactivatedEmployeeDetails> SavedEmployeeDetails()
+        public List<EmployeeDetails> RetrieveAllActivationWorkFlow()
         {
-            List<DeactivatedEmployeeDetails> userDetails = new List<DeactivatedEmployeeDetails>();
-            var info =  _context.DeactivationWorkflow.ToList();
-            foreach (var item in info)
+            var activatedEmployees = _context.ActivationWorkflow.ToList();
+            List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
+            foreach (var item in activatedEmployees)
             {
-                userDetails.Add(new DeactivatedEmployeeDetails
-                {
-                    Firstname = item.Firstname,
-                    Lastname = item.Lastname,
-                    Email = item.Email,
-                    GId = item.GId,
-                    Date = item.Date,
-                    TeamName = item.TeamName,
-                    SponsorName =item.SponsorName,
-                    SponsorEmailID =item.SponsorEmailID,
-                    Department = item.Department,
-                    SponsorGId = item.SponsorGId
-                });
+                EmployeeDetails employeeDetail = JsonConvert.DeserializeObject<EmployeeDetails>(JsonConvert.SerializeObject(item));
+                employeeDetails.Add(employeeDetail);
             }
-            return userDetails;
-        }
-
-        public List<Teams> RetrieveAllSponsorDetails()
-        {
-            List<Teams> teamDetails = new List<Teams>();
-            var details = _context.Teams.ToList();
-            foreach (var item in details)
-            {
-                teamDetails.Add(new Teams
-                {
-                    SponsorGID = item.SponsorGID,
-                    TeamName = item.TeamName,
-                    SponsorFirstName = item.SponsorFirstName,
-                    SponsorLastName = item.SponsorLastName,
-                    SponsorEmailID = item.SponsorEmailID,
-                    Department = item.Department,
-                    ReportingManagerEmail = item.ReportingManagerEmail
-                });
-            }
-            return teamDetails;
-        }
-
-        public List<ActivationWorkflowModel> RetrieveAllActivationGid()
-        {
-            List<ActivationWorkflowModel> activationDetails = new List<ActivationWorkflowModel>();
-            var details = _context.ActivationWorkflow.ToList();
-            foreach (var item in details)
-            {
-                activationDetails.Add(new ActivationWorkflowModel
-                {
-                    SiemensGID = item.SiemensGID,
-                    
-                });
-            }
-            return activationDetails;
-        }
-
-        public async Task<bool> AddEmployeeData(string firstName, string lastName, string gId, string email, DateTime lastWorkingDate, string teamsName, string sponsorName, string sponsorEmailId, string sponsorDepartment ,string sponsorGID)
-        //review change make parameters as class
-        {
-            bool databaseUpdateStatus = false;
-            DeactivatedEmployeeDetails employee = new DeactivatedEmployeeDetails()
-            {
-                Firstname = firstName,
-                Lastname = lastName,
-                GId = gId,
-                Email = email,
-                Date = lastWorkingDate,
-                TeamName = teamsName,
-                SponsorName = sponsorName,
-                SponsorEmailID = sponsorEmailId,
-                Department = sponsorDepartment,
-                SponsorGId = sponsorGID
-            };
-            var check = _context.DeactivationWorkflow.ToList();
-            foreach (var i in check)
-            {
-                if (i.GId == gId)
-                {
-                    _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == gId));
-                    _context.SaveChanges();
-                }
-            }
-
-            _context.Add(employee);
-            databaseUpdateStatus = _context.SaveChanges() == 1 ? true : false;
-            return databaseUpdateStatus;
+            return employeeDetails;
         }
 
 
-        public async Task<bool> AddActivationEmployeeData(string firstName, string lastName, string siemensEmailId, string siemensgId, string team, string sponsorName, string sponsorEmailId, string sponsordepartment, string sponsorGID, string reportingManagerEmailId, string employeeRole, string gender, DateTime dob, string pob, string address, string phoneNo, string nationality)
-        //review change make parameters as class
+        public bool SavePdfToDatabase(byte[] pdf, string gId)
         {
-            bool databaseUpdateStatus = false;
-            ActivationWorkflowModel employeeActivate = new ActivationWorkflowModel()
+
+            var activationWorkflows = _context.ActivationWorkflow.ToList();
+            foreach (var activatedWorkflow in activationWorkflows)
             {
-                FirstName = firstName,
-                LastName = lastName,
-                SiemensEmailId = siemensEmailId,
-                SiemensGID = siemensgId,
-                Team = team,
-                SponsorName = sponsorName,
-                SponsorEmail = sponsorEmailId,
-                SponsorGid= sponsorGID,
-                SponsorDepartment = sponsordepartment,
-                ReportingManagerEmail = reportingManagerEmailId,
-                Role= employeeRole,
-                Gender = gender,
-                DateOfBirth = dob,
-                PlaceofBirth = pob,
-                Address = address,
-                PhoneNo = phoneNo,
-                Nationality = nationality
-            };
-            var check = _context.ActivationWorkflow.ToList();
-            foreach (var i in check)
-            {
-                if (i.SiemensGID == siemensgId)
+                if (activatedWorkflow.GId == gId)
                 {
-                    _context.Remove(_context.ActivationWorkflow.Single(a => a.SiemensGID == siemensgId));
-                    _context.SaveChanges();
-                }
-            }
-
-            _context.Add(employeeActivate);
-            databaseUpdateStatus = _context.SaveChanges() == 1 ? true : false;
-            return databaseUpdateStatus;
-        }
-
-        public DeactivatedEmployeeDetails RetrieveEmployeeDataBasedOnGid(string gId)
-        {
-            var details = _context.DeactivationWorkflow.ToList();
-            foreach (var item in details)
-            {
-                if (item.GId == gId)
-                {
-                    return item;
-                }
-            }
-            return new DeactivatedEmployeeDetails();
-
-        }
-
-        public ActivationWorkflowModel RetrieveActivationDataBasedOnGid(string gId)
-        {
-            var details = _context.ActivationWorkflow.ToList();
-            foreach (var item in details)
-            {
-                if (item.SiemensGID == gId)
-                {
-                    return item;
-                }
-            }
-            return new ActivationWorkflowModel();
-
-        }
-
-        public bool savepdf(byte[] pdf, string gid)
-        
-        {
-            var check = _context.ActivationWorkflow.ToList();
-            foreach (var i in check)
-            {
-                if (i.SiemensGID == gid)
-                {
-                    i.PdfData = pdf;
+                    activatedWorkflow.ActivationWorkFlowPdfAttachment = pdf;
                     _context.SaveChanges();
                     return true;
                 }
             }
             return false;
         }
+     
+        public EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId)
+        {
+            var employeeDetails = RetrieveAllDeactivatedEmployees();
+            foreach (var employee in employeeDetails)
+            {
+                if (employee.GId == gId)
+                {
+                    return employee;
+                }
+            }
+            return new EmployeeDetails();
+        }
+        public string GetDeactivatedEmployeeEmailId(string gid)
+        {
+            var deactivationDetails = RetrieveAllDeactivatedEmployees();
+            foreach (var item in deactivationDetails)
+            {
+                var i = item.GId;
+                if (i == gid)
+                {
+                    string ss = item.EmailID;
+                    return ss;
+                    
+                }
+                
+            }
+
+            return "";
+        }
+
+        public EmployeeDetails RetrieveActivationDataBasedOnGid(string gId)
+        {
+            var allActivatedWorkFlows = RetrieveAllActivationWorkFlow();
+            foreach (var item in allActivatedWorkFlows)
+            {
+                if (item.GId == gId)
+                {
+                    return item;
+                }
+            }
+            return new EmployeeDetails();
+
+        }
+        #endregion
+
+        #region SponsorData
+
+        public string GetReportingManagerEmailId(string teamName)
+        {
+            var teamDetails = RetrieveAllSponsorDetails();
+            foreach (var item in teamDetails)
+            {
+                if(item.TeamName == teamName)
+                {
+                    return item.ReportingManagerEmailID;
+                }
+            }
+            return "";      
+        }
+        public string GetSponsorEmailId(string sponsorGid)
+        {
+            var teamDetails = RetrieveAllSponsorDetails();
+            foreach (var item in teamDetails)
+            {
+                if (item.SponsorGID == sponsorGid)
+                {
+                    return item.SponsorEmailID;
+                }
+            }
+            return "";
+        }
+        public List<Teams> RetrieveAllSponsorDetails()
+        {
+            return (_context.Teams.ToList());
+            
+        }
+
+        #endregion
     }
 
 }

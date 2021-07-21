@@ -11,117 +11,64 @@ namespace EmployeeDeactivation.BusinessLayer
 {
     public class AdminDataOperation : IAdminDataOperation
     {
-
+        private readonly IEmployeeDataOperation _employeeDataOperation;
         private readonly EmployeeDeactivationContext _context;
-        public AdminDataOperation(EmployeeDeactivationContext context)
+
+        public AdminDataOperation(IEmployeeDataOperation employeeDataOperation , EmployeeDeactivationContext context)
         {
+            _employeeDataOperation = employeeDataOperation;
             _context = context;
         }
 
-
         public List<Teams> RetrieveSponsorDetails()
         {
-            List<Teams> teamDetails = new List<Teams>();
-            var details = _context.Teams.ToList();
-            foreach (var item in details)
-            {
-                teamDetails.Add(new Teams
-                {
-                    SponsorGID = item.SponsorGID,
-                    TeamName = item.TeamName,
-                    SponsorFirstName = item.SponsorFirstName,
-                    SponsorLastName = item.SponsorLastName,
-                    SponsorEmailID = item.SponsorEmailID,
-                    Department = item.Department,
-                    ReportingManagerEmail = item.ReportingManagerEmail
-                });
-            }
-            return teamDetails;
+            return _context.Teams.ToList();
         }
 
-        public async Task<bool> AddSponsorData(string teamName, string sponsorFirstName, string sponsorLastName, string sponsorGid, string sponsorEmail, string sponsorDepartment, string reportingManagerEmail)
-        //review change make parameters as class
+        public bool AddSponsorData(Teams team)
         {
-            bool databaseUpdateStatus=false;
-            Teams sponsor = new Teams()
+            bool databaseUpdateStatus = false;
+            var teamDetails = _context.Teams.ToList();
+            foreach (var teams in teamDetails)
             {
-                TeamName = teamName,
-                SponsorFirstName = sponsorFirstName,
-                SponsorLastName = sponsorLastName,
-                SponsorGID = sponsorGid,
-                SponsorEmailID = sponsorEmail,
-                Department = sponsorDepartment,
-                ReportingManagerEmail = reportingManagerEmail,
-                
-            };
-            var check = _context.Teams.ToList();
-            foreach (var i in check)
-            {
-                if (i.SponsorGID == sponsorGid)
+                if (teams.SponsorGID == team.SponsorGID)
                 {
-                    _context.Remove(_context.Teams.Single(a => a.SponsorGID == sponsorGid));
+                    _context.Remove(_context.Teams.Single(a => a.SponsorGID == team.SponsorGID));
                     _context.SaveChanges();
-                   
                 }
             }
-            _context.Add(sponsor);
-            databaseUpdateStatus = _context.SaveChanges() == 1 ? true : false;
-
+            _context.Add(team);
+            databaseUpdateStatus = _context.SaveChanges() == 1;
             return databaseUpdateStatus;
         }
-        public async Task<bool> DeleteSponsorData(string gId)
-        //review change make parameters as class
+
+        public bool DeleteSponsorData(string gId)
         {
-          
-            var check = _context.Teams.ToList();
-            foreach (var i in check)
+            var teamDetails = _context.Teams.ToList();
+            foreach (var teams in teamDetails)
             {
-                if (i.SponsorGID == gId)
+                if (teams.SponsorGID == gId)
                 {
                     _context.Remove(_context.Teams.Single(a => a.SponsorGID == gId));
-                    _context.SaveChanges();
+                    return _context.SaveChanges() == 1;
+                    
                 }
             }
+            return true;
 
-            var databaseUpdateStatus = await _context.SaveChangesAsync() == 1 ? true : false;
-            return databaseUpdateStatus;
         }
 
-        public List<DeactivatedEmployeeDetails> RetrieveEmployeeDetails()
+        public List<EmployeeDetails> DeactivationEmployeeData()
         {
-            List<DeactivatedEmployeeDetails> employeeDetails = new List<DeactivatedEmployeeDetails>();
-            var details = _context.DeactivationWorkflow.ToList();
-            var sortedDetails = from p in details orderby p.Date select p;
-            foreach (var item in sortedDetails)
-            {
-               
-                employeeDetails.Add(new DeactivatedEmployeeDetails
-                {
-                    Firstname = item.Firstname,
-                    Lastname = item.Lastname,
-                    Email = item.Email,
-                    GId = item.GId,
-                    Date = item.Date,
-                    TeamName = item.TeamName,
-                    SponsorName = item.SponsorName,
-                    SponsorEmailID = item.SponsorEmailID,
-                    Department = item.Department,
-                });
-            }
-            return employeeDetails;
+            return _employeeDataOperation.RetrieveAllDeactivatedEmployees();
         }
 
-        public List<DeactivatedEmployeeDetails> DeactivationEmployeeData()//Refactoring
+
+
+        public List<EmployeeDetails> ActivationEmployeeData()
         {
-            List<DeactivatedEmployeeDetails> deactivationEmployeeData = (from deactivationEmployee in this._context.DeactivationWorkflow.Take(30000)select deactivationEmployee).ToList();
-            return deactivationEmployeeData;
+            return _employeeDataOperation.RetrieveAllActivationWorkFlow();
         }
 
-        public List<ActivationWorkflowModel> ActivationEmployeeData()
-        {
-            List<ActivationWorkflowModel> activationEmployeeData = (from activationEmployee in this._context.ActivationWorkflow.Take(30000) select activationEmployee).ToList();
-            return activationEmployeeData;
-        }
-
-    }   
+    }
 }
