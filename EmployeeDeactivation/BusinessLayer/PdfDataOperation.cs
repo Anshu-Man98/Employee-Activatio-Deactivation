@@ -66,7 +66,6 @@ namespace EmployeeDeactivation.BusinessLayer
             string[] sponsorFullName = activationEmployeeData.SponsorName.Split(' ');
             (form.Fields[16] as PdfLoadedTextBoxField).Text = sponsorFullName[0] ?? "";
             (form.Fields[17] as PdfLoadedTextBoxField).Text = sponsorFullName[1] ?? "";
-            (form.Fields[18] as PdfLoadedTextBoxField).Text = activationEmployeeData.GId ?? "";
             (form.Fields[19] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorDepartment ?? "";
             MemoryStream stream = new MemoryStream();
             loadedDocument.Save(stream);
