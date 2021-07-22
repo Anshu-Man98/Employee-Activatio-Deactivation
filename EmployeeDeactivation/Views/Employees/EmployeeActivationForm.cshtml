@@ -1,4 +1,25 @@
-﻿@model EmployeeDeactivation.Models.EmployeeDetails
+﻿
+@using System.Security.Claims
+@if (User.Identity.IsAuthenticated)
+
+
+{
+    var identity = User.Identity as ClaimsIdentity;
+    var managerDisplay = "none";
+    var adminDisplay = "none";
+
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("48b47645-cabb-4ca9-8749-5e1e79b1a9dc"))) == true)
+    {
+        adminDisplay = "block";
+
+
+    }
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"))) == true)
+    {
+        managerDisplay = "block";
+        adminDisplay = "block";
+
+    }
     <head>
 
 
@@ -82,7 +103,7 @@
                 fileData.append('Address', $('#address').val());
                 fileData.append('PhoneNo', $('#phoneNo').val());
                 fileData.append('Nationality', $('#nationality').val());
-                
+
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("AddDetailsToDatabase", "Employees")',
@@ -319,17 +340,38 @@
 
         <style>
 
-            h2 {
+            #header {
+                width: 102%;
                 margin-top: 0px;
                 padding: 20px;
-                text-align: left;
-                color: white;
-                font-size: 30px;
-                margin-bottom: 30px;
+                margin-bottom: 25px;
                 background-color: black;
                 height: 17%;
-                text-align: center;
+                position: relative;
             }
+
+            .headerText {
+                text-align: center;
+                font-size: 30px;
+                color: white;
+                position: absolute;
+                margin-left: 35%;
+                margin-top: 5px;
+            }
+
+
+
+            #sponsorDetailsButton, #viewReportButton, #workflowButton {
+                margin-left: 90%;
+                color: white;
+            }
+
+
+                #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover {
+                    font-size: 103%;
+                    color: darkgrey;
+                    cursor: default;
+                }
 
             .regular-field {
                 text-align: center;
@@ -405,7 +447,18 @@
     </head>
 
     <body>
-        <h2> Employee Activation Form</h2>
+        <div id="header">
+            <h2 class="headerText">Employee Activation Form </h2>
+            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
+            <div>
+                <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
+
+            </div>
+            <div>
+                <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
+
+            </div>
+        </div>
 
         <div class="regular-field">
             <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
@@ -545,7 +598,7 @@
                         Date Of Birth:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="date" class="form-control" id="dateOfBirth" onchange="checkDate()" min="1940-05-01" max="2015-01-01"/>
+                        <input type="date" class="form-control" id="dateOfBirth" onchange="checkDate()" min="1940-05-01" max="2015-01-01" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -607,7 +660,7 @@
             </form>
         </div>
     </body>
-
+}
 
 
 
