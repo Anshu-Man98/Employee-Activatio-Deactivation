@@ -210,7 +210,7 @@
                 }
             });
         });
-        var Regx = "^[a-zA-Z-]+$";
+            var Regx = "^[A-Za-z ]+$";
         function ValidateFirstName() {
             if ($('#employeeFirstName').val().trim().search(Regx)) {
                 document.getElementById('employeeFirstName').style.borderColor = 'red';

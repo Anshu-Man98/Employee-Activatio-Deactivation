@@ -179,7 +179,7 @@
         });
 
             function Validatephonenumber() {
-                var phoneno = /^[0-9]+$/;
+                var phoneno = /^[0-9+-\s]+$/;
 
                 if ($('#phoneNo').val().trim().search(phoneno)){
                     document.getElementById('phoneNo').style.borderColor = 'red';
@@ -193,7 +193,7 @@
             }
 
 
-        var Regx = "^[a-zA-Z-]+$";
+            var Regx = "^[A-Za-z ]+$";
         function ValidateFirstName() {
             if ($('#siemensFirstName').val().trim().search(Regx)) {
                 document.getElementById('siemensFirstName').style.borderColor = 'red';
