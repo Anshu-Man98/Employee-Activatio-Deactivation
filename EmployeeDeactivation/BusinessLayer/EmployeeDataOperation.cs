@@ -107,7 +107,7 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             return new EmployeeDetails();
         }
-        public string GetDeactivatedEmployeeEmailId(string gid)
+        public string[] GetDeactivatedEmployeeDetails(string gid)
         {
             var deactivationDetails = RetrieveAllDeactivatedEmployees();
             foreach (var item in deactivationDetails)
@@ -115,14 +115,13 @@ namespace EmployeeDeactivation.BusinessLayer
                 var i = item.GId;
                 if (i == gid)
                 {
-                    string ss = item.EmailID;
-                    return ss;
+                    return new string[] { item.EmailID, item.TeamName,item.CcEmailId };
                     
                 }
                 
             }
 
-            return "";
+             return new string[] { };
         }
 
         public EmployeeDetails RetrieveActivationDataBasedOnGid(string gId)
@@ -142,29 +141,17 @@ namespace EmployeeDeactivation.BusinessLayer
 
         #region SponsorData
 
-        public string GetReportingManagerEmailId(string teamName)
+        public string[] GetReportingEmailIds(string teamName)
         {
             var teamDetails = RetrieveAllSponsorDetails();
             foreach (var item in teamDetails)
             {
                 if(item.TeamName == teamName)
                 {
-                    return item.ReportingManagerEmailID;
+                    return new string[] { item.FromEmailID, item.ToEmailID, item.CcEmailID,item.ReportingManagerEmailID };
                 }
             }
-            return "";      
-        }
-        public string GetSponsorEmailId(string sponsorGid)
-        {
-            var teamDetails = RetrieveAllSponsorDetails();
-            foreach (var item in teamDetails)
-            {
-                if (item.SponsorGID == sponsorGid)
-                {
-                    return item.SponsorEmailID;
-                }
-            }
-            return "";
+            return new string[] { };      
         }
         public List<Teams> RetrieveAllSponsorDetails()
         {

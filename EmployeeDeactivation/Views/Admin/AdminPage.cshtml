@@ -53,7 +53,7 @@
                                         bootbox.alert("Sponsor detail sucessfully deleted", function () {
                                             window.location.reload();
                                         });
-                                          
+
                                     };
 
                                 }
@@ -69,34 +69,32 @@
         });
 
         $(document).on("click", "#edit", function (e) {
-            var $row = $(this).closest("tr"),
+            var gId = $(this).closest("tr").find("td:nth-child(3)").text();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SponsorDetailsAccordingToGid", "Admin")',
+                dataType: "json",
+                data: { 'sponsorGID': gId },
+                    success: function (response)
+                    {
+                        if (response) {
+                            $('#editTeamName').val(response.teamName);
+                            $('#editFirstName').val(response.sponsorFirstName);
+                            $('#editLastName').val(response.sponsorLastName);
+                            $('#editgid').val(response.sponsorGID);
+                            $('#editDepartment').val(response.department);
+                            $('#editRmEmail').val(response.reportingManagerEmailID);
+                            $('#editEmail').val(response.sponsorEmailID);
+                            $('#editFromEmail').val(response.fromEmailID);
+                            $('#editToEmail').val(response.toEmailID);
+                            $('#editCcEmail').val(response.ccEmailID);
+                            openForm1();
+                        }
+                    }
+                });
 
-            $editTeamName = $row.find("td:nth-child(1)").text();
-            $('#editTeamName').val($editTeamName);
 
-            $editLastName = $row.find("td:nth-child(2)").text();
-            var sponsorName = $editLastName
-            var splitName = sponsorName.split(" ");
-            var firstName = splitName[0];
-            var lastName = splitName[1];
-
-            $('#editFirstName').val(firstName);
-
-            $('#editLastName').val(lastName);
-
-            $editgid = $row.find("td:nth-child(3)").text();
-            $('#editgid').val($editgid);
-
-            $editEmail = $row.find("td:nth-child(4)").text();
-            $('#editEmail').val($editEmail);
-
-            $editDepartment = $row.find("td:nth-child(5)").text();
-            $('#editDepartment').val($editDepartment);
-
-            $editRmEmail = $row.find("td:nth-child(6)").text();
-            $('#editRmEmail').val($editRmEmail);
-
-            openForm1();
+            
             $(document).on("click", "#submit2", function (e) {
                 fileData = new FormData();
                 fileData.append('TeamName', $('#editTeamName').val());
@@ -107,7 +105,7 @@
                 fileData.append('Department', $('#editDepartment').val());
                 fileData.append('ReportingManagerEmailID', $('#editRmEmail').val());
                 fileData.append('FromEmailID', $('#editFromEmail').val());
-                fileData.append('ToEmailID', $('#editToEmail').val());
+                fileData.append('editToEmail', $('#editToEmail').val());
                 fileData.append('CcEmailID', $('#editCcEmail').val());
                 $.ajax({
                     type: "POST",
@@ -119,7 +117,7 @@
                     success:
                         function (response) {
                         if (response) {
-                          
+
                         }
                     }
 
@@ -321,6 +319,7 @@
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(4)')" style="cursor:pointer"> Sponsor Email</th>
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(5)')" style="cursor:pointer"> Sponsor Department</th>
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(6)')" style="cursor:pointer"> Reporting Manager Email</th>
+                    
                     <th scope="col"> Action</th>
 
                 </tr>
@@ -339,8 +338,8 @@
                 <label for="Team"><b>Team Name</b></label>
                 <input type="text" placeholder="Team Name" id="teamName" name="team" required>
 
-                <label for="fisrtname"><b>Sponsor Fisrt Name</b></label>
-                <input type="text" placeholder="First Name" id="sponsorFirstName" name="fisrtname" required>
+                <label for="firstname"><b>Sponsor First Name</b></label>
+                <input type="text" placeholder="First Name" id="sponsorFirstName" name="firstname" required>
 
                 <label for="lastname"><b>Sponsor Last Name</b></label>
                 <input type="text" placeholder="Last Name" id="sponsorLastName" name="lastname" required>
@@ -357,11 +356,11 @@
                 <label for="email"><b>Reporting Manager Email Id</b></label>
                 <input type="email" placeholder="Email Id" id="reportingManEmail" name="Rmemail" required>
 
-                <label for="email"><b>From Email Id</b></label>
+                <label for="email"><b>CM Email Id</b></label>
                 <input type="email" value="vr.arun@siemens.com" id="fromEmail" name="Fromemail" required>
 
-                <label for="email"><b>To Email Id</b></label>
-                <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" required>
+                <label for="email"><b>Sivantos Activation Request Point of Contact Email ID</b></label>
+                <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" required>
 
                 <label for="email"><b>Cc Email Id</b></label>
                 <input type="text" placeholder="Email Id" id="ccEmail" name="Ccemail"  onkeyup="ValidateEmail()" required>
@@ -382,8 +381,8 @@
                 <label for="Team"><b>Team Name</b></label>
                 <input type="text" placeholder="Team Name" name="team" id="editTeamName">
 
-                <label for="fisrtname"><b>Sponsor Fisrt Name</b></label>
-                <input type="text" placeholder="First Name" name="fisrtname" id="editFirstName">
+                <label for="firstname"><b>Sponsor First Name</b></label>
+                <input type="text" placeholder="First Name" name="firstname" id="editFirstName">
 
                 <label for="lastname"><b>Sponsor Last Name</b></label>
                 <input type="text" placeholder="Last Name" name="lastname" id="editLastName">
@@ -398,16 +397,16 @@
                 <input type="text" placeholder="Department" name="department" id="editDepartment">
 
                 <label for="email"><b>Reporting Manager Email Id</b></label>
-                <input type="email" placeholder="Email Id" name="Rmemail" id="editRmEmail">
+                <input type="email" placeholder="Email Id" id="editRmEmail">
 
-                <label for="email"><b>From Email Id</b></label>
-                <input type="email" value="vr.arun@siemens.com" id="editFromEmail" name="Fromemail" required>
+                <label for="email"><b>CM Email Id</b></label>
+                <input type="email" id="editFromEmail" name="Fromemail" required>
 
-                <label for="email"><b>To Email Id</b></label>
-                <input type="email" placeholder="Email Id" id="editToEmail" name="Toemail" required>
+                <label for="email"><b>Sivantos Activation Request Point of Contact Id</b></label>
+                <input type="email"  id="editToEmail" name="Toemail"  required>
 
                 <label for="email"><b>Cc Email Id</b></label>
-                <input type="text" placeholder="Email Id" id="editCcEmail" name="Ccemail" onkeyup="ValidateEmail()" required>
+                <input type="text"  id="editCcEmail" name="Ccemail" onkeyup="ValidateEmail()" required>
 
 
                 <button type="submit" id="submit2" class="btn">Submit</button>

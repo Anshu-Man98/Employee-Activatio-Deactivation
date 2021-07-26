@@ -11,5 +11,6 @@ namespace EmployeeDeactivation.Interface
         bool DeleteSponsorData(string gId);
         List<EmployeeDetails> DeactivationEmployeeData();
         List<EmployeeDetails> ActivationEmployeeData();
+        Teams RetrieveSponsorDetailsAccordingToGid(string gId);
     }
 }

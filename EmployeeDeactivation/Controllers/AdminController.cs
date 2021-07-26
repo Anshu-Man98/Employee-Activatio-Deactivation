@@ -35,6 +35,12 @@ namespace EmployeeDeactivation.Controllers
         {
             return Json(_adminDataOperation.RetrieveSponsorDetails());
         }
+        [HttpPost]
+        [Route("Admin/SponsorDetailsAccordingToGid")]
+        public JsonResult SponsorDetailsAccordingToGid(string sponsorGID)
+        {
+            return Json(_adminDataOperation.RetrieveSponsorDetailsAccordingToGid(sponsorGID));
+        }
 
         [HttpPost]
         [Route("Admin/AddSponsorDetailsToDatabase")]

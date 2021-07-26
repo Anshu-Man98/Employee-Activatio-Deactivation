@@ -24,6 +24,18 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             return _context.Teams.ToList();
         }
+        public Teams RetrieveSponsorDetailsAccordingToGid(string gId)
+        {
+            var allSponsors = _context.Teams.ToList();
+            foreach (var item in allSponsors)
+            {
+                if(item.SponsorGID==gId)
+                {
+                    return item;
+                }
+            }
+            return new Teams();           
+        }
 
         public bool AddSponsorData(Teams team)
         {

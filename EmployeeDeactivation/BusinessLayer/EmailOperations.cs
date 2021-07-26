@@ -25,26 +25,24 @@ namespace EmployeeDeactivation.BusinessLayer
         {
 
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
-            
-            var reportingManagerEmailId = _employeeDataOperation.GetReportingManagerEmailId(teamName);
+            var emailDetails = _employeeDataOperation.GetReportingEmailIds(teamName);
             byte[] byte_array = Encoding.ASCII.GetBytes(memoryStream);
             if (!isActivationPdf)
             {
-                _ = SendEmailAsync(reportingManagerEmailId,toEmailId, ccEmailId, employeeName, false, false, true, byte_array, fileName + employeeName);
+                _ = SendEmailAsync(emailDetails[3], emailDetails[0], emailDetails[2], employeeName, false, false, true, byte_array, fileName + employeeName);
             }
             if (isActivationPdf)
             {
-                var sponsorEmailId = _employeeDataOperation.GetSponsorEmailId(sponsorGID);
-                _ = SendEmailAsync(fromEmailId,toEmailId,ccEmailId,employeeName, false, false, true, byte_array,fileName+employeeName);
-                //_ = SendEmailAsync("1by16cs072@bmsit.in", employeeName, false, false, true, byte_array,fileName+employeeName);
+                _ = SendEmailAsync(emailDetails[0], emailDetails[1], emailDetails[2], employeeName, false, false, true, byte_array,fileName+employeeName);
             }
             return true;
         }
         public void SendEmailDeclined(string gId, string employeeName)
         {
-            var employeeEmailId = _employeeDataOperation.GetDeactivatedEmployeeEmailId(gId);
+            var employeeDetails = _employeeDataOperation.GetDeactivatedEmployeeDetails(gId);
+            var reportingManagerEmailId = _employeeDataOperation.GetReportingEmailIds(employeeDetails[1])[3];
             byte[] byte_array = null;
-            _ = SendEmailAsync(reportingManagerEmailId, employeeEmailId,"", employeeName, false, true, false, byte_array,"");
+            _ = SendEmailAsync(reportingManagerEmailId, employeeDetails[0], "", employeeName, false, true, false, byte_array,"");
 
         }
         public void SendReminderEmail()
@@ -55,7 +53,8 @@ namespace EmployeeDeactivation.BusinessLayer
                 DateTime date = Convert.ToDateTime(employee.EmployeeLastWorkingDate.ToString());
                 if (DateTime.Today == date || DateTime.Today > date)
                 {
-                    _ = SendEmailAsync(cm,employee.ReportingManagerEmail,"", employee.EmployeeName, true, false, false, employee.DeactivationWorkFlowPdfAttachment,"DeactivationWorkflow_"+employee.EmployeeName);
+                    var emailDetails = _employeeDataOperation.GetReportingEmailIds(employee.EmployeeTeamName);
+                    _ = SendEmailAsync(emailDetails[0], employee.ReportingManagerEmail,"", employee.EmployeeName, true, false, false, employee.DeactivationWorkFlowPdfAttachment,"DeactivationWorkflow_"+employee.EmployeeName);
                 }
             }
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
@@ -68,7 +67,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     {
                         if (employee.GId == approvedEmployee.EmployeeGId)
                         {
-                            _ = SendEmailAsync(cm,employee.SponsorEmailID,ccEmailId, approvedEmployee.EmployeeName, true, false, false, approvedEmployee.DeactivationWorkFlowPdfAttachment, "DeactivationWorkflow_" + approvedEmployee.EmployeeName);
+                            _ = SendEmailAsync("arun",employee.SponsorEmailID, _employeeDataOperation.GetDeactivatedEmployeeDetails(employee.GId)[3], approvedEmployee.EmployeeName, true, false, false, approvedEmployee.DeactivationWorkFlowPdfAttachment, "DeactivationWorkflow_" + approvedEmployee.EmployeeName);
                         }
                     }
                 }
@@ -88,8 +87,6 @@ namespace EmployeeDeactivation.BusinessLayer
                 emailAddress.Add(new EmailAddress(item));
 
             }
-                 
-          
                 var plainTextContent = "";
                 var htmlContent = "<strong>Workflow</strong>";
                 if (isDeclinedEmail)

@@ -128,6 +128,9 @@
                 fileData.append('SponsorEmailID', $('#sponsorEmail').val());
                 fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
                 fileData.append('SponsorGId', $('#sponsorGid').val());
+                fileData.append('ToEmailID', $('#toEmailId').val());
+                fileData.append('FromEmailID', $('#fromEmailId').val());
+                fileData.append('CcEmailID', $('#ccEmailId').val());
                 fileData.append('isDeactivatedWorkFlow', true);
                 $.ajax({
                     type: "POST",
@@ -532,6 +535,9 @@
 
                 <div id="sponsorGidHidden">
                     <input type="text" class="form-control" id="sponsorGid" readonly />
+                    <input type="text" class="form-control" id="toEmailId" readonly />
+                    <input type="text" class="form-control" id="fromEmailId" readonly />
+                    <input type="text" class="form-control" id="ccEmailId" readonly />
                 </div>
 
                 <div id="reportingManagerEmailId">

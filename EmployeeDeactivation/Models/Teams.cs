@@ -8,6 +8,7 @@ namespace EmployeeDeactivation.Models
 {
     public class Teams
     {
+        
         public string TeamName { get; set; }
         public string SponsorFirstName { get; set; }
         public string SponsorLastName { get; set; }
@@ -16,8 +17,8 @@ namespace EmployeeDeactivation.Models
         public string SponsorGID { get; set; }
         public string Department { get; set; }
         public string ReportingManagerEmailID { get; set; }
-        public string FromEmailID { get; set; }
         public string ToEmailID { get; set; }
+        public string FromEmailID { get; set; }
         public string CcEmailID { get; set; }
     }
 }

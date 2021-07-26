@@ -12,11 +12,10 @@ namespace EmployeeDeactivation.Interface
         bool AddEmployeeData(EmployeeDetails employeeDetails);
         List<EmployeeDetails> RetrieveAllDeactivatedEmployees();
         EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId);
-        string GetDeactivatedEmployeeEmailId(string gid);
+        string[] GetDeactivatedEmployeeDetails(string gid);
         List<EmployeeDetails> RetrieveAllActivationWorkFlow();
         EmployeeDetails RetrieveActivationDataBasedOnGid(string gId);
-        string GetReportingManagerEmailId(string teamName);
-        string GetSponsorEmailId(string sponsorGid);
+        string[] GetReportingEmailIds(string teamName);
         List<Teams> RetrieveAllSponsorDetails();
         bool SavePdfToDatabase(byte[] pdf, string gId);
     }
