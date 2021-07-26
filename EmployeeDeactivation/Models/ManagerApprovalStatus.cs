@@ -13,7 +13,8 @@ namespace EmployeeDeactivation.Models
         [Key]
         public string EmployeeGId { get; set; }
         public string EmployeeTeamName { get; set; }
-        public string SponsorName { get; set; }
+        public string SponsorFirstName { get; set; }
+        public string SponsorLastName { get; set; }
         public byte[] DeactivationWorkFlowPdfAttachment { get; set; }
         public string ReportingManagerEmail { get; set; }
         public string WorkFlowStatus { get; set; }

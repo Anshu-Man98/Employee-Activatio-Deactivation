@@ -26,7 +26,8 @@ namespace EmployeeDeactivation.BusinessLayer
                 EmployeeGId = managerApprovalStatus.EmployeeGId,
                 EmployeeLastWorkingDate = managerApprovalStatus.EmployeeLastWorkingDate,
                 EmployeeTeamName = managerApprovalStatus.EmployeeTeamName,
-                SponsorName = managerApprovalStatus.SponsorName,
+                SponsorFirstName = managerApprovalStatus.SponsorFirstName,
+                SponsorLastName = managerApprovalStatus.SponsorLastName,
                 DeactivationWorkFlowPdfAttachment = managerApprovalStatus.DeactivationWorkFlowPdfAttachment,
                 ReportingManagerEmail= managerApprovalStatus.ReportingManagerEmail,
                 WorkFlowStatus = managerApprovalStatus.WorkFlowStatus
