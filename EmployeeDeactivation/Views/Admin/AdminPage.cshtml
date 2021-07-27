@@ -85,10 +85,11 @@
                             $('#editDepartment').val(response.department);
                             $('#editRmEmail').val(response.reportingManagerEmailID);
                             $('#editEmail').val(response.sponsorEmailID);
-                            $('#editFromEmail').val(response.fromEmailID);
-                            $('#editToEmail').val(response.toEmailID);
+                            $('#editFromEmail').val(response.cmEmailID);
+                            $('#editToEmail').val(response.sivantosPointEmailID);
                             $('#editCcEmail').val(response.ccEmailID);
                             openForm1();
+                            
                         }
                     }
                 });
@@ -104,8 +105,8 @@
                 fileData.append('SponsorGID', $('#editgid').val());
                 fileData.append('Department', $('#editDepartment').val());
                 fileData.append('ReportingManagerEmailID', $('#editRmEmail').val());
-                fileData.append('FromEmailID', $('#editFromEmail').val());
-                fileData.append('editToEmail', $('#editToEmail').val());
+                fileData.append('CmEmailID', $('#editFromEmail').val());
+                fileData.append('SivantosPointEmailID', $('#editToEmail').val());
                 fileData.append('CcEmailID', $('#editCcEmail').val());
                 $.ajax({
                     type: "POST",
@@ -117,7 +118,7 @@
                     success:
                         function (response) {
                         if (response) {
-
+                           
                         }
                     }
 
@@ -138,8 +139,8 @@
                 fileData.append('SponsorGID', $('#sponsorGid').val());
                 fileData.append('Department', $('#sponsorDepartment').val());
                 fileData.append('ReportingManagerEmailID', $('#reportingManEmail').val());
-                fileData.append('FromEmailID', $('#fromEmail').val());
-                fileData.append('ToEmailID', $('#toEmail').val());
+                fileData.append('CmEmailID', $('#fromEmail').val());
+                fileData.append('SivantosPointEmailID', $('#toEmail').val());
                 fileData.append('CcEmailID', $('#ccEmail').val());
                 $.ajax({
                     type: "POST",
@@ -151,6 +152,7 @@
                     success: function (response)
                     {
                         if (response) {
+                            
 
                         }
                     }
@@ -174,6 +176,7 @@
         function openForm1()
         {
             document.getElementById("myForm1").style.display = "block";
+
         }
         function closeForm1()
         {

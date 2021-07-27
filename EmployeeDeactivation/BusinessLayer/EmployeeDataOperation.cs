@@ -26,7 +26,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
                     foreach (var deactivatedEmployee in deactivatedEmployees)
                     {
-                        if (deactivatedEmployee.GId == employeeDetails.GId)
+                        if (deactivatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
                         {
                             _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
                             _context.SaveChanges();
@@ -40,7 +40,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     var activatedEmployees = RetrieveAllActivationWorkFlow();
                     foreach (var activatedEmployee in activatedEmployees)
                     {
-                        if (activatedEmployee.GId == employeeDetails.GId)
+                        if (activatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
                         {
                             _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
                             _context.SaveChanges();
@@ -90,7 +90,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var activationWorkflows = _context.ActivationWorkflow.ToList();
             foreach (var activatedWorkflow in activationWorkflows)
             {
-                if (activatedWorkflow.GId == gId)
+                if (activatedWorkflow.GId.ToLower() == gId.ToLower())
                 {
                     activatedWorkflow.ActivationWorkFlowPdfAttachment = pdf;
                     _context.SaveChanges();
@@ -105,7 +105,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeDetails = RetrieveAllDeactivatedEmployees();
             foreach (var employee in employeeDetails)
             {
-                if (employee.GId == gId)
+                if (employee.GId.ToLower() == gId.ToLower())
                 {
                     return employee;
                 }
@@ -117,8 +117,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var deactivationDetails = RetrieveAllDeactivatedEmployees();
             foreach (var item in deactivationDetails)
             {
-                var i = item.GId;
-                if (i == gid)
+                if (item.GId.ToLower() == gid.ToLower())
                 {
                     return new string[] { item.EmailID, item.TeamName,item.CcEmailId };
                     
@@ -134,7 +133,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allActivatedWorkFlows = RetrieveAllActivationWorkFlow();
             foreach (var item in allActivatedWorkFlows)
             {
-                if (item.GId == gId)
+                if (item.GId.ToLower() == gId.ToLower())
                 {
                     return item;
                 }
@@ -151,9 +150,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var teamDetails = RetrieveAllSponsorDetails();
             foreach (var item in teamDetails)
             {
-                if(item.TeamName == teamName)
+                if(item.TeamName.ToLower() == teamName.ToLower())
                 {
-                    return new string[] { item.FromEmailID, item.ToEmailID, item.CcEmailID,item.ReportingManagerEmailID };
+                    return new string[] { item.CmEmailID, item.SivantosPointEmailID, item.CcEmailID,item.ReportingManagerEmailID };
                 }
             }
             return new string[] { };      

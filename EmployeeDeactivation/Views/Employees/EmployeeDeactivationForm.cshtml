@@ -117,8 +117,8 @@
                             $('#sponsorGid').val(item.sponsorGID);
                             $('#reportingManagerEmail').val(item.reportingManagerEmailID);
                             $('#sponsorDetails').show();
-                            $('#toEmailId').val(item.toEmailID);
-                            $('#fromEmailId').val(item.fromEmailID);
+                            $('#toEmailId').val(item.sivantosPointEmailID);
+                            $('#fromEmailId').val(item.cmEmailID);
                             $('#ccEmailId').val(item.ccEmailID);
 
                         }
@@ -183,7 +183,7 @@
                                                    $.ajax({
                                                         type: "POST",
                                                         url: '@Url.Action("PdfAttachmentEmail", "Email")',
-                                                        data: { 'memoryStream': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
+                                                       data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
                                                         dataType: "json",
                                                         success: function (result) {
                                                             if (result) {

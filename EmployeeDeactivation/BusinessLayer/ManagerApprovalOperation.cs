@@ -20,6 +20,7 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus)
         {
+            var count = 0;
             ManagerApprovalStatus ManagerApprovalStatus = new ManagerApprovalStatus()
             {
                 EmployeeName = managerApprovalStatus.EmployeeName,
@@ -32,8 +33,19 @@ namespace EmployeeDeactivation.BusinessLayer
                 ReportingManagerEmail= managerApprovalStatus.ReportingManagerEmail,
                 WorkFlowStatus = managerApprovalStatus.WorkFlowStatus
             };
-            _context.Add(ManagerApprovalStatus);
-            _context.SaveChanges();
+            var pendingDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var item in pendingDeactivationWorkflow)
+            {
+                if(item.EmployeeGId==managerApprovalStatus.EmployeeGId)
+                {
+                    count++;
+                }
+            }
+            if(count==0)
+            {
+                _context.Add(ManagerApprovalStatus);
+                _context.SaveChanges();
+            }
         }
         public List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail)
         {
@@ -55,7 +67,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allDeactivationWorkflow = RetrieveDeactivationDetails();
             foreach (var item in allDeactivationWorkflow)
             {
-                if (item.EmployeeGId == gId)
+                if (item.EmployeeGId.ToLower() == gId.ToLower())
                 {
                    return item.DeactivationWorkFlowPdfAttachment;
                 }
@@ -80,7 +92,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allDeactivationWorkflow = RetrieveDeactivationDetails();
             foreach (var i in allDeactivationWorkflow)
             {
-                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                if (i.EmployeeGId.ToLower() == gId.ToLower() && i.WorkFlowStatus.ToLower() == "pending")
                 {
                     i.WorkFlowStatus = "denied";
                     return _context.SaveChanges() ==1;

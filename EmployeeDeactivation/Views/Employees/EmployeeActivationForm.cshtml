@@ -34,8 +34,13 @@
 
         <script src="~/js/bootbox.js"></script>
         <script type="text/javascript">
-
-        $(document).ready(function () {
+            var sponsorFirstName = "";
+            var sponsorLastName = "";
+            var sponsorName = "";
+            $(document).ready(function () {
+                sponsorFirstName = "";
+                sponsorLastName = "";
+                sponsorName = "";
             GetTeamNames();
             $('#sponsorDetails').hide();
             $('#reportingManagerEmailId').hide();
@@ -51,6 +56,7 @@
                         $('<option selected disabled hidden></option>').val('').html('Choose Here')
                     );
                     $.each(response, function (i, item) {
+                        
                         $('#teamNames').append($('<option>', {
                             value: item.teamName,
                             text: item.teamName
@@ -72,7 +78,10 @@
 
                     $.each(response, function (i, item) {
                         if (item.teamName == teamName) {
-                            $('#sponsorFirstName').val(item.sponsorFirstName + " " + item.sponsorLastName);
+                            sponsorFirstName = item.sponsorFirstName;
+                            sponsorLastName = item.sponsorLastName;
+                            sponsorName = item.sponsorFirstName + " " + item.sponsorLastName;
+                            $('#sponsorName').val(sponsorName);
                             $('#sponsorEmail').val(item.sponsorEmailID);
                             $('#sponsorDepartment').val(item.department);
                             $('#sponsorGid').val(item.sponsorGID);
@@ -91,7 +100,8 @@
                 fileData.append('GId', $('#siemensGid').val());
                 fileData.append('EmailID', $('#siemensEmail').val());
                 fileData.append('TeamName', $('#teamNames').val());
-                fileData.append('SponsorName', $('#sponsorFirstName').val());
+                fileData.append('SponsorFirstName', sponsorFirstName);
+                fileData.append('SponsorLastName', sponsorLastName);
                 fileData.append('SponsorEmailID', $('#sponsorEmail').val());
                 fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
                 fileData.append('SponsorGId', $('#sponsorGid').val());
@@ -103,6 +113,7 @@
                 fileData.append('Address', $('#address').val());
                 fileData.append('PhoneNo', $('#phoneNo').val());
                 fileData.append('Nationality', $('#nationality').val());
+
 
             $.ajax({
                 type: "POST",
@@ -146,7 +157,7 @@
                                                             $.ajax({
                                                             type: "POST",
                                                             url: '@Url.Action("PdfAttachmentEmail", "Email")',
-                                                            data: { 'memoryStream': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': $('#sponsorGid').val(), 'isActivationPDf': true },
+                                                                data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': $('#sponsorGid').val(), 'isActivationPDf': true },
                                                             success: function () {
                                                                 bootbox.alert("Your form has been sent sucessfully!");
                                                                 document.getElementById('siemensFirstName').value = "";
@@ -535,7 +546,7 @@
                             Sponsor Name:
                         </label>
                         <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorFirstName" readonly />
+                            <input type="text" class="form-control" id="sponsorName" readonly />
                         </div>
                     </div>
 

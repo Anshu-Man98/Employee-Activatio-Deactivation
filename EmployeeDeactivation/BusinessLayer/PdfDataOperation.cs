@@ -62,8 +62,9 @@ namespace EmployeeDeactivation.BusinessLayer
             (form.Fields[11] as PdfLoadedTextBoxField).Text = activationEmployeeData.FirstName ?? "";
             (form.Fields[12] as PdfLoadedTextBoxField).Text = activationEmployeeData.Address ?? "";
             (form.Fields[13] as PdfLoadedTextBoxField).Text = activationEmployeeData.PlaceOfBirth ?? "";
-            (form.Fields[16] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorFirstName ?? "";
-            (form.Fields[17] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorLastName ?? "";
+            (form.Fields[16] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorLastName ?? "";
+            (form.Fields[17] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorFirstName ?? "";
+            (form.Fields[18] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorGId ?? "";
             (form.Fields[19] as PdfLoadedTextBoxField).Text = activationEmployeeData.SponsorDepartment ?? "";
             MemoryStream stream = new MemoryStream();
             loadedDocument.Save(stream);

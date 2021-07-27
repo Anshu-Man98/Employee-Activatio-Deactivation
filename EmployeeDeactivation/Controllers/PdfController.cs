@@ -24,7 +24,7 @@ namespace EmployeeDeactivation.Controllers
         [Route("Pdf/CreateActivationPdf")]
         public IActionResult CreateActivationPdf(string gId)
         {
-            return Json("data:application/pdf;base64," + Convert.ToBase64String(_pdfDataOperation.FillActivationPdfForm(gId)));
+            return Json("data:application/pdf;base64,"+ Convert.ToBase64String(_pdfDataOperation.FillActivationPdfForm(gId)));
         }
         
     }
