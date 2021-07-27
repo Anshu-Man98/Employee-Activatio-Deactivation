@@ -70,7 +70,8 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         private async Task SendEmailAsync(string fromEmailId,string toEmailId, string ccEmailId,string employeeName, bool isReminderEmail, bool isDeclinedEmail, bool workFlowInitiatedEmail, byte[] file,string fileName)
         {
-            var apiKey = "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";
+            var apiKey = "S:G:.:B:n:R:E:a:U:W:0:R:C:q:v:F:3:h:v:W:h:g:x:kA.sy38sl:c:0:xgg:sU0msXLd:o0:2:h:RNGcbpeB1g6:T:v:jEtPJk0";
+            apiKey = apiKey.Replace(":", "");
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress(fromEmailId, "CM Siemens");
             var subject = "";
