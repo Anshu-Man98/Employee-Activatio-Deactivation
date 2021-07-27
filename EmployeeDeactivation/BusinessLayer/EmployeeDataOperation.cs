@@ -18,44 +18,37 @@ namespace EmployeeDeactivation.BusinessLayer
         #region Employee Data
         public bool AddEmployeeData(EmployeeDetails employeeDetails)
         {
-            try
+            if (employeeDetails.isDeactivatedWorkFlow)
             {
-                if (employeeDetails.isDeactivatedWorkFlow)
-                {
 
-                    var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
-                    foreach (var deactivatedEmployee in deactivatedEmployees)
-                    {
-                        if (deactivatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
-                        {
-                            _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                            _context.SaveChanges();
-                        }
-                    }
-                    DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                    _context.Add(employeeDetail);
-                }
-                else
+                var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
+                foreach (var deactivatedEmployee in deactivatedEmployees)
                 {
-                    var activatedEmployees = RetrieveAllActivationWorkFlow();
-                    foreach (var activatedEmployee in activatedEmployees)
+                    if (deactivatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
                     {
-                        if (activatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
-                        {
-                            _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                            _context.SaveChanges();
-                        }
+                        _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                        _context.SaveChanges();
                     }
-                    ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                    _context.Add(employeeDetail);
                 }
-
-                return _context.SaveChanges() == 1;
+                DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                _context.Add(employeeDetail);
             }
-            catch(Exception ex)
+            else
             {
-                throw ex;
+                var activatedEmployees = RetrieveAllActivationWorkFlow();
+                foreach (var activatedEmployee in activatedEmployees)
+                {
+                    if (activatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
+                    {
+                        _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                        _context.SaveChanges();
+                    }
+                }
+                ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                _context.Add(employeeDetail);
             }
+
+            return _context.SaveChanges() == 1;
         }
 
         public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()

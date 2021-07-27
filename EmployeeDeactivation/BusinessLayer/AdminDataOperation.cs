@@ -39,26 +39,19 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public bool AddSponsorData(Teams team)
         {
-            try
+            bool databaseUpdateStatus = false;
+            var teamDetails = _context.Teams.ToList();
+            foreach (var teams in teamDetails)
             {
-                bool databaseUpdateStatus = false;
-                var teamDetails = _context.Teams.ToList();
-                foreach (var teams in teamDetails)
+                if (teams.SponsorGID.ToLower() == team.SponsorGID.ToLower())
                 {
-                    if (teams.SponsorGID.ToLower() == team.SponsorGID.ToLower())
-                    {
-                        _context.Remove(_context.Teams.Single(a => a.SponsorGID.ToLower() == team.SponsorGID.ToLower()));
-                        _context.SaveChanges();
-                    }
+                    _context.Remove(_context.Teams.Single(a => a.SponsorGID.ToLower() == team.SponsorGID.ToLower()));
+                    _context.SaveChanges();
                 }
-                _context.Add(team);
-                databaseUpdateStatus = _context.SaveChanges() == 1;
-                return databaseUpdateStatus;
             }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            _context.Add(team);
+            databaseUpdateStatus = _context.SaveChanges() == 1;
+            return databaseUpdateStatus;
         }
 
         public bool DeleteSponsorData(string gId)

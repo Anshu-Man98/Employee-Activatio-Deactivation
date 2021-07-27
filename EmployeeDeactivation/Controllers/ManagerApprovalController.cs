@@ -72,7 +72,7 @@ namespace EmployeeDeactivation.Controllers
         }
         private static string GetUserEmail(ClaimsPrincipal User)
         {
-            return User.Identities.FirstOrDefault().Claims.Where(c => c.Type.Equals("preferred_username")).FirstOrDefault().Value;
+            return User.Identities.FirstOrDefault().Claims.FirstOrDefault(c => c.Type.Equals("preferred_username")).Value;
         }
 
     }

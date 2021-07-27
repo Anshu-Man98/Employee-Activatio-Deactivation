@@ -70,50 +70,43 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         private async Task SendEmailAsync(string fromEmailId,string toEmailId, string ccEmailId,string employeeName, bool isReminderEmail, bool isDeclinedEmail, bool workFlowInitiatedEmail, byte[] file,string fileName)
         {
-            try
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress(fromEmailId, "CM Siemens");
+            var subject = "";
+            var to = new EmailAddress(toEmailId, "");
+            var cc = ccEmailId.Split(",");
+            List<EmailAddress> emailAddress = new List<EmailAddress>();
+            foreach (var item in cc)
             {
-                var apiKey = "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";
-                var client = new SendGridClient(apiKey);
-                var from = new EmailAddress(fromEmailId, "CM Siemens");
-                var subject = "";
-                var to = new EmailAddress(toEmailId, "");
-                var cc = ccEmailId.Split(",");
-                List<EmailAddress> emailAddress = new List<EmailAddress>();
-                foreach (var item in cc)
-                {
-                    emailAddress.Add(new EmailAddress(item));
+                emailAddress.Add(new EmailAddress(item));
 
-                }
-                var plainTextContent = "";
-                var htmlContent = "<strong>Workflow</strong>";
-                if (isDeclinedEmail)
-                {
-                    subject = "Deactivation workflow declined";
-                    plainTextContent = employeeName + " your account deactivation form has been declined";
-
-                }
-                if (workFlowInitiatedEmail)
-                {
-                    subject = "Workflow initiated";
-                }
-                if (isReminderEmail)
-                {
-                    subject = "Deactivation workflow";
-                    plainTextContent = "Today is " + employeeName + "'s last working day please check if you have approved the deactivation workflow";
-                }
-                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                msg.AddCcs(emailAddress);
-
-                if (file != null)
-                {
-                    msg.AddAttachment(filename: fileName + ".pdf", Convert.ToBase64String(file));
-                }
-                _ = await client.SendEmailAsync(msg);
             }
-            catch(Exception ex)
+            var plainTextContent = "";
+            var htmlContent = "<strong>Workflow</strong>";
+            if (isDeclinedEmail)
             {
-                throw ex;
+                subject = "Deactivation workflow declined";
+                plainTextContent = employeeName + " your account deactivation form has been declined";
+
             }
+            if (workFlowInitiatedEmail)
+            {
+                subject = "Workflow initiated";
+            }
+            if (isReminderEmail)
+            {
+                subject = "Deactivation workflow";
+                plainTextContent = "Today is " + employeeName + "'s last working day please check if you have approved the deactivation workflow";
+            }
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            msg.AddCcs(emailAddress);
+
+            if (file != null)
+            {
+                msg.AddAttachment(filename: fileName + ".pdf", Convert.ToBase64String(file));
+            }
+            _ = await client.SendEmailAsync(msg);
         }
     }
 }
