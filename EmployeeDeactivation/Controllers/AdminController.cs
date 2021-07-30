@@ -36,10 +36,10 @@ namespace EmployeeDeactivation.Controllers
             return Json(_adminDataOperation.RetrieveSponsorDetails());
         }
         [HttpPost]
-        [Route("Admin/SponsorDetailsAccordingToGid")]
-        public JsonResult SponsorDetailsAccordingToGid(string sponsorGID)
+        [Route("Admin/SponsorDetailsAccordingToTeamName")]
+        public JsonResult SponsorDetailsAccordingToGid(string teamName)
         {
-            return Json(_adminDataOperation.RetrieveSponsorDetailsAccordingToGid(sponsorGID));
+            return Json(_adminDataOperation.RetrieveSponsorDetailsAccordingToTeamName(teamName));
         }
 
         [HttpPost]
@@ -52,9 +52,9 @@ namespace EmployeeDeactivation.Controllers
 
         [HttpPost]
         [Route("Admin/DeleteSponsorDetail")]
-        public JsonResult DeleteSponsorDetails(string gId)
+        public JsonResult DeleteSponsorDetails(string teamName)
         { 
-            return Json(_adminDataOperation.DeleteSponsorData(gId));
+            return Json(_adminDataOperation.DeleteSponsorData(teamName));
         }
 
 

@@ -35,7 +35,7 @@
 
         $(document).on("click", "#delete", function (e) {
             var $row = $(this).closest("tr"),
-                $tds = $row.find("td:nth-child(3)").text();
+                $tds = $row.find("td:nth-child(1)").text();
             bootbox.dialog({
                 message: "Are you sure you want to delete the selected sponsor details?",
                 size: "small",
@@ -46,7 +46,7 @@
                             $.ajax({
                                 type: "POST",
                                 url: '@Url.Action("DeleteSponsorDetails", "Admin")',
-                                data: { 'gId': $tds },
+                                data: { 'teamName': $tds },
                                 dataType: "json",
                                 success: function (response) {
                                     if (response) {
@@ -69,12 +69,12 @@
         });
 
         $(document).on("click", "#edit", function (e) {
-            var gId = $(this).closest("tr").find("td:nth-child(3)").text();
+            var teamName = $(this).closest("tr").find("td:nth-child(1)").text();
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("SponsorDetailsAccordingToGid", "Admin")',
+                url: '@Url.Action("SponsorDetailsAccordingToTeamName", "Admin")',
                 dataType: "json",
-                data: { 'sponsorGID': gId },
+                data: { 'teamName': teamName },
                     success: function (response)
                     {
                         if (response) {
@@ -382,7 +382,7 @@
                 <h3>Edit Sponsor Details</h3>
 
                 <label for="Team"><b>Team Name</b></label>
-                <input type="text" placeholder="Team Name" name="team" id="editTeamName">
+                <input type="text" placeholder="Team Name" name="team" id="editTeamName" readonly>
 
                 <label for="firstname"><b>Sponsor First Name</b></label>
                 <input type="text" placeholder="First Name" name="firstname" id="editFirstName">
@@ -391,7 +391,7 @@
                 <input type="text" placeholder="Last Name" name="lastname" id="editLastName">
 
                 <label for="gid"><b>Sponsor GID</b></label>
-                <input type="text" placeholder="GID" name="gid" id="editgid" readonly>
+                <input type="text" placeholder="GID" name="gid" id="editgid" >
 
                 <label for="email"><b>Sponsor Email Id</b></label>
                 <input type="email" placeholder="Email Id" name="email" id="editEmail">

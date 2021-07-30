@@ -24,12 +24,12 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             return _context.Teams.ToList();
         }
-        public Teams RetrieveSponsorDetailsAccordingToGid(string gId)
+        public Teams RetrieveSponsorDetailsAccordingToTeamName(string teamName)
         {
             var allSponsors = _context.Teams.ToList();
             foreach (var item in allSponsors)
             {
-                if(item.SponsorGID.ToLower()==gId.ToLower())
+                if(item.TeamName.ToLower()==teamName.ToLower())
                 {
                     return item;
                 }
@@ -43,9 +43,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var teamDetails = _context.Teams.ToList();
             foreach (var teams in teamDetails)
             {
-                if (teams.SponsorGID.ToLower() == team.SponsorGID.ToLower())
+                if (teams.TeamName.ToLower() == team.TeamName.ToLower())
                 {
-                    _context.Remove(_context.Teams.Single(a => a.SponsorGID.ToLower() == team.SponsorGID.ToLower()));
+                    _context.Remove(_context.Teams.Single(a => a.TeamName.ToLower() == team.TeamName.ToLower()));
                     _context.SaveChanges();
                 }
             }
@@ -54,14 +54,14 @@ namespace EmployeeDeactivation.BusinessLayer
             return databaseUpdateStatus;
         }
 
-        public bool DeleteSponsorData(string gId)
+        public bool DeleteSponsorData(string teamName)
         {
             var teamDetails = _context.Teams.ToList();
             foreach (var teams in teamDetails)
             {
-                if (teams.SponsorGID.ToLower() == gId.ToLower())
+                if (teams.TeamName.ToLower() == teamName.ToLower())
                 {
-                    _context.Remove(_context.Teams.Single(a => a.SponsorGID.ToLower() == gId.ToLower()));
+                    _context.Remove(_context.Teams.Single(a => a.TeamName.ToLower() == teamName.ToLower()));
                     return _context.SaveChanges() == 1;
                     
                 }
