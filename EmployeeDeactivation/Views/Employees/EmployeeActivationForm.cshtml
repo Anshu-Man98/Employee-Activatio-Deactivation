@@ -321,7 +321,7 @@
                     document.getElementById('dateOfBirth').focus();
                     return false;
                 }
-                if (document.getElementById('placeOfBirth').value == "" || ValidatePOB() == false) {
+                if (document.getElementById('placeOfBirth').value == "") {
                     alert("Please provide your place of birth");
                     document.getElementById('placeOfBirth').focus();
                     return false;
@@ -622,7 +622,7 @@
                         Place of Birth:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="placeOfBirth" onkeyup="ValidatePOB()" placeholder="POB" />
+                        <input type="text" class="form-control" id="placeOfBirth" placeholder="POB" />
                     </div>
                 </div>
                 <div class="form-group row">
