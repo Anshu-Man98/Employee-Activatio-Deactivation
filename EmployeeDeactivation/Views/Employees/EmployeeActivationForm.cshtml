@@ -152,29 +152,29 @@
                                                     $.ajax({
                                                         type: "POST",
                                                         url: '@Url.Action("AddActivationPdfToDatabase", "Employees")',
-                                                        data: { 'pdf': response.toString().replace('data:application/pdf;base64,', ''), 'gId': $('#siemensGid').val()},
+                                                        data: { 'pdf': response.toString().replace('data:application/pdf;base64,', ''), 'gId': $('#siemensGid').val() },
                                                         success: function () {
                                                             $.ajax({
-                                                            type: "POST",
-                                                            url: '@Url.Action("PdfAttachmentEmail", "Email")',
+                                                                type: "POST",
+                                                                url: '@Url.Action("PdfAttachmentEmail", "Email")',
                                                                 data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': $('#sponsorGid').val(), 'isActivationPDf': true },
-                                                            success: function () {
-                                                                bootbox.alert("Your form has been sent sucessfully!");
-                                                                document.getElementById('siemensFirstName').value = "";
-                                                                document.getElementById('siemensLastName').value = "";
-                                                                document.getElementById('siemensEmail').value = "";
-                                                                document.getElementById('siemensGid').value = "";
-                                                                document.getElementById('teamNames').value = "";
-                                                                document.getElementById('role').value = "";
-                                                                document.getElementById('gender').value = "";
-                                                                document.getElementById('dateOfBirth').value= "";
-                                                                document.getElementById('placeOfBirth').value= "";
-                                                                document.getElementById('address').value= "";
-                                                                document.getElementById('phoneNo').value = "";
-                                                                document.getElementById('nationality').value = "";
-                                                                $('#sponsorDetails').hide();
-                                                            }
-                                                        });
+                                                                success: function () {
+                                                                    bootbox.alert("Your form has been sent sucessfully!");
+                                                                    document.getElementById('siemensFirstName').value = "";
+                                                                    document.getElementById('siemensLastName').value = "";
+                                                                    document.getElementById('siemensEmail').value = "";
+                                                                    document.getElementById('siemensGid').value = "";
+                                                                    document.getElementById('teamNames').value = "";
+                                                                    document.getElementById('role').value = "";
+                                                                    document.getElementById('gender').value = "";
+                                                                    document.getElementById('dateOfBirth').value = "";
+                                                                    document.getElementById('placeOfBirth').value = "";
+                                                                    document.getElementById('address').value = "";
+                                                                    document.getElementById('phoneNo').value = "";
+                                                                    document.getElementById('nationality').value = "";
+                                                                    $('#sponsorDetails').hide();
+                                                                }
+                                                            });
                                                         }
                                                     })
 
@@ -184,6 +184,9 @@
                                 }
                             }
                         });
+                    }
+                    else {
+                        alert("Data counld not be updated. Try again")
                     }
                 }
             });

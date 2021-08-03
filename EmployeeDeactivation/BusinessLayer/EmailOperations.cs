@@ -94,6 +94,7 @@ namespace EmployeeDeactivation.BusinessLayer
             if (workFlowInitiatedEmail)
             {
                 subject = "Workflow initiated";
+                htmlContent = "Dear Sevgi,<br>We have a new member joined our Test Automation team. Could you please initiate the audiology account creation process for him?<br>Thanks & Regards,<br>Arun";
             }
             if (isReminderEmail)
             {

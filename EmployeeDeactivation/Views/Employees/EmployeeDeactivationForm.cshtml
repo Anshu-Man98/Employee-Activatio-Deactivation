@@ -153,7 +153,7 @@
                     processData: false,
                 contentType: false,
                 success: function (response) {
-                    if (response) {
+                    if (response == true) {
                         $.ajax({
                             type: "GET",
                             url: '@Url.Action("CreateDeactivationPdf", "Pdf")',
@@ -180,52 +180,55 @@
                                             },
                                             callback: function (result) {
                                                 if (result) {
-                                                   $.ajax({
+                                                    $.ajax({
                                                         type: "POST",
                                                         url: '@Url.Action("PdfAttachmentEmail", "Email")',
-                                                       data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
+                                                        data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
                                                         dataType: "json",
                                                         success: function (result) {
                                                             if (result) {
-                                                            fileData = new FormData();
-                                                            fileData.append('EmployeeName', $('#employeeFirstName').val() + " " + $('#employeeLastName').val());
-                                                            fileData.append('EmployeeLastWorkingDate', $('#employeeLastWorkingdate').val());
-                                                            fileData.append('EmployeeGId', $('#employeeGid').val());
-                                                            fileData.append('EmployeeTeamName', $('#teamNames').val());
-                                                            fileData.append('SponsorFirstName', sponsorFirstName);
-                                                            fileData.append('SponsorLastName', sponsorLastName);
-                                                            fileData.append('DeactivationWorkFlowPdfAttachment', response.toString().replace('data:application/pdf;base64,', ''));
-                                                            fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
-                                                                fileData.append('WorkFlowStatus',"@managerAdminApprove");
-                                                            $.ajax({
-                                                                type: "POST",
-                                                                url: '@Url.Action("AddPendingDeactivationRequestToDatabase", "ManagerApproval")',
-                                                                data: fileData,
-                                                                processData: false,
-                                                                contentType: false,
-                                                                success: function (stream) {
-                                                                    bootbox.alert("Your form has been sent sucessfully!");
-                                                                    document.getElementById('employeeGid').value = "";
-                                                                    document.getElementById('employeeLastWorkingdate').value = "";
-                                                                    document.getElementById('teamNames').value = "";
-                                                                    document.getElementById('employeeFirstName').value = "";
-                                                                    document.getElementById('employeeLastName').value = "";
-                                                                    document.getElementById('employeeEmail').value = "";
-                                                                    $('#sponsorDetails').hide();
+                                                                fileData = new FormData();
+                                                                fileData.append('EmployeeName', $('#employeeFirstName').val() + " " + $('#employeeLastName').val());
+                                                                fileData.append('EmployeeLastWorkingDate', $('#employeeLastWorkingdate').val());
+                                                                fileData.append('EmployeeGId', $('#employeeGid').val());
+                                                                fileData.append('EmployeeTeamName', $('#teamNames').val());
+                                                                fileData.append('SponsorFirstName', sponsorFirstName);
+                                                                fileData.append('SponsorLastName', sponsorLastName);
+                                                                fileData.append('DeactivationWorkFlowPdfAttachment', response.toString().replace('data:application/pdf;base64,', ''));
+                                                                fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
+                                                                fileData.append('WorkFlowStatus', "@managerAdminApprove");
+                                                                $.ajax({
+                                                                    type: "POST",
+                                                                    url: '@Url.Action("AddPendingDeactivationRequestToDatabase", "ManagerApproval")',
+                                                                    data: fileData,
+                                                                    processData: false,
+                                                                    contentType: false,
+                                                                    success: function (stream) {
+                                                                        bootbox.alert("Your form has been sent sucessfully!");
+                                                                        document.getElementById('employeeGid').value = "";
+                                                                        document.getElementById('employeeLastWorkingdate').value = "";
+                                                                        document.getElementById('teamNames').value = "";
+                                                                        document.getElementById('employeeFirstName').value = "";
+                                                                        document.getElementById('employeeLastName').value = "";
+                                                                        document.getElementById('employeeEmail').value = "";
+                                                                        $('#sponsorDetails').hide();
 
-                                                                }
-                                                            });
-                                                        }
+                                                                    }
+                                                                });
+                                                            }
                                                         }
                                                     });
                                                 }
-                                                   
-                                                
+
+
                                             }
                                         });
                                 }
                             }
                         });
+                    }
+                    else {
+                        alert("Data counld not be updated. Try again")
                     }
                 }
             });

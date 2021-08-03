@@ -39,6 +39,7 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public bool AddSponsorData(Teams team)
         {
+        try{
             bool databaseUpdateStatus = false;
             var teamDetails = _context.Teams.ToList();
             foreach (var teams in teamDetails)
@@ -50,23 +51,36 @@ namespace EmployeeDeactivation.BusinessLayer
                 }
             }
             _context.Add(team);
-            databaseUpdateStatus = _context.SaveChanges() == 1;
-            return databaseUpdateStatus;
+           
+                databaseUpdateStatus = _context.SaveChanges() == 1;
+                return databaseUpdateStatus;
+
+            }
+        catch{
+                return false;
+            }     
         }
 
         public bool DeleteSponsorData(string teamName)
         {
-            var teamDetails = _context.Teams.ToList();
-            foreach (var teams in teamDetails)
+            try
             {
-                if (teams.TeamName.ToLower() == teamName.ToLower())
+                var teamDetails = _context.Teams.ToList();
+                foreach (var teams in teamDetails)
                 {
-                    _context.Remove(_context.Teams.Single(a => a.TeamName.ToLower() == teamName.ToLower()));
-                    return _context.SaveChanges() == 1;
-                    
+                    if (teams.TeamName.ToLower() == teamName.ToLower())
+                    {
+                        _context.Remove(_context.Teams.Single(a => a.TeamName.ToLower() == teamName.ToLower()));
+                        return _context.SaveChanges() == 1;
+
+                    }
                 }
+                return true;
             }
-            return true;
+            catch
+            {
+                return false;
+            }
 
         }
 

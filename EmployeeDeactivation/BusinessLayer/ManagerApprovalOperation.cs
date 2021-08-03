@@ -76,29 +76,43 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         public bool ApproveRequest(string gId)
         {
-            var allDeactivationWorkflow = RetrieveDeactivationDetails();
-            foreach (var i in allDeactivationWorkflow)
+            try
             {
-                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                var allDeactivationWorkflow = RetrieveDeactivationDetails();
+                foreach (var i in allDeactivationWorkflow)
                 {
-                    i.WorkFlowStatus = "approve";
-                    return _context.SaveChanges() ==1 ;
+                    if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                    {
+                        i.WorkFlowStatus = "approve";
+                        return _context.SaveChanges() == 1;
+                    }
                 }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
         public bool DeclineRequest(string gId)
         {
-            var allDeactivationWorkflow = RetrieveDeactivationDetails();
-            foreach (var i in allDeactivationWorkflow)
+            try
             {
-                if (i.EmployeeGId.ToLower() == gId.ToLower() && i.WorkFlowStatus.ToLower() == "pending")
+                var allDeactivationWorkflow = RetrieveDeactivationDetails();
+                foreach (var i in allDeactivationWorkflow)
                 {
-                    i.WorkFlowStatus = "denied";
-                    return _context.SaveChanges() ==1;
+                    if (i.EmployeeGId.ToLower() == gId.ToLower() && i.WorkFlowStatus.ToLower() == "pending")
+                    {
+                        i.WorkFlowStatus = "denied";
+                        return _context.SaveChanges() == 1;
+                    }
                 }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         public List<ManagerApprovalStatus> GetAllPendingDeactivationWorkflows()

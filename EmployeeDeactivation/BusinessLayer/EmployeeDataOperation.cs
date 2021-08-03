@@ -18,37 +18,44 @@ namespace EmployeeDeactivation.BusinessLayer
         #region Employee Data
         public bool AddEmployeeData(EmployeeDetails employeeDetails)
         {
-            if (employeeDetails.isDeactivatedWorkFlow)
+            try
             {
-
-                var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
-                foreach (var deactivatedEmployee in deactivatedEmployees)
+                if (employeeDetails.isDeactivatedWorkFlow)
                 {
-                    if (deactivatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
+
+                    var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
+                    foreach (var deactivatedEmployee in deactivatedEmployees)
                     {
-                        _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                        _context.SaveChanges();
+                        if (deactivatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
+                        {
+                            _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                            _context.SaveChanges();
+                        }
                     }
+                    DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                    _context.Add(employeeDetail);
                 }
-                DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                _context.Add(employeeDetail);
+                else
+                {
+                    var activatedEmployees = RetrieveAllActivationWorkFlow();
+                    foreach (var activatedEmployee in activatedEmployees)
+                    {
+                        if (activatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
+                        {
+                            _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                            _context.SaveChanges();
+                        }
+                    }
+                    ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                    _context.Add(employeeDetail);
+                }
+
+                return _context.SaveChanges() == 1;
             }
-            else
+            catch
             {
-                var activatedEmployees = RetrieveAllActivationWorkFlow();
-                foreach (var activatedEmployee in activatedEmployees)
-                {
-                    if (activatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
-                    {
-                        _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                        _context.SaveChanges();
-                    }
-                }
-                ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                _context.Add(employeeDetail);
+                return false;
             }
-
-            return _context.SaveChanges() == 1;
         }
 
         public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()
@@ -79,18 +86,25 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public bool SavePdfToDatabase(byte[] pdf, string gId)
         {
-
-            var activationWorkflows = _context.ActivationWorkflow.ToList();
-            foreach (var activatedWorkflow in activationWorkflows)
+            try
             {
-                if (activatedWorkflow.GId.ToLower() == gId.ToLower())
+
+                var activationWorkflows = _context.ActivationWorkflow.ToList();
+                foreach (var activatedWorkflow in activationWorkflows)
                 {
-                    activatedWorkflow.ActivationWorkFlowPdfAttachment = pdf;
-                    _context.SaveChanges();
-                    return true;
+                    if (activatedWorkflow.GId.ToLower() == gId.ToLower())
+                    {
+                        activatedWorkflow.ActivationWorkFlowPdfAttachment = pdf;
+                        _context.SaveChanges();
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
      
         public EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId)
