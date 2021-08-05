@@ -189,27 +189,124 @@
         }
 
         var Regx = "^[A-Za-z ]+$";
-        function ValidateTextField() {
-            if ($('#teamName').val().trim().search(Regx) || $('#sponsorFirstName').val().trim().search(Regx) || $('#sponsorLastName').val().trim().search(Regx) || $('#editTeamName').val().trim().search(Regx) || $('#editFirstName').val().trim().search(Regx) || $('#editLastName').val().trim().search(Regx)) {
+        function ValidateTeamName() {
+            if ($('#teamName').val().trim().search(Regx)) {
                 return true;
             } else {
                 return false;
             }
         }
 
+        function ValidateFirstName() {
+            if ($('#sponsorFirstName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function ValidateEditFirstName() {
+            if ($('#editFirstName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function ValidateLastName() {
+            if ($('#sponsorLastName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function ValidateEditLastName() {
+            if ($('#editLastName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        function ValidateSponsorEmail() {
+            if ($('#sponsorEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditSponsorEmail() {
+            if ($('#editSponsorEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditRMEmail() {
+            if ($('#editRmEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateRMEmail() {
+            if ($('#reportingManEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateFromEmail() {
+            if ($('#fromEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditFromEmail() {
+            if ($('#editFromEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateToEmail() {
+            if ($('#toEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditToEmail() {
+            if ($('#editToEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
         $(function () {
             $("#submit1").click(function (e) {
-                if (document.getElementById('teamName').value == "" || ValidateTextField() == false) {
+                if (document.getElementById('teamName').value == "" || ValidateTeamName() == true) {
                     alert("Please provide Team Name");
                     document.getElementById('teamName').focus();
                     return false;
                 }
-                if (document.getElementById('sponsorFirstName').value == "" || ValidateTextField() == false) {
+                if (document.getElementById('sponsorFirstName').value == "" || ValidateFirstName() == true) {
                     alert("Please provide First Name");
                     document.getElementById('sponsorFirstName').focus();
                     return false;
                 }
-                if (document.getElementById('sponsorLastName').value == "" || ValidateTextField() == false) {
+                if (document.getElementById('sponsorLastName').value == "" || ValidateLastName() == true) {
                     alert("Please provide Last Name");
                     document.getElementById('sponsorLastName').focus();
                     return false;
@@ -219,7 +316,7 @@
                     document.getElementById('sponsorGid').focus();
                     return false;
                 }
-                if (document.getElementById('sponsorEmail').value == "" ) {
+                if (document.getElementById('sponsorEmail').value == "" || ValidateSponsorEmail() == false) {
                     alert("Please provide Sponsor Email");
                     document.getElementById('sponsorEmail').focus();
                     return false;
@@ -228,17 +325,17 @@
                     alert("Please provide sponsor department");
                     return false;
                 }
-                if (document.getElementById('reportingManEmail').value == "") {
+                if (document.getElementById('reportingManEmail').value == "" || ValidateRMEmail() == false) {
                     alert("Please provide reporting manager email");
                     document.getElementById('reportingManEmail').focus();
                     return false;
                 }
-                if (document.getElementById('fromEmail').value == "" ) {
+                if (document.getElementById('fromEmail').value == "" || ValidateFromEmail() == false) {
                     alert("Please provide CM email");
                     document.getElementById('fromEmail').focus();
                     return false;
                 }
-                if (document.getElementById('toEmail').value == "" ) {
+                if (document.getElementById('toEmail').value == "" || ValidateToEmail() == false) {
                     alert("Please provide Sivantos Activation Request Point of Contact Id");
                     document.getElementById('toEmail').focus();
                     return false;
@@ -253,17 +350,13 @@
 
         $(function () {
             $("#submit2").click(function (e) {
-                if (document.getElementById('editTeamName').value == "" || ValidateTextField() == false) {
-                    alert("Please provide Team Name");
-                    document.getElementById('editTeamName').focus();
-                    return false;
-                }
-                if (document.getElementById('editFirstName').value == "" || ValidateTextField() == false) {
+
+                if (document.getElementById('editFirstName').value == "" || ValidateEditFirstName() == true) {
                     alert("Please provide First Name");
                     document.getElementById('editFirstName').focus();
                     return false;
                 }
-                if (document.getElementById('editLastName').value == "" || ValidateTextField() == false) {
+                if (document.getElementById('editLastName').value == "" || ValidateEditLastName() == true) {
                     alert("Please provide Last Name");
                     document.getElementById('editLastName').focus();
                     return false;
@@ -273,7 +366,7 @@
                     document.getElementById('editgid').focus();
                     return false;
                 }
-                if (document.getElementById('editSponsorEmail').value == "" ) {
+                if (document.getElementById('editSponsorEmail').value == "" || ValidateEditSponsorEmail() == false) {
                     alert("Please provide Sponsor Email");
                     document.getElementById('editSponsorEmail').focus();
                     return false;
@@ -282,22 +375,22 @@
                     alert("Please provide sponsor department");
                     return false;
                 }
-                if (document.getElementById('editRmEmail').value == "" ) {
+                if (document.getElementById('editRmEmail').value == "" || ValidateEditRMEmail() == false) {
                     alert("Please provide Reporting manager email");
                     document.getElementById('editRmEmail').focus();
                     return false;
                 }
-                if (document.getElementById('editFromEmail').value == "" ) {
+                if (document.getElementById('editFromEmail').value == "" || ValidateEditFromEmail() == false) {
                     alert("Please provide CM email");
                     document.getElementById('editFromEmail').focus();
                     return false;
                 }
-                if (document.getElementById('editToEmail').value == "" ) {
+                if (document.getElementById('editToEmail').value == "" || ValidateEditToEmail() == false) {
                     alert("Please provide Sivantos Activation Request Point of Contact Id");
                     document.getElementById('editToEmail').focus();
                     return false;
                 }
-                if (document.getElementById('editCcEmail').value == "" ) {
+                if (document.getElementById('editCcEmail').value == "") {
                     alert("Please provide cc of email");
                     document.getElementById('editCcEmail').focus();
                     return false;
@@ -453,34 +546,34 @@
                 <h3>Add Sponsor Details</h3>
 
                 <label for="Team"><b>Team Name</b></label>
-                <input type="text" placeholder="Team Name" id="teamName" name="team" onkeyup="ValidateTextField()" required>
+                <input type="text" placeholder="Team Name" id="teamName" name="team" onkeyup="ValidateTeamName()" required>
 
                 <label for="firstname"><b>Sponsor First Name</b></label>
-                <input type="text" placeholder="First Name" id="sponsorFirstName" name="firstname" onkeyup="ValidateTextField()" required>
+                <input type="text" placeholder="First Name" id="sponsorFirstName" name="firstname" onkeyup="ValidateFirstName()" required>
 
                 <label for="lastname"><b>Sponsor Last Name</b></label>
-                <input type="text" placeholder="Last Name" id="sponsorLastName" name="lastname" onkeyup="ValidateTextField()" required>
+                <input type="text" placeholder="Last Name" id="sponsorLastName" name="lastname" onkeyup="ValidateLastName()" required>
 
                 <label for="gid"><b>Sponsor GID</b></label>
                 <input type="text" placeholder="GID" id="sponsorGid" name="gid" required>
 
                 <label for="email"><b>Sponsor Email Id</b></label>
-                <input type="email" placeholder="Email Id" id="sponsorEmail" name="email" onkeyup="ValidateEmail()" required>
+                <input type="email" placeholder="Email Id" id="sponsorEmail" name="email" onkeyup="ValidateSponsorEmail()" required>
 
                 <label for="department"><b>Sponsor Department</b></label>
                 <input type="text" placeholder="Department" id="sponsorDepartment" name="department" required>
 
                 <label for="email"><b>Reporting Manager Email Id</b></label>
-                <input type="email" placeholder="Email Id" id="reportingManEmail" name="Rmemail" onkeyup="ValidateEmail()" required>
+                <input type="email" placeholder="Email Id" id="reportingManEmail" name="Rmemail" onkeyup="ValidateRMEmail()" required>
 
                 <label for="email"><b>CM Email Id</b></label>
-                <input type="email" value="vr.arun@siemens.com" id="fromEmail" name="Fromemail" onkeyup="ValidateEmail()" required>
+                <input type="email" value="vr.arun@siemens.com" id="fromEmail" name="Fromemail" onkeyup="ValidateFromEmail()" required>
 
                 <label for="email"><b>Sivantos Activation Request Point of Contact Email ID</b></label>
-                <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateEmail()" required>
+                <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateToEmail()" required>
 
                 <label for="email"><b>Cc Email Id</b></label>
-                <input type="text" placeholder="Email Id" id="ccEmail" name="Ccemail"  onkeyup="ValidateEmail()" required>
+                <input type="text" placeholder="Email Id" id="ccEmail" name="Ccemail"  required>
 
 
                 <button type="submit" id="submit1" class="btn">Submit</button>
@@ -499,31 +592,31 @@
                 <input type="text" placeholder="Team Name" name="team" id="editTeamName" readonly>
 
                 <label for="firstname"><b>Sponsor First Name</b></label>
-                <input type="text" placeholder="First Name" name="firstname" onkeyup="ValidateTextField()" id="editFirstName">
+                <input type="text" placeholder="First Name" name="firstname" onkeyup="ValidateEditFirstName()" id="editFirstName"required>
 
                 <label for="lastname"><b>Sponsor Last Name</b></label>
-                <input type="text" placeholder="Last Name" name="lastname" onkeyup="ValidateTextField()" id="editLastName">
+                <input type="text" placeholder="Last Name" name="lastname" onkeyup="ValidateEditLastName()" id="editLastName" required>
 
                 <label for="gid"><b>Sponsor GID</b></label>
-                <input type="text" placeholder="GID" name="gid" id="editgid" >
+                <input type="text" placeholder="GID" name="gid" id="editgid" required>
 
                 <label for="email"><b>Sponsor Email Id</b></label>
-                <input type="email" placeholder="Email Id" name="email" onkeyup="ValidateEmail()" id="editSponsorEmail">
+                <input type="email" placeholder="Email Id" name="email" onkeyup="ValidateEditSponsorEmail()" id="editSponsorEmail" required>
 
                 <label for="department"><b>Sponsor Department</b></label>
-                <input type="text" placeholder="Department" name="department" id="editDepartment">
+                <input type="text" placeholder="Department" name="department" id="editDepartment" required>
 
                 <label for="email"><b>Reporting Manager Email Id</b></label>
-                <input type="email" placeholder="Email Id" onkeyup="ValidateEmail()" id="editRmEmail">
+                <input type="email" placeholder="Email Id" onkeyup="ValidateEditRMEmail()" id="editRmEmail" required>
 
                 <label for="email"><b>CM Email Id</b></label>
-                <input type="email" id="editFromEmail" name="Fromemail" onkeyup="ValidateEmail()" required>
+                <input type="email" id="editFromEmail" name="Fromemail" onkeyup="ValidateEditFromEmail()" required>
 
                 <label for="email"><b>Sivantos Activation Request Point of Contact Id</b></label>
-                <input type="email"  id="editToEmail" name="Toemail" onkeyup="ValidateEmail()" required>
+                <input type="email"  id="editToEmail" name="Toemail" onkeyup="ValidateEditToEmail()" required>
 
                 <label for="email"><b>Cc Email Id</b></label>
-                <input type="text"  id="editCcEmail" name="Ccemail" onkeyup="ValidateEmail()" required>
+                <input type="text"  id="editCcEmail" name="Ccemail"  required>
 
 
                 <button type="submit" id="submit2" class="btn">Submit</button>

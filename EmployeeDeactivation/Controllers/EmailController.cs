@@ -13,9 +13,9 @@ namespace EmployeeDeactivation.Controllers
         }
         [HttpPost]
         [Route("Email/PdfAttachmentEmail")]
-        public JsonResult PdfAttachmentEmail(byte[] pdfFileArray, string employeeName, string teamName, string sponsorGID, bool isActivationPDf)
+        public JsonResult PdfAttachmentEmail(byte[] pdfFileArray, string employeeName, string teamName, bool isActivationPDf)
         {
-           return Json(_emailOperation.SendPDfAsEmailAttachment(pdfFileArray, employeeName, teamName, sponsorGID, isActivationPDf));
+           return Json(_emailOperation.SendPDfAsEmailAttachment(pdfFileArray, employeeName, teamName, isActivationPDf));
         }
 
         [HttpGet]
