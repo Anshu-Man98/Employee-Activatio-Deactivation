@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EmployeeDeactivation.Models;
+using System;
 
 namespace EmployeeDeactivation.Interface
 {
@@ -6,6 +7,6 @@ namespace EmployeeDeactivation.Interface
     {
         void SendReminderEmail();
         void SendEmailDeclined(string gId, string employeeName);
-        bool SendPDfAsEmailAttachment(byte[] pdfFileArray, string employeeName, string teamName, string sponsorGID, bool isActivationPdf);
+        bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf);
     }
 }

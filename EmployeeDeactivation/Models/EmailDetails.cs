@@ -11,8 +11,8 @@ namespace EmployeeDeactivation.Models
         public string ToEmailId { get; set; }
         public string CcEmailId { get; set; }
         public TypeOfWorkflow TypeOfWorkflow { get; set; }
-        public byte[] File { get; set; }
         public string FileName { get; set; }
+        public string EmployeeName { get; set; }
         public ActivationEmployeeDetails ActivatedEmployee { get; set; }
     }
 }

@@ -22,11 +22,15 @@ namespace EmployeeDeactivation.BusinessLayer
          public bool SendPDfAsEmailAttachment(EmailDetails details,bool isActivationPdf)
         {
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
-            //var emailDetails = _employeeDataOperation.GetReportingEmailIds(teamName);
             var emailDetails = _employeeDataOperation.GetReportingEmailIds(details.ActivatedEmployee.TeamName);
+            
 
             if (!isActivationPdf)
             {
+                details.FromEmailId = emailDetails[3];
+                details.ToEmailId = emailDetails[0];
+                details.CcEmailId = emailDetails[2];
+                details.FileName = fileName + details.EmployeeName;
                 //_ = SendEmailAsync(emailDetails[3], emailDetails[0], emailDetails[2], employeeName, TypeOfWorkflow.Deactivation, pdfFileArray, fileName + employeeName, teamName);
 
                 _ = SendEmailAsync(details, TypeOfWorkflow.Deactivation);
@@ -34,6 +38,10 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             if (isActivationPdf)
             {
+                details.FromEmailId = emailDetails[0];
+                details.ToEmailId = emailDetails[1];
+                details.CcEmailId = emailDetails[2];
+                details.FileName = fileName + details.EmployeeName;
                 //_ = SendEmailAsync(emailDetails[0], emailDetails[1], emailDetails[2], employeeName, TypeOfWorkflow.Activation, pdfFileArray, fileName+employeeName, teamName);
                 _ = SendEmailAsync(details, TypeOfWorkflow.Activation);
             }
@@ -44,6 +52,15 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeDetails = _employeeDataOperation.GetDeactivatedEmployeeDetails(gId);
             var reportingManagerEmailId = _employeeDataOperation.GetReportingEmailIds(employeeDetails[1])[3];
             byte[] byte_array = null;
+            EmailDetails details = new EmailDetails()
+            {
+                FromEmailId = reportingManagerEmailId,
+                ToEmailId = employeeDetails[0],
+                CcEmailId = "",
+                EmployeeName = employeeName,
+                ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = byte_array, TeamName = String.Empty },
+                FileName = String.Empty
+            };
            // _ = SendEmailAsync(reportingManagerEmailId, employeeDetails[0], "", employeeName,TypeOfWorkflow.DeclinedEmail, byte_array,string.Empty,string.Empty);
             _ = SendEmailAsync(details, TypeOfWorkflow.DeclinedEmail);
 
@@ -57,8 +74,17 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (DateTime.Today == date || DateTime.Today > date)
                 {
                     var emailDetails = _employeeDataOperation.GetReportingEmailIds(employee.EmployeeTeamName);
+                    EmailDetails details = new EmailDetails()
+                    {
+                        FromEmailId = emailDetails[0],
+                        ToEmailId = employee.ReportingManagerEmail,
+                        CcEmailId = "",
+                        EmployeeName = employee.EmployeeName,
+                        ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = employee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
+                        FileName = "DeactivationWorkflow_" + employee.EmployeeName
+                    };
                     //_ = SendEmailAsync(emailDetails[0], employee.ReportingManagerEmail,"", employee.EmployeeName, TypeOfWorkflow.ReminderEmail, employee.DeactivationWorkFlowPdfAttachment,"DeactivationWorkflow_"+employee.EmployeeName,string.Empty);
-                    _ = SendEmailAsync(EmailDetails, TypeOfWorkflow.ReminderEmail);
+                    _ = SendEmailAsync(details, TypeOfWorkflow.ReminderEmail);
                 }
             }
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
@@ -71,22 +97,31 @@ namespace EmployeeDeactivation.BusinessLayer
                     {
                         if (employee.GId.ToLower() == approvedEmployee.EmployeeGId.ToLower())
                         {
+                            EmailDetails details = new EmailDetails()
+                            {
+                                FromEmailId = employee.FromEmailId,
+                                ToEmailId = employee.SponsorEmailID,
+                                CcEmailId = _employeeDataOperation.GetDeactivatedEmployeeDetails(employee.GId)[3],
+                                EmployeeName = approvedEmployee.EmployeeName,
+                                ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
+                                FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
+                            };
                             //_ = SendEmailAsync("arun",employee.SponsorEmailID, _employeeDataOperation.GetDeactivatedEmployeeDetails(employee.GId)[3], approvedEmployee.EmployeeName,TypeOfWorkflow.ReminderEmail, approvedEmployee.DeactivationWorkFlowPdfAttachment, "DeactivationWorkflow_" + approvedEmployee.EmployeeName,string.Empty);
-                            _ = SendEmailAsync(EmailDetails ,, TypeOfWorkflow.ReminderEmail);
+                            _ = SendEmailAsync(details , TypeOfWorkflow.ReminderEmail);
                         }
                     }
                 }
             }
         }
-        private async Task SendEmailAsync(string fromEmailId,string toEmailId, string ccEmailId,string employeeName, Enum typeOfWorkflow , byte[] file,string fileName,string teamName)
+        private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {
             var apiKey = "S:G:.:B:n:R:E:a:U:W:0:R:C:q:v:F:3:h:v:W:h:g:x:kA.sy38sl:c:0:xgg:sU0msXLd:o0:2:h:RNGcbpeB1g6:T:v:jEtPJk0";
             apiKey = apiKey.Replace(":", "");
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress(fromEmailId, "CM Siemens");
+            var from = new EmailAddress(details.FromEmailId, "CM Siemens");
             var subject = "";
-            var to = new EmailAddress(toEmailId, "");
-            var cc = ccEmailId.Split(",");
+            var to = new EmailAddress(details.ToEmailId, "");
+            var cc = details.CcEmailId.Split(",");
             List<EmailAddress> emailAddress = new List<EmailAddress>();
             foreach (var item in cc)
             {
@@ -107,25 +142,25 @@ namespace EmployeeDeactivation.BusinessLayer
 
                 textBody += "</table>";
 
-                htmlContent = "Dear Sevgi,<br>We have a new member joined our "+teamName+" team. Could you please initiate the audiology account creation process ?<br> " + textBody + "Thanks & Regards,<br>Arun";
+                htmlContent = "Dear Sevgi,<br>We have a new member joined our "+details.ActivatedEmployee.TeamName+" team. Could you please initiate the audiology account creation process ?<br> " + textBody + "Thanks & Regards,<br>Arun";
 
             }
             if (Convert.ToInt32(typeOfWorkflow) == 3)
             {
                 subject = "Deactivation workflow";
-                plainTextContent = "Today is " + employeeName + "'s last working day please check if you have approved the deactivation workflow";
+                plainTextContent = "Today is " + details.EmployeeName + "'s last working day please check if you have approved the deactivation workflow";
             }
             if (Convert.ToInt32(typeOfWorkflow) == 4)
             {
                 subject = "Deactivation workflow declined";
-                plainTextContent = employeeName + " your account deactivation form has been declined";
+                plainTextContent = details.EmployeeName + " your account deactivation form has been declined";
 
             }
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             msg.AddCcs(emailAddress);
-            if (file != null)
+            if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null)
             {
-                msg.AddAttachment(filename: fileName + ".pdf", Convert.ToBase64String(file));
+                msg.AddAttachment(filename: details.FileName + ".pdf", Convert.ToBase64String(details.ActivatedEmployee.ActivationWorkFlowPdfAttachment));
             }
             _ = await client.SendEmailAsync(msg);
         }

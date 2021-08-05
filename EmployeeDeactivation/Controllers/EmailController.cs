@@ -1,4 +1,5 @@
 ﻿using EmployeeDeactivation.Interface;
+using EmployeeDeactivation.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeDeactivation.Controllers
@@ -15,7 +16,8 @@ namespace EmployeeDeactivation.Controllers
         [Route("Email/PdfAttachmentEmail")]
         public JsonResult PdfAttachmentEmail(byte[] pdfFileArray, string employeeName, string teamName, bool isActivationPDf)
         {
-           return Json(_emailOperation.SendPDfAsEmailAttachment(pdfFileArray, employeeName, teamName, isActivationPDf));
+           return Json(_emailOperation.SendPDfAsEmailAttachment(new EmailDetails() { ActivatedEmployee = new ActivationEmployeeDetails() 
+           { ActivationWorkFlowPdfAttachment = pdfFileArray, TeamName = teamName }, EmployeeName = employeeName}, isActivationPDf));
         }
 
         [HttpGet]
