@@ -23,7 +23,10 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
             var emailDetails = _employeeDataOperation.GetReportingEmailIds(details.ActivatedEmployee.TeamName);
-            
+            if(emailDetails == null)
+            {
+                return false;
+            }
 
             if (!isActivationPdf)
             {
@@ -115,6 +118,7 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {
+            
             var apiKey = "S:G:.:B:n:R:E:a:U:W:0:R:C:q:v:F:3:h:v:W:h:g:x:kA.sy38sl:c:0:xgg:sU0msXLd:o0:2:h:RNGcbpeB1g6:T:v:jEtPJk0";
             apiKey = apiKey.Replace(":", "");
             var client = new SendGridClient(apiKey);
@@ -136,9 +140,10 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             if (Convert.ToInt32(typeOfWorkflow) == 2)
             {
+                var activationEmployeeDetails = _employeeDataOperation.RetrieveActivationDataBasedOnGid(details.ActivatedEmployee.GId);
                 subject = "Activation Workflow initiated";
 
-                string textBody = "<table border=" + 1 + " cellpadding=" + 0 + " cellspacing=" + 0 + " width = " + 400 + "><tr><td><b>Surname</b></td> <td> <b> First Name </b> </td> <td><b>Surname</b></td> <td><b>Audiology Display Name</b></td> <td><b>Siemens e-mail ID</b></td> <td><b>Siemens Login</b></td> <td><b>Siemens GID</b></td> <td><b>Team</b></td><td><b>Role</b></td> <td><b>Gender</b></td> <td><b>Date of birth</b></td> <td><b>Place of birth</b></td> <td><b>Address - Street</b></td> <td><b>Address - City, Country</b></td> <td><b>Phone num</b></td> </tr> <tr><td></td></tr>";
+                string textBody = "<table border=" + 1 + " cellpadding=" + 0 + " cellspacing=" + 0 + " width = " + 400 + "><tr> <th><b>Surname</b></th> <th><b>First Name</b></th> <th><b>Audiology Display Name</b></th> <th><b>Siemens e-mail ID</b></th> <th><b>Siemens Login</b></th> <th><b>Siemens GID</b></th> <th><b>Team</b></th> <th><b>Role</b></th> <th><b>Gender</b></th> <th><b>Date of birth</b></th> <th><b>Place of birth</b></th> <th><b>Address - Street</b></th> <th><b>Address - City, Country</b></th> <th><b>Phone num</b></th> <th><b>Nationality</b></th> </tr> <tr><td>"+ activationEmployeeDetails.LastName + "</td> <td>" + activationEmployeeDetails.FirstName + "</td> <td>" + details.EmployeeName + "</td> <td>" + activationEmployeeDetails.EmailID + "</td> <td>" + details.ActivatedEmployee.GId + "</td> <td>" + activationEmployeeDetails.GId + "</td> <td>" + details.ActivatedEmployee.TeamName + "</td> <td>" + activationEmployeeDetails.Role + "</td>  <td>" + activationEmployeeDetails.Gender + "</td> <td>" + activationEmployeeDetails.DateOfBirth + "</td> <td>" + activationEmployeeDetails.PlaceOfBirth + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.PhoneNo + "</td> <td>" + activationEmployeeDetails.Nationality + "</td></tr>";
 
                 textBody += "</table>";
 

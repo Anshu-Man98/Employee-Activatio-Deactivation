@@ -14,10 +14,10 @@ namespace EmployeeDeactivation.Controllers
         }
         [HttpPost]
         [Route("Email/PdfAttachmentEmail")]
-        public JsonResult PdfAttachmentEmail(byte[] pdfFileArray, string employeeName, string teamName, bool isActivationPDf)
+        public JsonResult PdfAttachmentEmail(byte[] pdfFileArray, string employeeName, string teamName, bool isActivationPDf , string siemensGID)
         {
            return Json(_emailOperation.SendPDfAsEmailAttachment(new EmailDetails() { ActivatedEmployee = new ActivationEmployeeDetails() 
-           { ActivationWorkFlowPdfAttachment = pdfFileArray, TeamName = teamName }, EmployeeName = employeeName}, isActivationPDf));
+           { ActivationWorkFlowPdfAttachment = pdfFileArray, TeamName = teamName, GId = siemensGID }, EmployeeName = employeeName}, isActivationPDf));
         }
 
         [HttpGet]

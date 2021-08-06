@@ -154,15 +154,22 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public string[] GetReportingEmailIds(string teamName)
         {
-            var teamDetails = RetrieveAllSponsorDetails();
-            foreach (var item in teamDetails)
+            try
             {
-                if(item.TeamName.ToLower() == teamName.ToLower())
+                var teamDetails = RetrieveAllSponsorDetails();
+                foreach (var item in teamDetails)
                 {
-                    return new string[] { item.CmEmailID, item.SivantosPointEmailID, item.CcEmailID,item.ReportingManagerEmailID };
+                    if (item.TeamName.ToLower() == teamName.ToLower())
+                    {
+                        return new string[] { item.CmEmailID, item.SivantosPointEmailID, item.CcEmailID, item.ReportingManagerEmailID };
+                    }
                 }
+                return new string[] { };
             }
-            return new string[] { };      
+            catch
+            {
+                return null;
+            }
         }
         public List<Teams> RetrieveAllSponsorDetails()
         {

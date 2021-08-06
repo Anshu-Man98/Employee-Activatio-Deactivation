@@ -92,8 +92,10 @@
                 }
             })
         });
-
+            var clicked = true;
             $(document).on("click", "#submitButton", function (e) {
+                if (clicked) {
+                    clicked = false;
                 fileData = new FormData();
                 fileData.append('FirstName', $('#siemensFirstName').val());
                 fileData.append('LastName', $('#siemensLastName').val());
@@ -115,82 +117,91 @@
                 fileData.append('Nationality', $('#nationality').val());
 
 
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddDetailsToDatabase", "Employees")',
-                dataType: "json",
-                data: fileData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response) {
-                        $.ajax({
-                            type: "GET",
-                            url: '@Url.Action("CreateActivationPdf", "Pdf")',
-                            data: { 'gId': $('#siemensGid').val() },
-                            dataType: "json",
-                            success: function (response) {
-                                if (response) {
-                                    let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
-                                    pdfWindow.document.write("<title>Activation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
-                                    bootbox.confirm
-                                        ({
-                                            message: "Do you wish to submit? no further changes can be made to the pdf after submission",
-                                            buttons: {
-                                                confirm: {
-                                                    label: 'Yes',
-                                                    className: 'btn-class-here'
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddDetailsToDatabase", "Employees")',
+                    dataType: "json",
+                    data: fileData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response) {
+                            $.ajax({
+                                type: "GET",
+                                url: '@Url.Action("CreateActivationPdf", "Pdf")',
+                                data: { 'gId': $('#siemensGid').val() },
+                                dataType: "json",
+                                success: function (response) {
+                                    if (response) {
+                                        clicked = true;
+                                        let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
+                                        pdfWindow.document.write("<title>Activation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
+                                        bootbox.confirm
+                                            ({
+                                                message: "Do you wish to submit? no further changes can be made to the pdf after submission",
+                                                buttons: {
+                                                    confirm: {
+                                                        label: 'Yes',
+                                                        className: 'btn-class-here'
 
+                                                    },
+                                                    cancel: {
+                                                        label: 'No',
+                                                        className: 'btn-class-here'
+                                                    }
                                                 },
-                                                cancel: {
-                                                    label: 'No',
-                                                    className: 'btn-class-here'
-                                                }
-                                            },
-                                            callback: function (result) {
-                                                if (result) {
-                                                    $.ajax({
-                                                        type: "POST",
-                                                        url: '@Url.Action("AddActivationPdfToDatabase", "Employees")',
-                                                        data: { 'pdf': response.toString().replace('data:application/pdf;base64,', ''), 'gId': $('#siemensGid').val() },
-                                                        success: function () {
-                                                            $.ajax({
-                                                                type: "POST",
-                                                                url: '@Url.Action("PdfAttachmentEmail", "Email")',
-                                                                data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': $('#sponsorGid').val(), 'isActivationPDf': true },
-                                                                success: function () {
-                                                                    bootbox.alert("Your form has been sent sucessfully!");
-                                                                    document.getElementById('siemensFirstName').value = "";
-                                                                    document.getElementById('siemensLastName').value = "";
-                                                                    document.getElementById('siemensEmail').value = "";
-                                                                    document.getElementById('siemensGid').value = "";
-                                                                    document.getElementById('teamNames').value = "";
-                                                                    document.getElementById('role').value = "";
-                                                                    document.getElementById('gender').value = "";
-                                                                    document.getElementById('dateOfBirth').value = "";
-                                                                    document.getElementById('placeOfBirth').value = "";
-                                                                    document.getElementById('address').value = "";
-                                                                    document.getElementById('phoneNo').value = "";
-                                                                    document.getElementById('nationality').value = "";
-                                                                    $('#sponsorDetails').hide();
-                                                                }
-                                                            });
-                                                        }
-                                                    })
+                                                callback: function (result) {
+                                                    if (result) {
+                                                        $.ajax({
+                                                            type: "POST",
+                                                            url: '@Url.Action("AddActivationPdfToDatabase", "Employees")',
+                                                            data: { 'pdf': response.toString().replace('data:application/pdf;base64,', ''), 'gId': $('#siemensGid').val() },
+                                                            success: function () {
+                                                                $.ajax({
+                                                                    type: "POST",
+                                                                    url: '@Url.Action("PdfAttachmentEmail", "Email")',
+                                                                    data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'siemensGID': $('#siemensGid').val(), 'isActivationPDf': true },
+                                                                    success: function (response) {
+                                                                        if (response) {
+                                                                            bootbox.alert("Your form has been sent sucessfully!");
+                                                                            document.getElementById('siemensFirstName').value = "";
+                                                                            document.getElementById('siemensLastName').value = "";
+                                                                            document.getElementById('siemensEmail').value = "";
+                                                                            document.getElementById('siemensGid').value = "";
+                                                                            document.getElementById('teamNames').value = "";
+                                                                            document.getElementById('role').value = "";
+                                                                            document.getElementById('gender').value = "";
+                                                                            document.getElementById('dateOfBirth').value = "";
+                                                                            document.getElementById('placeOfBirth').value = "";
+                                                                            document.getElementById('address').value = "";
+                                                                            document.getElementById('phoneNo').value = "";
+                                                                            document.getElementById('nationality').value = "";
+                                                                            $('#sponsorDetails').hide();
+                                                                        }
+                                                                        else {
+                                                                            alert("Sorry, an issue has occured please try again")
+                                                                        }
+                                                                    }
 
+                                                                });
+                                                            }
+                                                        })
+
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+                        else {
+                            alert("An error has occured please try again")
+                        }
                     }
-                    else {
-                        alert("Data counld not be updated. Try again")
-                    }
-                }
+                });
+            }
             });
-        });
+            
 
             function Validatephonenumber() {
                 var phoneno = /^[0-9+-\s]+$/;
