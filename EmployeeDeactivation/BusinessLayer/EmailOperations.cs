@@ -18,8 +18,7 @@ namespace EmployeeDeactivation.BusinessLayer
             _managerApprovalOperation = managerApprovalOperation;
   
         }
-       // public bool SendPDfAsEmailAttachment(byte[] pdfFileArray, string employeeName, string teamName, string sponsorGID, bool isActivationPdf)
-         public bool SendPDfAsEmailAttachment(EmailDetails details,bool isActivationPdf)
+        public bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf)
         {
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
             var emailDetails = _employeeDataOperation.GetReportingEmailIds(details.ActivatedEmployee.TeamName);
@@ -34,8 +33,6 @@ namespace EmployeeDeactivation.BusinessLayer
                 details.ToEmailId = emailDetails[0];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                //_ = SendEmailAsync(emailDetails[3], emailDetails[0], emailDetails[2], employeeName, TypeOfWorkflow.Deactivation, pdfFileArray, fileName + employeeName, teamName);
-
                 _ = SendEmailAsync(details, TypeOfWorkflow.Deactivation);
 
             }
@@ -45,7 +42,6 @@ namespace EmployeeDeactivation.BusinessLayer
                 details.ToEmailId = emailDetails[1];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                //_ = SendEmailAsync(emailDetails[0], emailDetails[1], emailDetails[2], employeeName, TypeOfWorkflow.Activation, pdfFileArray, fileName+employeeName, teamName);
                 _ = SendEmailAsync(details, TypeOfWorkflow.Activation);
             }
             return true;
@@ -61,10 +57,9 @@ namespace EmployeeDeactivation.BusinessLayer
                 ToEmailId = employeeDetails[0],
                 CcEmailId = "",
                 EmployeeName = employeeName,
-                ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = byte_array, TeamName = String.Empty },
-                FileName = String.Empty
+                ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = byte_array, TeamName = string.Empty },
+                FileName = string.Empty
             };
-           // _ = SendEmailAsync(reportingManagerEmailId, employeeDetails[0], "", employeeName,TypeOfWorkflow.DeclinedEmail, byte_array,string.Empty,string.Empty);
             _ = SendEmailAsync(details, TypeOfWorkflow.DeclinedEmail);
 
         }
@@ -86,7 +81,6 @@ namespace EmployeeDeactivation.BusinessLayer
                         ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = employee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                         FileName = "DeactivationWorkflow_" + employee.EmployeeName
                     };
-                    //_ = SendEmailAsync(emailDetails[0], employee.ReportingManagerEmail,"", employee.EmployeeName, TypeOfWorkflow.ReminderEmail, employee.DeactivationWorkFlowPdfAttachment,"DeactivationWorkflow_"+employee.EmployeeName,string.Empty);
                     _ = SendEmailAsync(details, TypeOfWorkflow.ReminderEmail);
                 }
             }
@@ -109,7 +103,6 @@ namespace EmployeeDeactivation.BusinessLayer
                                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                                 FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
                             };
-                            //_ = SendEmailAsync("arun",employee.SponsorEmailID, _employeeDataOperation.GetDeactivatedEmployeeDetails(employee.GId)[3], approvedEmployee.EmployeeName,TypeOfWorkflow.ReminderEmail, approvedEmployee.DeactivationWorkFlowPdfAttachment, "DeactivationWorkflow_" + approvedEmployee.EmployeeName,string.Empty);
                             _ = SendEmailAsync(details , TypeOfWorkflow.ReminderEmail);
                         }
                     }
