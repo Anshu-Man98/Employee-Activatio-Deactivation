@@ -24,13 +24,15 @@ namespace EmployeeDeactivation.BusinessLayer
         public byte[] FillDeactivationPdfForm(string gId)
         {
             var employeeData = _employeeDataOperation.RetrieveDeactivatedEmployeeDataBasedOnGid(gId);
-            FileStream docStream = new FileStream("DeactivationFormPDF.pdf", FileMode.Open, FileAccess.Read);
+            FileStream docStream = new FileStream("DeactivationPDF .pdf", FileMode.Open, FileAccess.Read);
             PdfLoadedDocument loadedDocument = new PdfLoadedDocument(docStream);
             PdfLoadedForm form = loadedDocument.Form;
+            string EmailandGId =  employeeData.GId +", "+ employeeData.EmailID;
             (form.Fields[11] as PdfLoadedTextBoxField).Text = employeeData.FirstName ?? "";
+            (form.Fields[11] as PdfLoadedTextBoxField).ReadOnly = true;
             (form.Fields[10] as PdfLoadedTextBoxField).Text = employeeData.LastName ?? "";
-            (form.Fields[13] as PdfLoadedTextBoxField).Text = employeeData.EmailID ?? "";
-            (form.Fields[12] as PdfLoadedTextBoxField).Text = employeeData.GId ?? "";
+            (form.Fields[12] as PdfLoadedTextBoxField).Text = EmailandGId;
+            (form.Fields[12] as PdfLoadedTextBoxField).ReadOnly = true;
             (form.Fields[4] as PdfLoadedTextBoxField).Text = employeeData.LastWorkingDate.ToString() ?? "";
             (form.Fields[16] as PdfLoadedTextBoxField).Text = employeeData.SponsorLastName ?? "";
             (form.Fields[17] as PdfLoadedTextBoxField).Text = employeeData.SponsorFirstName ?? "";

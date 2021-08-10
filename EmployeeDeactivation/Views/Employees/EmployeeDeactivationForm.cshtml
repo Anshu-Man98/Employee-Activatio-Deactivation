@@ -38,24 +38,26 @@
         managerAdminApprove = "approve";
     }
 
-    <head>
+<head>
 
 
-        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
+    <meta charset="utf-8">
+    <script scr="jquery-2.1.4.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-        <script src="~/js/bootbox.js"></script>
-        <script type="text/javascript">
+    <script src="~/js/bootbox.js"></script>
+    <script type="text/javascript">
             var sponsorFirstName = "";
             var sponsorLastName = "";
             var sponsorName = "";
-            $(document).ready(function () {
+        $(document).ready(function () {
+            $("#loader-wrapper").hide();
                 sponsorFirstName = "";
                 sponsorLastName = "";
                 sponsorName = "";
@@ -63,8 +65,8 @@
             $('#sponsorDetails').hide();
             $('#reportingManagerEmailId').hide();
             $('#sponsorGidHidden').hide();
-           
-            
+
+
         });
         var x = setInterval(Reminder, 86400000);
         function Reminder() {
@@ -131,6 +133,7 @@
             $(document).on("click", "#submitButton", function (e) {
                 if (clicked) {
                     clicked = false;
+                    $("#loader-wrapper").show();
 
                 fileData = new FormData();
                 fileData.append('FirstName', $('#employeeFirstName').val());
@@ -164,6 +167,7 @@
                                 dataType: "json",
                                 success: function (response) {
                                     if (response) {
+                                        $("#loader-wrapper").hide();
                                         clicked = true;
                                         let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
                                         pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
@@ -182,8 +186,9 @@
                                                         className: 'btn-class-here'
                                                     }
                                                 },
-                                                callback: function (result) {
+                                                callback: function (result) {  
                                                     if (result) {
+                                                        $("#loader-wrapper").show();
                                                         $.ajax({
                                                             type: "POST",
                                                             url: '@Url.Action("PdfAttachmentEmail", "Email")',
@@ -208,6 +213,7 @@
                                                                         processData: false,
                                                                         contentType: false,
                                                                         success: function (stream) {
+                                                                            $("#loader-wrapper").hide();
                                                                             bootbox.alert("Your form has been sent sucessfully!");
                                                                             document.getElementById('employeeGid').value = "";
                                                                             document.getElementById('employeeLastWorkingdate').value = "";
@@ -327,115 +333,187 @@
 
 
 
-        </script>
+    </script>
 
-        <style>
+    <style>
+
+        #header {
+            width: 102%;
+            margin-top: 0px;
+            padding: 20px;
+            margin-bottom: 5px;
+            background-color: black;
+            height: 17%;
+            position: relative;
+        }
+
+        .headerText {
+            text-align: center;
+            font-size: 30px;
+            color: white;
+            position: absolute;
+            margin-left: 35%;
+            margin-top: 5px;
+        }
+
+        .loader-wrapper {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(1,1,1,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            border: 4px solid white;
+            animation: loader 2s infinite ease;
+        }
+
+        .loader-inner {
+            vertical-align: top;
+            display: inline-block;
+            width: 100%;
+            background-color: azure;
+            animation: loader-inner 2s infinite ease-in;
+        }
+
+        @@keyframes loader {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(180deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
+
+            75% {
+                transform: rotate(360deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes loader-inner {
+            0% {
+                height: 0%;
+            }
+
+            25% {
+                height: 0%;
+            }
+
+            50% {
+                height: 100%;
+            }
+
+            75% {
+                height: 100%;
+            }
+
+            100% {
+                height: 0%;
+            }
+        }
+
+
+
+        #sponsorDetailsButton, #viewReportButton, #workflowButton {
+            margin-left: 90%;
+            color: white;
+        }
+
+
+            #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover {
+                font-size: 103%;
+                color: darkgrey;
+                cursor: default;
+            }
+
+
+        .form {
+            margin-top: 32px;
+            margin-left: 33%;
+        }
+
+        #TextField {
+            white-space: nowrap;
+            padding-left: 0px;
+        }
+
+        #hello {
+            color: blue;
+            font-size: 17px;
+            text-align: center;
+        }
+
+        #inputTextbox {
+            margin-left: 70px;
+            width: 400px;
+        }
+
+        .ErrorView {
+            color: red;
+            margin-left: 183px;
+        }
+
+        #submitButton:hover {
+            background-color: Highlight;
+            color: azure;
+        }
+
+        .regular-field {
+            text-align: center;
+        }
+
+        .radio-but1 {
+            margin-right: 5px;
+        }
+
+        #radio-1-txt {
+            margin-right: 10px;
+        }
+
+        @@media only screen and (max-width:880px) {
 
             #header {
-                width: 102%;
-                margin-top: 0px;
-                padding: 20px;
-                margin-bottom: 5px;
-                background-color: black;
-                height: 17%;
-                position: relative;
+                width: 130%;
             }
 
-            .headerText {
-                text-align: center;
-                font-size: 30px;
-                color: white;
-                position: absolute;
-                margin-left: 35%;
-                margin-top: 5px;
-            }
-
-
-
-            #sponsorDetailsButton, #viewReportButton, #workflowButton {
-                margin-left: 90%;
-                color: white;
-            }
-
-
-                #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover {
-                    font-size: 103%;
-                    color: darkgrey;
-                    cursor: default;
-                }
-            
-
-            .form {
-                margin-top: 32px;
-                margin-left: 33%;
-            }
-
-            #TextField {
-                white-space: nowrap;
-                padding-left: 0px;
-            }
-
-            #hello {
-                color: blue;
-                font-size: 17px;
-                text-align: center;
-            }
-
-            #inputTextbox {
-                margin-left: 70px;
-                width: 400px;
+            #sponsorDetailsButton, #viewReportButton {
+                background-color: blue;
             }
 
             .ErrorView {
-                color: red;
-                margin-left: 183px;
-            }
-
-            #submitButton:hover {
-                background-color: Highlight;
-                color: azure;
-            }
-
-            .regular-field {
-                text-align: center;
-            }
-
-            .radio-but1 {
-                margin-right: 5px;
-            }
-
-            #radio-1-txt {
-                margin-right: 10px;
-            }
-
-            @@media only screen and (max-width:880px) {
-                
-                #header {
-                    width: 130%;
-                }
-                #sponsorDetailsButton, #viewReportButton {
-                    background-color:blue;
-                }
-
-                .ErrorView {
                 margin-left: 80px;
-                }
-
-                #submitButton {
-                    position: center;
-                }
-
-                
             }
-        </style>
+
+            #submitButton {
+                position: center;
+            }
+        }
+    </style>
 
 
-    </head>
+</head>
 
     <body>
         <div id="header">
             <h2 class="headerText">Employee Deactivation Form </h2>
-            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
+            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Configuration</div>
             <div>
                 <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
 
@@ -510,7 +588,7 @@
                         Last Working Date:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01"/>
+                        <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -573,6 +651,10 @@
                 <div class="form-group row" style="padding-left:2px">
                     <br />
                     <input type="button" value="Preview Pdf" class="btn btn-default" id="submitButton" />
+                </div>
+
+                <div class="loader-wrapper" id="loader-wrapper">
+                    <span class="loader"><span class="loader-inner"></span></span>
                 </div>
 
             </form>

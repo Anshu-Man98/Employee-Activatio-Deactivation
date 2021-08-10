@@ -24,6 +24,7 @@
 
 
         <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script scr="jquery-2.1.4.js"></script>
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
         <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
         <meta charset="utf-8">
@@ -38,6 +39,7 @@
             var sponsorLastName = "";
             var sponsorName = "";
             $(document).ready(function () {
+                $("#loader-wrapper").hide();
                 sponsorFirstName = "";
                 sponsorLastName = "";
                 sponsorName = "";
@@ -65,7 +67,7 @@
                     });
                 }
             })
-        }
+            }
 
         $(document).on("change", "#teamNames", function (e) {
             var teamName = $('#teamNames').val();
@@ -96,6 +98,7 @@
             $(document).on("click", "#submitButton", function (e) {
                 if (clicked) {
                     clicked = false;
+                    $("#loader-wrapper").show();
                 fileData = new FormData();
                 fileData.append('FirstName', $('#siemensFirstName').val());
                 fileData.append('LastName', $('#siemensLastName').val());
@@ -126,6 +129,7 @@
                     contentType: false,
                     success: function (response) {
                         if (response) {
+                            $("#loader-wrapper").show();
                             $.ajax({
                                 type: "GET",
                                 url: '@Url.Action("CreateActivationPdf", "Pdf")',
@@ -133,6 +137,7 @@
                                 dataType: "json",
                                 success: function (response) {
                                     if (response) {
+                                        $("#loader-wrapper").hide();
                                         clicked = true;
                                         let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
                                         pdfWindow.document.write("<title>Activation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
@@ -144,6 +149,7 @@
                                                         label: 'Yes',
                                                         className: 'btn-class-here'
 
+
                                                     },
                                                     cancel: {
                                                         label: 'No',
@@ -152,6 +158,7 @@
                                                 },
                                                 callback: function (result) {
                                                     if (result) {
+                                                        $("#loader-wrapper").show();
                                                         $.ajax({
                                                             type: "POST",
                                                             url: '@Url.Action("AddActivationPdfToDatabase", "Employees")',
@@ -163,6 +170,7 @@
                                                                     data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'siemensGID': $('#siemensGid').val(), 'isActivationPDf': true },
                                                                     success: function (response) {
                                                                         if (response) {
+                                                                            $("#loader-wrapper").hide();
                                                                             bootbox.alert("Your form has been sent sucessfully!");
                                                                             document.getElementById('siemensFirstName').value = "";
                                                                             document.getElementById('siemensLastName').value = "";
@@ -384,6 +392,47 @@
                 margin-top: 5px;
             }
 
+            .loader-wrapper {
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: rgba(1,1,1,0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .loader{
+                display: inline-block;
+                width:30px;
+                height:30px;
+                position: relative;
+                border: 4px solid white;
+                animation: loader 2s infinite ease;
+            }
+            .loader-inner{
+                vertical-align:top;
+                display:inline-block;
+                width:100%;
+                background-color:azure;
+                animation: loader-inner 2s infinite ease-in;
+            }
+
+            @@keyframes loader {
+              0% { transform: rotate(0deg);}
+              25% { transform: rotate(180deg);}
+              50% { transform: rotate(180deg);}
+              75% { transform: rotate(360deg);}
+              100% { transform: rotate(360deg);}
+            }
+            @@keyframes loader-inner {
+              0% { height: 0%;}
+              25% { height: 0%;}
+              50% { height: 100%;}
+              75% { height: 100%;}
+              100% { height: 0%;}
+            }
 
 
             #sponsorDetailsButton, #viewReportButton, #workflowButton {
@@ -474,7 +523,7 @@
     <body>
         <div id="header">
             <h2 class="headerText">Employee Activation Form </h2>
-            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
+            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Configuration</div>
             <div>
                 <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
 
@@ -680,6 +729,10 @@
                 <div class="form-group row" style="padding-left:2px">
                     <br />
                     <input type="button" value="Preview Pdf" class="btn btn-default" id="submitButton" />
+                </div>
+
+                <div class="loader-wrapper" id="loader-wrapper">
+                    <span class="loader"><span class="loader-inner"></span></span>
                 </div>
 
             </form>
