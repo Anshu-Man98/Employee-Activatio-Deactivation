@@ -1,17 +1,92 @@
-﻿using EmployeeDeactivation.Interface;
+﻿using EmployeeDeactivation.Data;
+using EmployeeDeactivation.Interface;
 using EmployeeDeactivation.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.BusinessLayer
 {
     public class EmailOperations:IEmailOperation
     {
+
         private readonly IEmployeeDataOperation _employeeDataOperation;
         private readonly IManagerApprovalOperation _managerApprovalOperation;
+        private readonly EmployeeDeactivationContext _context;
+
+
+        public EmailOperations(IEmployeeDataOperation employeeDataOperation, IManagerApprovalOperation managerApprovalOperation, EmployeeDeactivationContext context)
+        {
+            _employeeDataOperation = employeeDataOperation;
+            _managerApprovalOperation = managerApprovalOperation;
+            _context = context;
+        }
+
+        public List<MailContent> RetrieveAllMailContent()
+        {
+            return _context.MailContents.ToList();
+        }
+
+        public bool AddMailContentData(MailContent mailContent)
+        {
+            try
+            {
+                bool databaseUpdateStatus = false;
+                var MailContentDetails = _context.MailContents.ToList();
+                foreach (var MailContents in MailContentDetails)
+                {
+                    if (MailContents.MailType.ToLower() == mailContent.MailType.ToLower())
+                    {
+                        _context.Remove(_context.MailContents.Single(a => a.MailType.ToLower() == mailContent.MailType.ToLower()));
+                        _context.SaveChanges();
+                    }
+                }
+                _context.Add(mailContent);
+
+                databaseUpdateStatus = _context.SaveChanges() == 1;
+                return databaseUpdateStatus;
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public List<Token> RetrieveAllToken()
+        {
+            return _context.Tokens.ToList();
+        }
+
+        public bool AddTokenData(Token token)
+        {
+            try
+            {
+                bool databaseUpdateStatus = false;
+                var TokenDetails = _context.Tokens.ToList();
+                foreach (var TokenDetail in TokenDetails)
+                {
+                    if (TokenDetail.TokenName.ToLower() == token.TokenName.ToLower())
+                    {
+                        _context.Remove(_context.Tokens.Single(a => a.TokenName.ToLower() == token.TokenName.ToLower()));
+                        _context.SaveChanges();
+                    }
+                }
+                _context.Add(token);
+
+                databaseUpdateStatus = _context.SaveChanges() == 1;
+                return databaseUpdateStatus;
+
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public EmailOperations(IEmployeeDataOperation employeeDataOperation, IManagerApprovalOperation managerApprovalOperation)
         {
             _employeeDataOperation = employeeDataOperation;
