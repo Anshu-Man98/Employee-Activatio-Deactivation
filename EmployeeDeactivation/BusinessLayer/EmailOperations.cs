@@ -1,6 +1,7 @@
 ﻿using EmployeeDeactivation.Data;
 using EmployeeDeactivation.Interface;
 using EmployeeDeactivation.Models;
+using Newtonsoft.Json;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
@@ -30,9 +31,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var configurations = RetrieveAllMailContent();
             foreach (var item in configurations)
             {
-                if (item.ConfigurationKey == key)
+                if (item.TokenName == key)
                 {
-                    return item.ConfigurationValue;
+                    return item.TokenName;
                 }
             }
             return string.Empty;
@@ -43,22 +44,33 @@ namespace EmployeeDeactivation.BusinessLayer
             try
             {
                 bool databaseUpdateStatus = false;
-                var ConfigDetails = _context.Configurations.ToList();
+                var ConfigDetails = _context.Tokens.ToList();
                 foreach (var Config in ConfigDetails)
                 {
-                    if (Config.ConfigurationKey.ToLower() == configuration.ConfigurationKey.ToLower())
-                    {
-                        _context.Remove(_context.Configurations.Single(a => a.ConfigurationKey.ToLower() == configuration.ConfigurationKey.ToLower()));
-                        _context.SaveChanges();
-                    }
+                    _context.SaveChanges();
+                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "ActivationMail"));
+                    Tokens tokens = new Tokens();
+                    tokens.TokenName = "ActivationMail";
+                    tokens.TokenValue = ActivationMail;
+                    _context.Add(tokens);
+                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "DeactivationMail"));
+                    tokens.TokenName = "DeactivationMail";
+                    tokens.TokenValue = DeactivationMail;
+                    _context.Add(tokens);
+                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "ReminderMail"));
+                    tokens.TokenName = "ReminderMail";
+                    tokens.TokenValue = ReminderMail;
+                    _context.Add(tokens);
+                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "DeclinedMail"));
+                    tokens.TokenName = "DeclinedMail";
+                    tokens.TokenValue = ReminderMail;
+                    _context.Add(tokens);
                 }
-                _context.Add(configuration);
-
                 databaseUpdateStatus = _context.SaveChanges() == 1;
                 return databaseUpdateStatus;
 
             }
-            catch
+            catch(Exception ex)
             {
                 return false;
             }
@@ -162,9 +174,9 @@ namespace EmployeeDeactivation.BusinessLayer
                 }
             }
         }
-        private List<Configuration> RetrieveAllMailContent()
+        private List<Tokens> RetrieveAllMailContent()
         {
-            return _context.Configurations.ToList();
+            return _context.Tokens.ToList();
         }
         private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {

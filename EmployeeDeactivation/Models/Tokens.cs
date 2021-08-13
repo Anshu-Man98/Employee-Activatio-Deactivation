@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.Models
 {
-    public class MailContent
+    public class Tokens
     {
         [Key]
-        public string MailType { get; set; }
-        public string MailContents { get; set; }
+        public string TokenName { get; set; }
+        public string TokenValue { get; set; }
+
     }
 }

@@ -1,7 +1,6 @@
 ﻿
 <head>
     <script src="~/js/Toastr.js"></script>
-
     <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
@@ -215,21 +214,12 @@
                     type: "POST",
                     url: '@Url.Action("AddConfigurationToDatabase", "Email")',
                     dataType: "json",
-                    data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMail": $('#DeactivationMailContent').val(), "ReminderMail": $('#RemainderMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val()}
+                    data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMail": $('#DeactivationMailContent').val(), "ReminderMail": $('#RemainderMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val()},
                     success: function (response) {
                  }
              });
 
         });
-
-
-
-
-      
-
-
-
-
 
         function openForm1()
         {
@@ -681,9 +671,6 @@
 
     </div>
     <input type="button" value="ADD" class="btn btn-default" id="addButton" />
-
-
-
     <div id="mailConfig">
         <hr />
         <div>
@@ -749,9 +736,6 @@
         <button type="button" id="TokenButton" class="btn btn-primary">Submit</button>
 
     </div>
-
-
-
     <div id="pop1">
         <div class="form-popup" id="myForm">
             <form class="form-container">
@@ -794,7 +778,6 @@
             </form>
         </div>
     </div>
-
     <div id="pop2">
         <div class="form-popup" id="myForm1">
             <form class="form-container">
@@ -837,12 +820,9 @@
             </form>
         </div>
     </div>
-
-    <div class="loader-wrapper" id="loader-wrapper">
+    @*<div class="loader-wrapper" id="loader-wrapper">
         <span class="loader"><span class="loader-inner"></span></span>
-    </div>
-
-
+    </div>*@
 </body>
 
 

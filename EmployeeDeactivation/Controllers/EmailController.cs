@@ -24,36 +24,6 @@ namespace EmployeeDeactivation.Controllers
             return Json(_emailOperation.AddMailConfigurationData(ActivationMail, DeactivationMail, ReminderMail, DeclinedMail));
         }
 
-        //[HttpPost]
-        //[Route("Email/AddMailContentsToDatabase")]
-        //public JsonResult AddMailContentsToDatabase(MailContent mailContent)
-        //{
-
-        //    return Json(_emailOperation.AddMailContentData(mailContent));
-        //}
-
-        //[HttpGet]
-        //[Route("Email/MailDetails")]
-        //public JsonResult MailDetails()
-        //{
-        //    return Json(_emailOperation.RetrieveAllMailContent());
-        //}
-
-        //[HttpPost]
-        //[Route("Email/AddTokenDetalsToDatabase")]
-        //public JsonResult AddTokenDetalsToDatabase(Token token)
-        //{
-
-        //    return Json(_emailOperation.AddTokenData(token));
-        //}
-
-        //[HttpGet]
-        //[Route("Email/TokenDetails")]
-        //public JsonResult TokenDetails()
-        //{
-        //    return Json(_emailOperation.RetrieveAllToken());
-        //}
-
         [HttpPost]
         [Route("Email/PdfAttachmentEmail")]
         public JsonResult PdfAttachmentEmail(byte[] pdfFileArray, string employeeName, string teamName, bool isActivationPDf , string siemensGID)
