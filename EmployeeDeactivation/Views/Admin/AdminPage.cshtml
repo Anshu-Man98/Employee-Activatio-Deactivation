@@ -211,121 +211,21 @@
         });
 
         $(document).on("click", "#MailContentButton", function (e) {
-            $("#loader-wrapper").show();
-            fileData = new FormData();
-            var type="Activation"
-            fileData.append('MailType', type);
-            fileData.append('MailContents', $('#ActivationMailContent').val());
-                $.ajax({
+             $.ajax({
                     type: "POST",
-                    url: '@Url.Action("AddMailContentsToDatabase", "Email")',
+                    url: '@Url.Action("AddConfigurationToDatabase", "Email")',
                     dataType: "json",
-                    data:  fileData ,
-                    processData: false,
-                    contentType:false,
-                    success: function (response)
-                    {
-                        if (response == true) {
+                    data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMail": $('#DeactivationMailContent').val(), "ReminderMail": $('#RemainderMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val()}
+                    success: function (response) {
+                 }
+             });
 
-          fileData = new FormData();
-            var type="Deactivation"
-            fileData.append('MailType', type);
-            fileData.append('MailContents', $('#DeactivationMailContent').val());
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("AddMailContentsToDatabase", "Email")',
-                    dataType: "json",
-                    data:  fileData ,
-                    processData: false,
-                    contentType:false,
-                    success: function (response)
-                    {
-                        if (response == true) {
-                fileData = new FormData();
-                var type="Remainder"
-                fileData.append('MailType', type);
-                fileData.append('MailContents', $('#RemainderMailContent').val());
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("AddMailContentsToDatabase", "Email")',
-                    dataType: "json",
-                    data:  fileData ,
-                    processData: false,
-                    contentType:false,
-                    success: function (response)
-                    {
-                        if (response == true) {
-
-                fileData = new FormData();
-                var type="Declined"
-                fileData.append('MailType', type);
-                fileData.append('MailContents', $('#DeclinedMailContent').val());
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("AddMailContentsToDatabase", "Email")',
-                    dataType: "json",
-                    data:  fileData ,
-                    processData: false,
-                    contentType:false,
-                    success: function (response)
-                    {
-                        
-                        if (response == true) {
-                            $("#loader-wrapper").hide();
-
-                            alert("Mail Configuration updated")
-                        }
-                        else {
-                            alert("data could not be updated. Try again")
-                        }
-                    }
-                });
-                        }
-                        else {
-                            alert("data could not be updated. Try again")
-                        }
-                    }
-                });
-                        }
-                        else {
-                            alert("data could not be updated. Try again")
-                        }
-                    }
-                });
-                        }
-                        else {
-                            alert("data could not be updated. Try again")
-                        }
-                    }
-                });
         });
 
 
-        $(document).on("click", "#TokenButton", function (e) {
-            $("#loader-wrapper").show();
-                fileData = new FormData();
-                fileData.append('TokenName', $('#TokenName').val());
-                fileData.append('TokenValue', $('#TokenValue').val());
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("AddTokenDetalsToDatabase", "Email")',
-                    dataType: "json",
-                    data:  fileData ,
-                    processData: false,
-                    contentType:false,
-                    success: function (response)
-                    {
-                        $("#loader-wrapper").hide();
-                        if (response == true) {
 
-                            alert("Api token updated")
-                        }
-                        else {
-                            alert("Token data could not be updated. Try again")
-                        }
-                    }
-                });
-            });
+
+      
 
 
 
@@ -819,7 +719,7 @@
                     Email Timer:
                 </label>*@
             <div class="col-sm-3" id="inputTextbox" data-toggle="dropdown">
-                <select id="gender" class="form-control">
+                <select id="emailTimer" class="form-control">
                     <option value="" selected>Choose Here</option>
                     <option value="1">1 day</option>
                     <option value="2">2 days</option>

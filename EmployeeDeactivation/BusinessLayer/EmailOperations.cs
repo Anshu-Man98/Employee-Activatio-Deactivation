@@ -25,26 +25,34 @@ namespace EmployeeDeactivation.BusinessLayer
             _context = context;
         }
 
-        public List<MailContent> RetrieveAllMailContent()
+        public string RetrieveSpecificConfiguration(string key)
         {
-            return _context.MailContents.ToList();
+            var configurations = RetrieveAllMailContent();
+            foreach (var item in configurations)
+            {
+                if (item.ConfigurationKey == key)
+                {
+                    return item.ConfigurationValue;
+                }
+            }
+            return string.Empty;
         }
-
-        public bool AddMailContentData(MailContent mailContent)
+       
+        public bool AddMailConfigurationData(string ActivationMail, string DeactivationMail,string  ReminderMail, string DeclinedMail)
         {
             try
             {
                 bool databaseUpdateStatus = false;
-                var MailContentDetails = _context.MailContents.ToList();
-                foreach (var MailContents in MailContentDetails)
+                var ConfigDetails = _context.Configurations.ToList();
+                foreach (var Config in ConfigDetails)
                 {
-                    if (MailContents.MailType.ToLower() == mailContent.MailType.ToLower())
+                    if (Config.ConfigurationKey.ToLower() == configuration.ConfigurationKey.ToLower())
                     {
-                        _context.Remove(_context.MailContents.Single(a => a.MailType.ToLower() == mailContent.MailType.ToLower()));
+                        _context.Remove(_context.Configurations.Single(a => a.ConfigurationKey.ToLower() == configuration.ConfigurationKey.ToLower()));
                         _context.SaveChanges();
                     }
                 }
-                _context.Add(mailContent);
+                _context.Add(configuration);
 
                 databaseUpdateStatus = _context.SaveChanges() == 1;
                 return databaseUpdateStatus;
@@ -56,45 +64,8 @@ namespace EmployeeDeactivation.BusinessLayer
             }
         }
 
-        public List<Token> RetrieveAllToken()
-        {
-            return _context.Tokens.ToList();
-        }
-
-        public bool AddTokenData(Token token)
-        {
-            try
-            {
-                bool databaseUpdateStatus = false;
-                var TokenDetails = _context.Tokens.ToList();
-                foreach (var TokenDetail in TokenDetails)
-                {
-                    if (TokenDetail.TokenName.ToLower() == token.TokenName.ToLower())
-                    {
-                        _context.Remove(_context.Tokens.Single(a => a.TokenName.ToLower() == token.TokenName.ToLower()));
-                        _context.SaveChanges();
-                    }
-                }
-                _context.Add(token);
-
-                databaseUpdateStatus = _context.SaveChanges() == 1;
-                return databaseUpdateStatus;
-
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public EmailOperations(IEmployeeDataOperation employeeDataOperation, IManagerApprovalOperation managerApprovalOperation)
-        {
-            _employeeDataOperation = employeeDataOperation;
-            _managerApprovalOperation = managerApprovalOperation;
-  
-        }
-       // public bool SendPDfAsEmailAttachment(byte[] pdfFileArray, string employeeName, string teamName, string sponsorGID, bool isActivationPdf)
-         public bool SendPDfAsEmailAttachment(EmailDetails details,bool isActivationPdf)
+        // public bool SendPDfAsEmailAttachment(byte[] pdfFileArray, string employeeName, string teamName, string sponsorGID, bool isActivationPdf)
+        public bool SendPDfAsEmailAttachment(EmailDetails details,bool isActivationPdf)
         {
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
             var emailDetails = _employeeDataOperation.GetReportingEmailIds(details.ActivatedEmployee.TeamName);
@@ -190,6 +161,10 @@ namespace EmployeeDeactivation.BusinessLayer
                     }
                 }
             }
+        }
+        private List<Configuration> RetrieveAllMailContent()
+        {
+            return _context.Configurations.ToList();
         }
         private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {

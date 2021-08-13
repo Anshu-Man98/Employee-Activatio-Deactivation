@@ -14,35 +14,45 @@ namespace EmployeeDeactivation.Controllers
         {
             _emailOperation = emailOperation;
         }
-        [HttpPost]
-        [Route("Email/AddMailContentsToDatabase")]
-        public JsonResult AddMailContentsToDatabase(MailContent mailContent)
-        {
 
-            return Json(_emailOperation.AddMailContentData(mailContent));
-        }
-
-        [HttpGet]
-        [Route("Email/MailDetails")]
-        public JsonResult MailDetails()
-        {
-            return Json(_emailOperation.RetrieveAllMailContent());
-        }
 
         [HttpPost]
-        [Route("Email/AddTokenDetalsToDatabase")]
-        public JsonResult AddTokenDetalsToDatabase(Token token)
+        [Route("Email/AddConfigurationToDatabase")]
+        public JsonResult AddConfigurationToDatabase(string ActivationMail , string DeactivationMail, string ReminderMail, string DeclinedMail)
         {
 
-            return Json(_emailOperation.AddTokenData(token));
+            return Json(_emailOperation.AddMailConfigurationData(ActivationMail, DeactivationMail, ReminderMail, DeclinedMail));
         }
 
-        [HttpGet]
-        [Route("Email/TokenDetails")]
-        public JsonResult TokenDetails()
-        {
-            return Json(_emailOperation.RetrieveAllToken());
-        }
+        //[HttpPost]
+        //[Route("Email/AddMailContentsToDatabase")]
+        //public JsonResult AddMailContentsToDatabase(MailContent mailContent)
+        //{
+
+        //    return Json(_emailOperation.AddMailContentData(mailContent));
+        //}
+
+        //[HttpGet]
+        //[Route("Email/MailDetails")]
+        //public JsonResult MailDetails()
+        //{
+        //    return Json(_emailOperation.RetrieveAllMailContent());
+        //}
+
+        //[HttpPost]
+        //[Route("Email/AddTokenDetalsToDatabase")]
+        //public JsonResult AddTokenDetalsToDatabase(Token token)
+        //{
+
+        //    return Json(_emailOperation.AddTokenData(token));
+        //}
+
+        //[HttpGet]
+        //[Route("Email/TokenDetails")]
+        //public JsonResult TokenDetails()
+        //{
+        //    return Json(_emailOperation.RetrieveAllToken());
+        //}
 
         [HttpPost]
         [Route("Email/PdfAttachmentEmail")]
