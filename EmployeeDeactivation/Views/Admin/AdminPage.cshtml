@@ -16,6 +16,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
+            $("#loader-wrapper").hide();
 
             $.ajax({
                 type: "GET",
@@ -29,6 +30,42 @@
 
                     });
                     $("#tbldata").append(row);
+                }
+            })
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("MailDetails", "Email")',
+                dataType: "json",
+                success: function (response) {
+                    $.each(response, function (i, item) {
+                        if (item.mailType == "Activation") {
+                            $("#ActivationMailContent").val(item.mailContents)
+                        }
+                        if (item.mailType == "Deactivation") {
+                            $("#DeactivationMailContent").val(item.mailContents)
+                        }
+                        if (item.mailType == "Remainder") {
+                            $("#RemainderMailContent").val(item.mailContents)
+                        }
+                        if (item.mailType == "Declined") {
+                            $("#DeclinedMailContent").val(item.mailContents)
+                        }
+
+                    });
+                }
+            })
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("TokenDetails", "Email")',
+                dataType: "json",
+                success: function (response) {
+                    $.each(response, function (i, item) {
+                        $("#TokenName").val(item.tokenName)
+                        $("#TokenValue").val(item.tokenValue)
+
+                    });
                 }
             })
         });
@@ -92,14 +129,15 @@
                             $('#editToEmail').val(response.sivantosPointEmailID);
                             $('#editCcEmail').val(response.ccEmailID);
                             openForm1();
-                            
+
                         }
                     }
                 });
 
 
-            
+
             $(document).on("click", "#submit2", function (e) {
+                $("#loader-wrapper").show();
                 fileData = new FormData();
                 fileData.append('TeamName', $('#editTeamName').val());
                 fileData.append('SponsorFirstName', $('#editFirstName').val());
@@ -120,6 +158,7 @@
                     contentType: false,
                     success:
                         function (response) {
+                            $("#loader-wrapper").hide();
                             if (response == true) {
                                 window.location.reload();
                             }
@@ -137,6 +176,7 @@
         $(document).on("click", "#addButton", function (e) {
             openForm();
             $(document).on("click", "#submit1", function (e) {
+                $("#loader-wrapper").show();
                 fileData = new FormData();
                 fileData.append('TeamName', $('#teamName').val());
                 fileData.append('SponsorFirstName', $('#sponsorFirstName').val());
@@ -157,8 +197,9 @@
                     contentType:false,
                     success: function (response)
                     {
+                        $("#loader-wrapper").hide();
                         if (response == true) {
-                            
+
                             window.location.reload();
                         }
                         else {
@@ -168,6 +209,27 @@
                 });
             });
         });
+
+        $(document).on("click", "#MailContentButton", function (e) {
+             $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddConfigurationToDatabase", "Email")',
+                    dataType: "json",
+                    data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMail": $('#DeactivationMailContent').val(), "ReminderMail": $('#RemainderMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val()}
+                    success: function (response) {
+                 }
+             });
+
+        });
+
+
+
+
+      
+
+
+
+
 
         function openForm1()
         {
@@ -406,6 +468,13 @@
             margin-top: 40px;
         }
 
+        #mailConfig {
+            padding-left: 50px;
+            padding-right: 50px;
+            padding-bottom:50px;
+
+        }
+
         .header {
             width: 100%;
             margin-top: 0px;
@@ -415,6 +484,79 @@
             background-color: black;
             color: white;
             font-size: 30px;
+        }
+
+        .loader-wrapper {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(1,1,1,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            border: 4px solid white;
+            animation: loader 2s infinite ease;
+        }
+
+        .loader-inner {
+            vertical-align: top;
+            display: inline-block;
+            width: 100%;
+            background-color: azure;
+            animation: loader-inner 2s infinite ease-in;
+        }
+
+        @@keyframes loader {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(180deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
+
+            75% {
+                transform: rotate(360deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes loader-inner {
+            0% {
+                height: 0%;
+            }
+
+            25% {
+                height: 0%;
+            }
+
+            50% {
+                height: 100%;
+            }
+
+            75% {
+                height: 100%;
+            }
+
+            100% {
+                height: 0%;
+            }
         }
 
         #edit {
@@ -529,7 +671,7 @@
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(4)')" style="cursor:pointer"> Sponsor Email</th>
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(5)')" style="cursor:pointer"> Sponsor Department</th>
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(6)')" style="cursor:pointer"> Reporting Manager Email</th>
-                    
+
                     <th scope="col"> Action</th>
 
                 </tr>
@@ -538,8 +680,78 @@
         </table>
 
     </div>
-
     <input type="button" value="ADD" class="btn btn-default" id="addButton" />
+
+
+
+    <div id="mailConfig">
+        <hr />
+        <div>
+            <h2>Mail Content Configuration</h2>
+        </div>
+        <div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Activation Mail:</label>
+                <textarea class="form-control" id="ActivationMailContent" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Deactivation Mail:</label>
+                <textarea class="form-control" id="DeactivationMailContent" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Remainder Mail for Deactivation:</label>
+                <textarea class="form-control" id="RemainderMailContent" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Declined Mail:</label>
+                <textarea class="form-control" id="DeclinedMailContent" rows="2"></textarea>
+            </div>
+        </div>
+
+        <button type="button" id="MailContentButton" class="btn btn-primary">Submit</button>
+
+        <hr />
+
+        <h2>Email Timer</h2>
+        <div class="form-group row">
+
+            @*<label id="TextField" class="control-label col-sm-1" style="white-space: nowrap;">
+                    Email Timer:
+                </label>*@
+            <div class="col-sm-3" id="inputTextbox" data-toggle="dropdown">
+                <select id="emailTimer" class="form-control">
+                    <option value="" selected>Choose Here</option>
+                    <option value="1">1 day</option>
+                    <option value="2">2 days</option>
+                    <option value="4">4 days</option>
+                    <option value="1w">1 week</option>
+                    <option value="15">15 days</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" id="MailtimerButton" class="btn btn-primary">Submit</button>
+
+        <hr />
+
+        <div>
+            <h2>Api Token Configuration</h2>
+        </div>
+
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Token Name:</label>
+            <textarea class="form-control" id="TokenName" rows="1"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Token Value:</label>
+            <textarea class="form-control" id="TokenValue" rows="1"></textarea>
+        </div>
+
+        <button type="button" id="TokenButton" class="btn btn-primary">Submit</button>
+
+    </div>
+
+
+
     <div id="pop1">
         <div class="form-popup" id="myForm">
             <form class="form-container">
@@ -573,7 +785,7 @@
                 <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateToEmail()" required>
 
                 <label for="email"><b>Cc Email Id</b></label>
-                <input type="text" placeholder="Email Id" id="ccEmail" name="Ccemail"  required>
+                <input type="text" placeholder="Email Id" id="ccEmail" name="Ccemail" required>
 
 
                 <button type="submit" id="submit1" class="btn">Submit</button>
@@ -592,7 +804,7 @@
                 <input type="text" placeholder="Team Name" name="team" id="editTeamName" readonly>
 
                 <label for="firstname"><b>Sponsor First Name</b></label>
-                <input type="text" placeholder="First Name" name="firstname" onkeyup="ValidateEditFirstName()" id="editFirstName"required>
+                <input type="text" placeholder="First Name" name="firstname" onkeyup="ValidateEditFirstName()" id="editFirstName" required>
 
                 <label for="lastname"><b>Sponsor Last Name</b></label>
                 <input type="text" placeholder="Last Name" name="lastname" onkeyup="ValidateEditLastName()" id="editLastName" required>
@@ -613,10 +825,10 @@
                 <input type="email" id="editFromEmail" name="Fromemail" onkeyup="ValidateEditFromEmail()" required>
 
                 <label for="email"><b>Sivantos Activation Request Point of Contact Id</b></label>
-                <input type="email"  id="editToEmail" name="Toemail" onkeyup="ValidateEditToEmail()" required>
+                <input type="email" id="editToEmail" name="Toemail" onkeyup="ValidateEditToEmail()" required>
 
                 <label for="email"><b>Cc Email Id</b></label>
-                <input type="text"  id="editCcEmail" name="Ccemail"  required>
+                <input type="text" id="editCcEmail" name="Ccemail" required>
 
 
                 <button type="submit" id="submit2" class="btn">Submit</button>
@@ -624,6 +836,10 @@
 
             </form>
         </div>
+    </div>
+
+    <div class="loader-wrapper" id="loader-wrapper">
+        <span class="loader"><span class="loader-inner"></span></span>
     </div>
 
 
