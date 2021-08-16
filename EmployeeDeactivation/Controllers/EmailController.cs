@@ -15,13 +15,26 @@ namespace EmployeeDeactivation.Controllers
             _emailOperation = emailOperation;
         }
 
+        //[HttpGet]
+        //[Route("Email/GetSpecificConfiguration")]
+        //public JsonResult GetSpecificConfiguration(string key)
+        //{
+        //    return Json(_emailOperation.RetrieveSpecificConfiguration(key));
+        //}
+
+        [HttpGet]
+        [Route("Email/GetConfigurationDetails")]
+        public JsonResult GetConfigurationDetails()
+        {
+            return Json(_emailOperation.RetrieveAllMailContent());
+        }
 
         [HttpPost]
         [Route("Email/AddConfigurationToDatabase")]
-        public JsonResult AddConfigurationToDatabase(string ActivationMail , string DeactivationMail, string ReminderMail, string DeclinedMail)
+        public JsonResult AddConfigurationToDatabase(string ActivationMail , string DeactivationMail, string ReminderMail, string DeclinedMail, string SendGrid, string EmailTimer)
         {
 
-            return Json(_emailOperation.AddMailConfigurationData(ActivationMail, DeactivationMail, ReminderMail, DeclinedMail));
+            return Json(_emailOperation.AddMailConfigurationData(ActivationMail, DeactivationMail, ReminderMail, DeclinedMail, SendGrid, EmailTimer));
         }
 
         [HttpPost]

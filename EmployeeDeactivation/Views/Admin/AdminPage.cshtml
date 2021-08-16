@@ -32,41 +32,34 @@
                 }
             })
 
-            $.ajax({
+           $.ajax({
                 type: "GET",
-                url: '@Url.Action("MailDetails", "Email")',
+                url: '@Url.Action("GetConfigurationDetails", "Email")',
                 dataType: "json",
                 success: function (response) {
                     $.each(response, function (i, item) {
-                        if (item.mailType == "Activation") {
-                            $("#ActivationMailContent").val(item.mailContents)
+                        if (item.tokenName == "ActivationMail") {
+                            $("#ActivationMailContent").val(item.tokenValue)
                         }
-                        if (item.mailType == "Deactivation") {
-                            $("#DeactivationMailContent").val(item.mailContents)
+                        if (item.tokenName == "DeactivationMail") {
+                            $("#DeactivationMailContent").val(item.tokenValue)
                         }
-                        if (item.mailType == "Remainder") {
-                            $("#RemainderMailContent").val(item.mailContents)
+                        if (item.tokenName == "ReminderMail") {
+                            $("#RemainderMailContent").val(item.tokenValue)
                         }
-                        if (item.mailType == "Declined") {
-                            $("#DeclinedMailContent").val(item.mailContents)
+                        if (item.tokenName == "DeclinedMail") {
+                            $("#DeclinedMailContent").val(item.tokenValue)
                         }
-
+                        if (item.tokenName == "SendGrid") {
+                            $("#TokenValue").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "EmailTimer") {
+                            $("#emailTimer").val(item.tokenValue)
+                        }                       
                     });
                 }
             })
 
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("TokenDetails", "Email")',
-                dataType: "json",
-                success: function (response) {
-                    $.each(response, function (i, item) {
-                        $("#TokenName").val(item.tokenName)
-                        $("#TokenValue").val(item.tokenValue)
-
-                    });
-                }
-            })
         });
 
         $(document).on("click", "#delete", function (e) {
@@ -210,12 +203,20 @@
         });
 
         $(document).on("click", "#MailContentButton", function (e) {
+            $("#loader-wrapper").show();
              $.ajax({
                     type: "POST",
                     url: '@Url.Action("AddConfigurationToDatabase", "Email")',
                     dataType: "json",
-                    data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMail": $('#DeactivationMailContent').val(), "ReminderMail": $('#RemainderMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val()},
-                    success: function (response) {
+                    data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMail": $('#DeactivationMailContent').val(), "ReminderMail": $('#RemainderMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val(), "SendGrid": $('#TokenValue').val(), "EmailTimer": $('#emailTimer').val()},
+                 success: function (response) {
+                     if (response == true) {
+                         $("#loader-wrapper").hide();
+                         window.location.reload();
+                         alert("Mail Configuration updated");
+                     } else {
+                         alert("data could not be updated. Try again")
+                     }
                  }
              });
 
@@ -695,7 +696,6 @@
             </div>
         </div>
 
-        <button type="button" id="MailContentButton" class="btn btn-primary">Submit</button>
 
         <hr />
 
@@ -703,11 +703,11 @@
         <div class="form-group row">
 
             @*<label id="TextField" class="control-label col-sm-1" style="white-space: nowrap;">
-                    Email Timer:
-                </label>*@
+                Email Timer:
+            </label>*@
             <div class="col-sm-3" id="inputTextbox" data-toggle="dropdown">
                 <select id="emailTimer" class="form-control">
-                    <option value="" selected>Choose Here</option>
+                    @*<option value="" selected>Choose Here</option>*@
                     <option value="1">1 day</option>
                     <option value="2">2 days</option>
                     <option value="4">4 days</option>
@@ -716,7 +716,7 @@
                 </select>
             </div>
         </div>
-        <button type="button" id="MailtimerButton" class="btn btn-primary">Submit</button>
+
 
         <hr />
 
@@ -726,14 +726,15 @@
 
         <div class="form-group">
             <label for="exampleFormControlTextarea1">Token Name:</label>
-            <textarea class="form-control" id="TokenName" rows="1"></textarea>
+            <textarea class="form-control" id="TokenName" rows="1" placeholder="SendGrid" readonly></textarea>
         </div>
         <div class="form-group">
             <label for="exampleFormControlTextarea1">Token Value:</label>
             <textarea class="form-control" id="TokenValue" rows="1"></textarea>
         </div>
 
-        <button type="button" id="TokenButton" class="btn btn-primary">Submit</button>
+
+        <button type="button" id="MailContentButton" class="btn btn-primary">Submit</button>
 
     </div>
     <div id="pop1">
@@ -820,9 +821,9 @@
             </form>
         </div>
     </div>
-    @*<div class="loader-wrapper" id="loader-wrapper">
+    <div class="loader-wrapper" id="loader-wrapper">
         <span class="loader"><span class="loader-inner"></span></span>
-    </div>*@
+    </div>
 </body>
 
 
