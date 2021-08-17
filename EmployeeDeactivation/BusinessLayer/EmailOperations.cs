@@ -25,7 +25,7 @@ namespace EmployeeDeactivation.BusinessLayer
             _managerApprovalOperation = managerApprovalOperation;
             _context = context;
         }
-
+        #region MailConfiguration
         public string RetrieveSpecificConfiguration(string key)
         {
             var configurations = RetrieveAllMailContent();
@@ -42,7 +42,6 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             return _context.Tokens.ToList();
         }
-
         public bool AddMailConfigurationData(string ActivationMail, string DeactivationMail,string  ReminderMail, string DeclinedMail,string SendGrid, string EmailTimer)
         {
             try
@@ -93,7 +92,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 return false;
             }
         }
-
+        #endregion
         public bool SendPDfAsEmailAttachment(EmailDetails details,bool isActivationPdf)
         {
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
@@ -183,12 +182,28 @@ namespace EmployeeDeactivation.BusinessLayer
                         }
                     }
                 }
+                var twoDaysAgo=Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).AddDays(-2);
+                if (DateTime.Today.ToString() == twoDaysAgo.ToString())
+                {
+                    foreach (var employee in employeeData)
+                    {
+                        if (employee.GId.ToLower() == approvedEmployee.EmployeeGId.ToLower())
+                        {
+                            EmailDetails details = new EmailDetails()
+                            {
+                                FromEmailId = employee.FromEmailId,
+                                ToEmailId = employee.ReportingManagerEmail,
+                                EmployeeName = approvedEmployee.EmployeeName
+                            };
+                            _ = SendEmailAsync(details, TypeOfWorkflow.ReminderEmail);
+                        }
+                    }
+                }
             }
         }
        
         private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {
-            
             var apiKey = RetrieveSpecificConfiguration("SendGrid");
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress(details.FromEmailId, "CM Siemens");
@@ -212,34 +227,35 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 var activationEmployeeDetails = _employeeDataOperation.RetrieveActivationDataBasedOnGid(details.ActivatedEmployee.GId);
                 subject = "Activation Workflow initiated";
-                string textBody = "<table border=" + 1 + " cellpadding=" + 0 + " cellspacing=" + 0 + " width = " + 400 + "><tr> <th><b>Surname</b></th> <th><b>First Name</b></th> <th><b>Audiology Display Name</b></th> <th><b>Siemens e-mail ID</b></th> <th><b>Siemens Login</b></th> <th><b>Siemens GID</b></th> <th><b>Team</b></th> <th><b>Role</b></th> <th><b>Gender</b></th> <th><b>Date of birth</b></th> <th><b>Place of birth</b></th> <th><b>Address - Street</b></th> <th><b>Address - City, Country</b></th> <th><b>Phone num</b></th> <th><b>Nationality</b></th> </tr> <tr><td>"+ activationEmployeeDetails.LastName + "</td> <td>" + activationEmployeeDetails.FirstName + "</td> <td>" + details.EmployeeName + "</td> <td>" + activationEmployeeDetails.EmailID + "</td> <td>" + details.ActivatedEmployee.GId + "</td> <td>" + activationEmployeeDetails.GId + "</td> <td>" + details.ActivatedEmployee.TeamName + "</td> <td>" + activationEmployeeDetails.Role + "</td>  <td>" + activationEmployeeDetails.Gender + "</td> <td>" + activationEmployeeDetails.DateOfBirth + "</td> <td>" + activationEmployeeDetails.PlaceOfBirth + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.PhoneNo + "</td> <td>" + activationEmployeeDetails.Nationality + "</td></tr>";
+                string textBody = "<table border=" + 1 + " cellpadding=" + 0 + " cellspacing=" + 0 + " width = " + 400 + "><tr> <th><b>Surname</b></th> <th><b>First Name</b></th> <th><b>Audiology Display Name</b></th> <th><b>Siemens e-mail ID</b></th> <th><b>Siemens Login</b></th> <th><b>Siemens GID</b></th> <th><b>Team</b></th> <th><b>Role</b></th> <th><b>Gender</b></th> <th><b>Date of birth</b></th> <th><b>Place of birth</b></th> <th><b>Address - Street</b></th> <th><b>Address - City, Country</b></th> <th><b>Phone num</b></th> <th><b>Nationality</b></th> </tr> <tr><td>" + activationEmployeeDetails.LastName + "</td> <td>" + activationEmployeeDetails.FirstName + "</td> <td>" + details.EmployeeName + "</td> <td>" + activationEmployeeDetails.EmailID + "</td> <td>" + details.ActivatedEmployee.GId + "</td> <td>" + activationEmployeeDetails.GId + "</td> <td>" + details.ActivatedEmployee.TeamName + "</td> <td>" + activationEmployeeDetails.Role + "</td>  <td>" + activationEmployeeDetails.Gender + "</td> <td>" + activationEmployeeDetails.DateOfBirth + "</td> <td>" + activationEmployeeDetails.PlaceOfBirth + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.PhoneNo + "</td> <td>" + activationEmployeeDetails.Nationality + "</td></tr>";
                 textBody += "</table>";
                 htmlContent = plainTextContent = RetrieveSpecificConfiguration("ActivationMail");
                 if (htmlContent.Contains("+TeamName+"))
                 {
-                    htmlContent.Replace("+TeamName+", details.ActivatedEmployee.TeamName);
+                    htmlContent=htmlContent.Replace("+TeamName+", details.ActivatedEmployee.TeamName);
                 }
                 if (htmlContent.Contains("+textBody+"))
                 {
-                    htmlContent.Replace("+textBody+", textBody);
+                    htmlContent = htmlContent.Replace("+textBody+", textBody);
                 }
             }
             if (Convert.ToInt32(typeOfWorkflow) == 3)
             {
                 subject = "Deactivation workflow";
                 plainTextContent = RetrieveSpecificConfiguration("ReminderMail");
-                if(plainTextContent.Contains("+EmployeeName+"))
+                if (plainTextContent.Contains("+EmployeeName+"))
                 {
-                    plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
+                    plainTextContent= plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
                 }
             }
+           
             if (Convert.ToInt32(typeOfWorkflow) == 4)
             {
                 subject = "Deactivation workflow declined";
                 plainTextContent = RetrieveSpecificConfiguration("DeclinedMail");
-                if(plainTextContent.Contains("+EmployeeName+"))
+                if (plainTextContent.Contains("+EmployeeName+"))
                 {
-                    plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
+                    plainTextContent=plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
                 }
             }
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
