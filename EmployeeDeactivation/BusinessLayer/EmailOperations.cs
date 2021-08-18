@@ -101,14 +101,13 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 return false;
             }
-
             if (!isActivationPdf)
             {
                 details.FromEmailId = emailDetails[3];
                 details.ToEmailId = emailDetails[0];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                _ = SendEmailAsync(details, TypeOfWorkflow.Deactivation);
+                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowInitiated);
 
             }
             if (isActivationPdf)
@@ -141,6 +140,14 @@ namespace EmployeeDeactivation.BusinessLayer
         public void SendReminderEmail()
         {
             var employeeDetails = _managerApprovalOperation.GetAllPendingDeactivationWorkflows();
+            var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
+            var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
+            SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
+            SendDeactivationWorkFlowMailToSponsorOnLastWokringDay(approvedEmployeeDetails, employeeData);
+            SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
+        }
+        private void SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
+        {
             foreach (var employee in employeeDetails)
             {
                 DateTime date = Convert.ToDateTime(employee.EmployeeLastWorkingDate.ToString());
@@ -156,11 +163,12 @@ namespace EmployeeDeactivation.BusinessLayer
                         ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = employee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                         FileName = "DeactivationWorkflow_" + employee.EmployeeName
                     };
-                    _ = SendEmailAsync(details, TypeOfWorkflow.ReminderEmail);
+                    _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
                 }
             }
-            var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
-            var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
+        }
+        private void SendDeactivationWorkFlowMailToSponsorOnLastWokringDay(List<ManagerApprovalStatus> approvedEmployeeDetails,List<EmployeeDetails> employeeData)
+        {
             foreach (var approvedEmployee in approvedEmployeeDetails)
             {
                 if (DateTime.Today.ToString() == approvedEmployee.EmployeeLastWorkingDate)
@@ -178,12 +186,17 @@ namespace EmployeeDeactivation.BusinessLayer
                                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                                 FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
                             };
-                            _ = SendEmailAsync(details , TypeOfWorkflow.ReminderEmail);
+                            _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
                         }
                     }
                 }
-                var twoDaysAgo=Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).AddDays(-2);
-                if (DateTime.Today.ToString() == twoDaysAgo.ToString())
+            }
+        }
+        private void SendReminderMailTwoDaysBeforeLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
+        {
+            foreach (var approvedEmployee in approvedEmployeeDetails)
+            {
+                if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).AddDays(-2).ToString())
                 {
                     foreach (var employee in employeeData)
                     {
@@ -192,38 +205,79 @@ namespace EmployeeDeactivation.BusinessLayer
                             EmailDetails details = new EmailDetails()
                             {
                                 FromEmailId = employee.FromEmailId,
-                                ToEmailId = employee.ReportingManagerEmail,
-                                EmployeeName = approvedEmployee.EmployeeName
+                                ToEmailId = approvedEmployee.ReportingManagerEmail,
+                                EmployeeName = approvedEmployee.EmployeeName,
+                                ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
                             };
-                            _ = SendEmailAsync(details, TypeOfWorkflow.ReminderEmail);
+                            _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
+                            details.ToEmailId = employee.EmailID;
+                            details.CcEmailId = approvedEmployee.ReportingManagerEmail;
+                            _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee);
                         }
                     }
                 }
             }
         }
-       
         private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {
-            var apiKey = RetrieveSpecificConfiguration("SendGrid");
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress(details.FromEmailId, "CM Siemens");
+            List<EmailAddress> emailAddress = new List<EmailAddress>();
+            var client = new SendGridClient(RetrieveSpecificConfiguration("SendGrid"));
+            var from = new EmailAddress(details.FromEmailId, "");
             var subject = "";
             var to = new EmailAddress(details.ToEmailId, "");
-            var cc = details.CcEmailId.Split(",");
-            List<EmailAddress> emailAddress = new List<EmailAddress>();
-            foreach (var item in cc)
+            if(!string.IsNullOrEmpty(details.CcEmailId))
             {
-                emailAddress.Add(new EmailAddress(item));
-
+                foreach (var item in details.CcEmailId.Split(","))
+                {
+                    emailAddress.Add(new EmailAddress(item));
+                }
             }
             var plainTextContent = "";
             var htmlContent = "<strong>Workflow</strong>";
             if (Convert.ToInt32(typeOfWorkflow) == 1)
             {
-                subject = "Deactivation Workflow initiated";
-                htmlContent = RetrieveSpecificConfiguration("DeactivationMail");
+                subject = "Deactivation Workflow Initiated";
+                if (RetrieveSpecificConfiguration("DeactivationMailInitiated").Contains("+EmployeeName+"))
+                {
+                    htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
+                }
             }
             if (Convert.ToInt32(typeOfWorkflow) == 2)
+            {
+                subject = "Deactivation Workflow Initiated";
+                if (RetrieveSpecificConfiguration("DeactivationMailLastWorkingDay").Contains("+EmployeeName+"))
+                {
+                    htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
+                }
+            }
+            if (Convert.ToInt32(typeOfWorkflow) == 3)
+            {
+                subject = "Deactivation workflow";
+                plainTextContent = RetrieveSpecificConfiguration("DeactivationMailOnLastWorkingDay");
+                if (plainTextContent.Contains("+EmployeeName+"))
+                {
+                    plainTextContent = plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
+                }
+            }
+            if (Convert.ToInt32(typeOfWorkflow) == 4)
+            {
+                subject = "Deactivation workflow";
+                plainTextContent = RetrieveSpecificConfiguration("DeactivationWorkflowTwoDaysBefore");
+                if (plainTextContent.Contains("+EmployeeName+"))
+                {
+                    plainTextContent = plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
+                }
+            }
+            if (Convert.ToInt32(typeOfWorkflow) == 5)
+            {
+                subject = "Deactivation workflow";
+                plainTextContent = RetrieveSpecificConfiguration("DeactivationWorkflowToEmployee");
+                if (plainTextContent.Contains("+EmployeeName+"))
+                {
+                    plainTextContent = plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
+                }
+            }
+            if (Convert.ToInt32(typeOfWorkflow) == 6)
             {
                 var activationEmployeeDetails = _employeeDataOperation.RetrieveActivationDataBasedOnGid(details.ActivatedEmployee.GId);
                 subject = "Activation Workflow initiated";
@@ -239,17 +293,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     htmlContent = htmlContent.Replace("+textBody+", textBody);
                 }
             }
-            if (Convert.ToInt32(typeOfWorkflow) == 3)
-            {
-                subject = "Deactivation workflow";
-                plainTextContent = RetrieveSpecificConfiguration("ReminderMail");
-                if (plainTextContent.Contains("+EmployeeName+"))
-                {
-                    plainTextContent= plainTextContent.Replace("+EmployeeName+", details.EmployeeName);
-                }
-            }
-           
-            if (Convert.ToInt32(typeOfWorkflow) == 4)
+            if (Convert.ToInt32(typeOfWorkflow) == 7)
             {
                 subject = "Deactivation workflow declined";
                 plainTextContent = RetrieveSpecificConfiguration("DeclinedMail");
@@ -259,7 +303,10 @@ namespace EmployeeDeactivation.BusinessLayer
                 }
             }
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            msg.AddCcs(emailAddress);
+            if(emailAddress.Count>0)
+            {
+                msg.AddCcs(emailAddress);
+            }
             if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null)
             {
                 msg.AddAttachment(filename: details.FileName + ".pdf", Convert.ToBase64String(details.ActivatedEmployee.ActivationWorkFlowPdfAttachment));

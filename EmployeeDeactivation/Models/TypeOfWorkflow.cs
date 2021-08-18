@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace EmployeeDeactivation.Models
 {
     public enum TypeOfWorkflow
     {
-        Deactivation=1, Activation=2, ReminderEmail=3, DeclinedEmail=4
+        DeactivationWorkFlowInitiated=1,
+        DeactivationWorkFlowLastWorkingDay = 2,
+        DeactivationWorkFlowReminderManagerOnLastWorkingDay=3,
+        DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay = 4,
+        DeactivationWorkFlowReminderEmployee =5,
+        Activation = 6, 
+        DeclinedEmail = 7
     }
 }

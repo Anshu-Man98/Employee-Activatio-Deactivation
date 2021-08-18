@@ -15,13 +15,6 @@ namespace EmployeeDeactivation.Controllers
             _emailOperation = emailOperation;
         }
 
-        //[HttpGet]
-        //[Route("Email/GetSpecificConfiguration")]
-        //public JsonResult GetSpecificConfiguration(string key)
-        //{
-        //    return Json(_emailOperation.RetrieveSpecificConfiguration(key));
-        //}
-
         [HttpGet]
         [Route("Email/GetConfigurationDetails")]
         public JsonResult GetConfigurationDetails()

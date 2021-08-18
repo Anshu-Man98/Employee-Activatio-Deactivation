@@ -68,7 +68,7 @@
 
 
         });
-        var x = setInterval(Reminder, 86400000);
+        var x = setInterval(Reminder,/* 86400000*/60000);
         function Reminder() {
             $.ajax({
                 type: "GET",
