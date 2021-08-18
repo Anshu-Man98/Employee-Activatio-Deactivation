@@ -19,6 +19,11 @@ namespace EmployeeDeactivation.Controllers
             return View();
         }
 
+        public IActionResult AdminConfigurationPage()
+        {
+            return View();
+        }
+
         public IActionResult AccountDeactivationDatePage()
         {
             return View(_adminDataOperation.DeactivationEmployeeData());
@@ -28,6 +33,7 @@ namespace EmployeeDeactivation.Controllers
         {
             return View(_adminDataOperation.ActivationEmployeeData());
         }
+
 
         [HttpGet]
         [Route("Admin/SponsorDetails")]
