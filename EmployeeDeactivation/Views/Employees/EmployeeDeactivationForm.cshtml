@@ -68,7 +68,7 @@
 
 
         });
-        var x = setInterval(Reminder,/* 86400000*/60000);
+        var x = setInterval(Reminder,/* 86400000*/120000);
         function Reminder() {
             $.ajax({
                 type: "GET",
@@ -513,7 +513,7 @@
         <div id="header">
             <h2 class="headerText">Employee Deactivation Form </h2>
             <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
-            @*<div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>*@
+            <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
             <div>
                 <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
             </div>
