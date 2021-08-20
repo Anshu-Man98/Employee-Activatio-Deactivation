@@ -42,7 +42,7 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             return _context.Tokens.ToList();
         }
-        public bool AddMailConfigurationData(string ActivationMail, string DeactivationMail,string  ReminderMail, string DeclinedMail,string SendGrid, string EmailTimer)
+        public bool AddMailConfigurationData(string SendGrid, string EmailTimer)
         {
             try
             {
@@ -50,39 +50,17 @@ namespace EmployeeDeactivation.BusinessLayer
                 var ConfigDetails = _context.Tokens.ToList();
                 foreach (var Config in ConfigDetails)
                 {
-                    
-                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "ActivationMail"));
-                    Tokens tokens = new Tokens();
-                    tokens.TokenName = "ActivationMail";
-                    tokens.TokenValue = ActivationMail;
-                    _context.Add(tokens);
-                    _context.SaveChanges();
-                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "DeactivationMail"));
-                    tokens.TokenName = "DeactivationMail";
-                    tokens.TokenValue = DeactivationMail;
-                    _context.Add(tokens);
-                    _context.SaveChanges();
-                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "ReminderMail"));
-                    tokens.TokenName = "ReminderMail";
-                    tokens.TokenValue = ReminderMail;
-                    _context.Add(tokens);
-                    _context.SaveChanges();
-                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "DeclinedMail"));
-                    tokens.TokenName = "DeclinedMail";
-                    tokens.TokenValue = DeclinedMail;
-                    _context.Add(tokens);
-                    _context.SaveChanges();
-                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "SendGrid"));
-                    tokens.TokenName = "SendGrid";
-                    tokens.TokenValue = SendGrid;
-                    _context.Add(tokens);
-                    _context.SaveChanges();
-                    _context.Remove(_context.Tokens.Single(a => a.TokenName == "EmailTimer"));
-                    tokens.TokenName = "EmailTimer";
-                    tokens.TokenValue = EmailTimer;
-                    _context.Add(tokens);
-                    _context.SaveChanges();
 
+                    if (Config.TokenName == "SendGrid")
+                    {
+                        Config.TokenValue = SendGrid;
+                        _context.SaveChanges() ;
+                    }
+                    if (Config.TokenName == "EmailTimer")
+                    {
+                        Config.TokenValue = EmailTimer;
+                        _context.SaveChanges();
+                    }
                 }
                 databaseUpdateStatus = true;
                 return databaseUpdateStatus;
@@ -120,7 +98,7 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             return true;
         }
-        public void SendEmailDeclined(string gId, string employeeName)
+        public async Task SendEmailDeclined(string gId, string employeeName)
         {
             var employeeDetails = _employeeDataOperation.GetDeactivatedEmployeeDetails(gId);
             var reportingManagerEmailId = _employeeDataOperation.GetReportingEmailIds(employeeDetails[1])[3];
@@ -137,19 +115,19 @@ namespace EmployeeDeactivation.BusinessLayer
                 },
                 FileName = String.Empty
             };
-            _ = SendEmailAsync(details, TypeOfWorkflow.DeclinedEmail);
+            await SendEmailAsync(details, TypeOfWorkflow.DeclinedEmail);
 
         }
-        public void SendReminderEmail()
+        public async Task SendReminderEmail()
         {
             var employeeDetails = _managerApprovalOperation.GetAllPendingDeactivationWorkflows();
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
             var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
-            SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
-            SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
-            SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
+            await  SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
+            await  SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
+            await  SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
         }
-        private void SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
+        private async Task SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
         {
             foreach (var employee in employeeDetails)
             {
@@ -166,11 +144,11 @@ namespace EmployeeDeactivation.BusinessLayer
                         ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = employee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                         FileName = "DeactivationWorkflow_" + employee.EmployeeName
                     };
-                    _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
+                     await  SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
                 }
             }
         }
-        private void SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails,List<EmployeeDetails> employeeData)
+        private async Task SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails,List<EmployeeDetails> employeeData)
         {
             foreach (var approvedEmployee in approvedEmployeeDetails)
             {
@@ -189,13 +167,13 @@ namespace EmployeeDeactivation.BusinessLayer
                                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                                 FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
                             };
-                            _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
+                             await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
                         }
                     }
                 }
             }
         }
-        private void SendReminderMailTwoDaysBeforeLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
+        private async Task SendReminderMailTwoDaysBeforeLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
         {
             foreach (var approvedEmployee in approvedEmployeeDetails)
             {
@@ -212,11 +190,11 @@ namespace EmployeeDeactivation.BusinessLayer
                                 EmployeeName = approvedEmployee.EmployeeName,
                                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
                             };
-                            _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
+                            await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
 
                             details.ToEmailId = employee.EmailID;
                             details.CcEmailId = approvedEmployee.ReportingManagerEmail;
-                            _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee);
+                             await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee);
                         }
                     }
                 }

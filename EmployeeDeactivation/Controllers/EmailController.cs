@@ -24,10 +24,10 @@ namespace EmployeeDeactivation.Controllers
 
         [HttpPost]
         [Route("Email/AddConfigurationToDatabase")]
-        public JsonResult AddConfigurationToDatabase(string ActivationMail , string DeactivationMail, string ReminderMail, string DeclinedMail, string SendGrid, string EmailTimer)
+        public JsonResult AddConfigurationToDatabase(/*string ActivationMail , string DeactivationMail, string ReminderMail, string DeclinedMail,*/ string SendGrid, string EmailTimer)
         {
 
-            return Json(_emailOperation.AddMailConfigurationData(ActivationMail, DeactivationMail, ReminderMail, DeclinedMail, SendGrid, EmailTimer));
+            return Json(_emailOperation.AddMailConfigurationData(/*ActivationMail, DeactivationMail, ReminderMail, DeclinedMail, */SendGrid, EmailTimer));
         }
 
         [HttpPost]

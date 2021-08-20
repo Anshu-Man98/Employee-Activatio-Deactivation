@@ -25,14 +25,23 @@
                         if (item.tokenName == "ActivationMail") {
                             $("#ActivationMailContent").val(item.tokenValue)
                         }
-                        if (item.tokenName == "DeactivationMail") {
+                        if (item.tokenName == "DeactivationMailInitiated") {
                             $("#DeactivationMailContent").val(item.tokenValue)
-                        }
-                        if (item.tokenName == "ReminderMail") {
-                            $("#RemainderMailContent").val(item.tokenValue)
                         }
                         if (item.tokenName == "DeclinedMail") {
                             $("#DeclinedMailContent").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "DeactivationMailLastWorkingDay") {
+                            $("#DeactivationMailToSponsor").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "DeactivationMailOnLastWorkingDay") {
+                            $("#RemainderMailToManagerUnapproveworkflow").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "DeactivationWorkflowTwoDaysBefore") {
+                            $("#RemainderMailToManagerTwoDaysBefore").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "DeactivationWorkflowToEmployee") {
+                            $("#RemainderMailToEmployeeTwoDaysBefore").val(item.tokenValue)
                         }
 
                     });
@@ -48,7 +57,7 @@
                     type: "POST",
                     url: '@Url.Action("AddConfigurationToDatabase", "Email")',
                     dataType: "json",
-                    data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMail": $('#DeactivationMailContent').val(), "ReminderMail": $('#RemainderMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val()},
+                 data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMailInitiated": $('#DeactivationMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val(), "DeactivationMailLastWorkingDay": $('#DeactivationMailToSponsor').val(), "DeactivationMailOnLastWorkingDay": $('#RemainderMailToManagerUnapproveworkflow').val(), "DeactivationWorkflowTwoDaysBefore": $('#RemainderMailToManagerTwoDaysBefore').val(), "DeactivationWorkflowToEmployee": $('#RemainderMailToEmployeeTwoDaysBefore').val()},
                  success: function (response) {
                      if (response == true) {
                          $("#loader-wrapper").hide();
@@ -100,12 +109,29 @@
                 <textarea class="form-control" id="DeactivationMailContent" rows="2"></textarea>
             </div>
             <div class="form-group">
-                <label for="exampleFormControlTextarea1">Remainder Mail for Deactivation:</label>
-                <textarea class="form-control" id="RemainderMailContent" rows="2"></textarea>
-            </div>
-            <div class="form-group">
                 <label for="exampleFormControlTextarea1">Declined Mail:</label>
                 <textarea class="form-control" id="DeclinedMailContent" rows="2"></textarea>
+            </div>
+            @*<div class="form-group">
+                <label for="exampleFormControlTextarea1">Remainder Mail for Deactivation:</label>
+                <textarea class="form-control" id="RemainderMailContent" rows="2"></textarea>
+            </div>*@
+
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Deactivation Mail to Sponsor on employee last working day:</label>
+                <textarea class="form-control" id="DeactivationMailToSponsor" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Remainder mail to manager on last working day of employee to approve deactivation workflow :</label>
+                <textarea class="form-control" id="RemainderMailToManagerUnapproveworkflow" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Remainder mail to manager two before last working day of employee :</label>
+                <textarea class="form-control" id="RemainderMailToManagerTwoDaysBefore" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Remainder mail to Employee two before last working day of employee :</label>
+                <textarea class="form-control" id="RemainderMailToEmployeeTwoDaysBefore" rows="2"></textarea>
             </div>
         </div>
         <button type="button" id="MailContentButton" class="btn btn-primary">Submit</button>
