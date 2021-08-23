@@ -20,19 +20,32 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus)
         {
+            var count = 0;
             ManagerApprovalStatus ManagerApprovalStatus = new ManagerApprovalStatus()
             {
                 EmployeeName = managerApprovalStatus.EmployeeName,
                 EmployeeGId = managerApprovalStatus.EmployeeGId,
                 EmployeeLastWorkingDate = managerApprovalStatus.EmployeeLastWorkingDate,
                 EmployeeTeamName = managerApprovalStatus.EmployeeTeamName,
-                SponsorName = managerApprovalStatus.SponsorName,
+                SponsorFirstName = managerApprovalStatus.SponsorFirstName,
+                SponsorLastName = managerApprovalStatus.SponsorLastName,
                 DeactivationWorkFlowPdfAttachment = managerApprovalStatus.DeactivationWorkFlowPdfAttachment,
                 ReportingManagerEmail= managerApprovalStatus.ReportingManagerEmail,
                 WorkFlowStatus = managerApprovalStatus.WorkFlowStatus
             };
-            _context.Add(ManagerApprovalStatus);
-            _context.SaveChanges();
+            var pendingDeactivationWorkflow = RetrieveDeactivationDetails();
+            foreach (var item in pendingDeactivationWorkflow)
+            {
+                if(item.EmployeeGId==managerApprovalStatus.EmployeeGId)
+                {
+                    count++;
+                }
+            }
+            if(count==0)
+            {
+                _context.Add(ManagerApprovalStatus);
+                _context.SaveChanges();
+            }
         }
         public List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail)
         {
@@ -54,7 +67,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allDeactivationWorkflow = RetrieveDeactivationDetails();
             foreach (var item in allDeactivationWorkflow)
             {
-                if (item.EmployeeGId == gId)
+                if (item.EmployeeGId.ToLower() == gId.ToLower())
                 {
                    return item.DeactivationWorkFlowPdfAttachment;
                 }
@@ -63,29 +76,43 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         public bool ApproveRequest(string gId)
         {
-            var allDeactivationWorkflow = RetrieveDeactivationDetails();
-            foreach (var i in allDeactivationWorkflow)
+            try
             {
-                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                var allDeactivationWorkflow = RetrieveDeactivationDetails();
+                foreach (var i in allDeactivationWorkflow)
                 {
-                    i.WorkFlowStatus = "approve";
-                    return _context.SaveChanges() ==1 ;
+                    if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                    {
+                        i.WorkFlowStatus = "approve";
+                        return _context.SaveChanges() == 1;
+                    }
                 }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
         public bool DeclineRequest(string gId)
         {
-            var allDeactivationWorkflow = RetrieveDeactivationDetails();
-            foreach (var i in allDeactivationWorkflow)
+            try
             {
-                if (i.EmployeeGId == gId && i.WorkFlowStatus.ToLower() == "pending")
+                var allDeactivationWorkflow = RetrieveDeactivationDetails();
+                foreach (var i in allDeactivationWorkflow)
                 {
-                    i.WorkFlowStatus = "denied";
-                    return _context.SaveChanges() ==1;
+                    if (i.EmployeeGId.ToLower() == gId.ToLower() && i.WorkFlowStatus.ToLower() == "pending")
+                    {
+                        i.WorkFlowStatus = "denied";
+                        return _context.SaveChanges() == 1;
+                    }
                 }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         public List<ManagerApprovalStatus> GetAllPendingDeactivationWorkflows()

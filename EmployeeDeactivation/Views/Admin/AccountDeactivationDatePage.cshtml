@@ -129,6 +129,8 @@
             </thead>
             @foreach (EmployeeDetails employeeData in Model)
             {
+                var sponsorName = "";
+                sponsorName = employeeData.SponsorFirstName + " " + employeeData.SponsorLastName;
                 <tbody>
 
                     <tr class=item>
@@ -138,7 +140,7 @@
                         <td>@employeeData.GId</td>
                         <td>@employeeData.LastWorkingDate.Day - @employeeData.LastWorkingDate.Month - @employeeData.LastWorkingDate.Year</td>
                         <td>@employeeData.TeamName</td>
-                        <td>@employeeData.SponsorName</td>
+                        <td>@sponsorName</td>
                         <td>@employeeData.SponsorEmailID</td>
                         <td>@employeeData.SponsorDepartment</td>
                     </tr>

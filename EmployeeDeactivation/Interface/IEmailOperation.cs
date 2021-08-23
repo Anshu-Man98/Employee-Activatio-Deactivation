@@ -1,15 +1,18 @@
-﻿using System;
+﻿using EmployeeDeactivation.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.Interface
 {
     public interface IEmailOperation
     {
-        void SendReminderEmail();
-        void SendEmailDeclined(string gId, string employeeName);
-        bool SendPDfAsEmailAttachment(string memoryStream, string employeeName, string teamName, string sponsorGID, bool isActivationPdf);
+         Task SendReminderEmail();
+        Task SendEmailDeclined(string gId, string employeeName);
+        bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf);
+        bool AddMailConfigurationData(/*string ActivationMail, string DeactivationMail, string ReminderMail, string DeclinedMail, */string SendGrid, string EmailTimer);
+        //string RetrieveSpecificConfiguration(string key);
+        List<Tokens> RetrieveAllMailContent();
+
     }
 }

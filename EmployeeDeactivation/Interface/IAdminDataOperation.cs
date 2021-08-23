@@ -8,8 +8,9 @@ namespace EmployeeDeactivation.Interface
     {
         List<Teams> RetrieveSponsorDetails();
         bool AddSponsorData(Teams team);
-        bool DeleteSponsorData(string gId);
+        bool DeleteSponsorData(string teamName);
         List<EmployeeDetails> DeactivationEmployeeData();
         List<EmployeeDetails> ActivationEmployeeData();
+        Teams RetrieveSponsorDetailsAccordingToTeamName(string teamName);
     }
 }

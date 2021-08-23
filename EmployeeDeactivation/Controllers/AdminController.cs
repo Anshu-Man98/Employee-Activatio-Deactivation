@@ -19,6 +19,11 @@ namespace EmployeeDeactivation.Controllers
             return View();
         }
 
+        public IActionResult AdminConfigurationPage()
+        {
+            return View();
+        }
+
         public IActionResult AccountDeactivationDatePage()
         {
             return View(_adminDataOperation.DeactivationEmployeeData());
@@ -29,11 +34,18 @@ namespace EmployeeDeactivation.Controllers
             return View(_adminDataOperation.ActivationEmployeeData());
         }
 
+
         [HttpGet]
         [Route("Admin/SponsorDetails")]
         public JsonResult SponsorDetails()
         {
             return Json(_adminDataOperation.RetrieveSponsorDetails());
+        }
+        [HttpPost]
+        [Route("Admin/SponsorDetailsAccordingToTeamName")]
+        public JsonResult SponsorDetailsAccordingToGid(string teamName)
+        {
+            return Json(_adminDataOperation.RetrieveSponsorDetailsAccordingToTeamName(teamName));
         }
 
         [HttpPost]
@@ -46,9 +58,9 @@ namespace EmployeeDeactivation.Controllers
 
         [HttpPost]
         [Route("Admin/DeleteSponsorDetail")]
-        public JsonResult DeleteSponsorDetails(string gId)
+        public JsonResult DeleteSponsorDetails(string teamName)
         { 
-            return Json(_adminDataOperation.DeleteSponsorData(gId));
+            return Json(_adminDataOperation.DeleteSponsorData(teamName));
         }
 
 

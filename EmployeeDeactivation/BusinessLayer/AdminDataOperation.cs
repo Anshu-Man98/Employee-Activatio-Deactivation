@@ -24,37 +24,63 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             return _context.Teams.ToList();
         }
+        public Teams RetrieveSponsorDetailsAccordingToTeamName(string teamName)
+        {
+            var allSponsors = _context.Teams.ToList();
+            foreach (var item in allSponsors)
+            {
+                if(item.TeamName.ToLower()==teamName.ToLower())
+                {
+                    return item;
+                }
+            }
+            return new Teams();           
+        }
 
         public bool AddSponsorData(Teams team)
         {
+        try{
             bool databaseUpdateStatus = false;
             var teamDetails = _context.Teams.ToList();
             foreach (var teams in teamDetails)
             {
-                if (teams.SponsorGID == team.SponsorGID)
+                if (teams.TeamName.ToLower() == team.TeamName.ToLower())
                 {
-                    _context.Remove(_context.Teams.Single(a => a.SponsorGID == team.SponsorGID));
+                    _context.Remove(_context.Teams.Single(a => a.TeamName.ToLower() == team.TeamName.ToLower()));
                     _context.SaveChanges();
                 }
             }
             _context.Add(team);
-            databaseUpdateStatus = _context.SaveChanges() == 1;
-            return databaseUpdateStatus;
+           
+                databaseUpdateStatus = _context.SaveChanges() == 1;
+                return databaseUpdateStatus;
+
+            }
+        catch{
+                return false;
+            }     
         }
 
-        public bool DeleteSponsorData(string gId)
+        public bool DeleteSponsorData(string teamName)
         {
-            var teamDetails = _context.Teams.ToList();
-            foreach (var teams in teamDetails)
+            try
             {
-                if (teams.SponsorGID == gId)
+                var teamDetails = _context.Teams.ToList();
+                foreach (var teams in teamDetails)
                 {
-                    _context.Remove(_context.Teams.Single(a => a.SponsorGID == gId));
-                    return _context.SaveChanges() == 1;
-                    
+                    if (teams.TeamName.ToLower() == teamName.ToLower())
+                    {
+                        _context.Remove(_context.Teams.Single(a => a.TeamName.ToLower() == teamName.ToLower()));
+                        return _context.SaveChanges() == 1;
+
+                    }
                 }
+                return true;
             }
-            return true;
+            catch
+            {
+                return false;
+            }
 
         }
 

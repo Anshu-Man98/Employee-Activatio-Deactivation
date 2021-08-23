@@ -1,13 +1,10 @@
 ﻿using EmployeeDeactivation.Data;
 using EmployeeDeactivation.Interface;
 using EmployeeDeactivation.Models;
-using Microsoft.ApplicationInsights;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.BusinessLayer
 {
@@ -21,36 +18,44 @@ namespace EmployeeDeactivation.BusinessLayer
         #region Employee Data
         public bool AddEmployeeData(EmployeeDetails employeeDetails)
         {
-            if (employeeDetails.isDeactivatedWorkFlow)
+            try
             {
-                var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
-                foreach (var deactivatedEmployee in deactivatedEmployees)
+                if (employeeDetails.isDeactivatedWorkFlow)
                 {
-                    if (deactivatedEmployee.GId == employeeDetails.GId)
+
+                    var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
+                    foreach (var deactivatedEmployee in deactivatedEmployees)
                     {
-                        _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                        _context.SaveChanges();
+                        if (deactivatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
+                        {
+                            _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                            _context.SaveChanges();
+                        }
                     }
+                    DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                    _context.Add(employeeDetail);
                 }
-                DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                _context.Add(employeeDetail);
+                else
+                {
+                    var activatedEmployees = RetrieveAllActivationWorkFlow();
+                    foreach (var activatedEmployee in activatedEmployees)
+                    {
+                        if (activatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
+                        {
+                            _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                            _context.SaveChanges();
+                        }
+                    }
+                    ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
+                    _context.Add(employeeDetail);
+                }
+
+                return _context.SaveChanges() == 1;
             }
-            else
+            catch
             {
-                var activatedEmployees = RetrieveAllActivationWorkFlow();
-                foreach (var activatedEmployee in activatedEmployees)
-                {
-                    if (activatedEmployee.GId == employeeDetails.GId)
-                    {
-                        _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                        _context.SaveChanges();
-                    }
-                }
-            ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                _context.Add(employeeDetail);
+                return false;
             }
-           
-            return _context.SaveChanges() == 1;
         }
 
         public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()
@@ -81,18 +86,25 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public bool SavePdfToDatabase(byte[] pdf, string gId)
         {
-
-            var activationWorkflows = _context.ActivationWorkflow.ToList();
-            foreach (var activatedWorkflow in activationWorkflows)
+            try
             {
-                if (activatedWorkflow.GId == gId)
+
+                var activationWorkflows = _context.ActivationWorkflow.ToList();
+                foreach (var activatedWorkflow in activationWorkflows)
                 {
-                    activatedWorkflow.ActivationWorkFlowPdfAttachment = pdf;
-                    _context.SaveChanges();
-                    return true;
+                    if (activatedWorkflow.GId.ToLower() == gId.ToLower())
+                    {
+                        activatedWorkflow.ActivationWorkFlowPdfAttachment = pdf;
+                        _context.SaveChanges();
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
      
         public EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId)
@@ -100,29 +112,27 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeDetails = RetrieveAllDeactivatedEmployees();
             foreach (var employee in employeeDetails)
             {
-                if (employee.GId == gId)
+                if (employee.GId.ToLower() == gId.ToLower())
                 {
                     return employee;
                 }
             }
             return new EmployeeDetails();
         }
-        public string GetDeactivatedEmployeeEmailId(string gid)
+        public string[] GetDeactivatedEmployeeDetails(string gid)
         {
             var deactivationDetails = RetrieveAllDeactivatedEmployees();
             foreach (var item in deactivationDetails)
             {
-                var i = item.GId;
-                if (i == gid)
+                if (item.GId.ToLower() == gid.ToLower())
                 {
-                    string ss = item.EmailID;
-                    return ss;
+                    return new string[] { item.EmailID, item.TeamName,item.CcEmailId };
                     
                 }
                 
             }
 
-            return "";
+             return new string[] { };
         }
 
         public EmployeeDetails RetrieveActivationDataBasedOnGid(string gId)
@@ -130,7 +140,7 @@ namespace EmployeeDeactivation.BusinessLayer
             var allActivatedWorkFlows = RetrieveAllActivationWorkFlow();
             foreach (var item in allActivatedWorkFlows)
             {
-                if (item.GId == gId)
+                if (item.GId.ToLower() == gId.ToLower())
                 {
                     return item;
                 }
@@ -142,29 +152,24 @@ namespace EmployeeDeactivation.BusinessLayer
 
         #region SponsorData
 
-        public string GetReportingManagerEmailId(string teamName)
+        public string[] GetReportingEmailIds(string teamName)
         {
-            var teamDetails = RetrieveAllSponsorDetails();
-            foreach (var item in teamDetails)
+            try
             {
-                if(item.TeamName == teamName)
+                var teamDetails = RetrieveAllSponsorDetails();
+                foreach (var item in teamDetails)
                 {
-                    return item.ReportingManagerEmailID;
+                    if (item.TeamName.ToLower() == teamName.ToLower())
+                    {
+                        return new string[] { item.CmEmailID, item.SivantosPointEmailID, item.CcEmailID, item.ReportingManagerEmailID };
+                    }
                 }
+                return new string[] { };
             }
-            return "";      
-        }
-        public string GetSponsorEmailId(string sponsorGid)
-        {
-            var teamDetails = RetrieveAllSponsorDetails();
-            foreach (var item in teamDetails)
+            catch
             {
-                if (item.SponsorGID == sponsorGid)
-                {
-                    return item.SponsorEmailID;
-                }
+                return null;
             }
-            return "";
         }
         public List<Teams> RetrieveAllSponsorDetails()
         {

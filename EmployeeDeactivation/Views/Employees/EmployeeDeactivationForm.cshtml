@@ -38,29 +38,37 @@
         managerAdminApprove = "approve";
     }
 
-    <head>
+<head>
 
 
-        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
+    <meta charset="utf-8">
+    <script scr="jquery-2.1.4.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-        <script src="~/js/bootbox.js"></script>
-        <script type="text/javascript">
-
+    <script src="~/js/bootbox.js"></script>
+    <script type="text/javascript">
+            var sponsorFirstName = "";
+            var sponsorLastName = "";
+            var sponsorName = "";
         $(document).ready(function () {
+            $("#loader-wrapper").hide();
+                sponsorFirstName = "";
+                sponsorLastName = "";
+                sponsorName = "";
             GetTeamNames();
             $('#sponsorDetails').hide();
             $('#reportingManagerEmailId').hide();
             $('#sponsorGidHidden').hide();
-            
+
+
         });
-        var x = setInterval(Reminder, 86400000);
+        var x = setInterval(Reminder,86400000);
         function Reminder() {
             $.ajax({
                 type: "GET",
@@ -102,12 +110,18 @@
 
                     $.each(response, function (i, item) {
                         if (item.teamName == teamName) {
-                            $('#sponsorFirstName').val(item.sponsorFirstName + " " + item.sponsorLastName);
+                            sponsorFirstName = item.sponsorFirstName;
+                            sponsorLastName = item.sponsorLastName;
+                            sponsorName = item.sponsorFirstName + " " + item.sponsorLastName;
+                            $('#sponsorName').val(sponsorName);
                             $('#sponsorEmail').val(item.sponsorEmailID);
                             $('#sponsorDepartment').val(item.department);
                             $('#sponsorGid').val(item.sponsorGID);
                             $('#reportingManagerEmail').val(item.reportingManagerEmailID);
                             $('#sponsorDetails').show();
+                            $('#toEmailId').val(item.sivantosPointEmailID);
+                            $('#fromEmailId').val(item.cmEmailID);
+                            $('#ccEmailId').val(item.ccEmailID);
 
                         }
                     });
@@ -115,7 +129,11 @@
             })
         });
 
+            var clicked = true;
             $(document).on("click", "#submitButton", function (e) {
+                if (clicked) {
+                    clicked = false;
+                    $("#loader-wrapper").show();
 
                 fileData = new FormData();
                 fileData.append('FirstName', $('#employeeFirstName').val());
@@ -124,91 +142,107 @@
                 fileData.append('EmailID', $('#employeeEmail').val());
                 fileData.append('LastWorkingDate', $('#employeeLastWorkingdate').val());
                 fileData.append('TeamName', $('#teamNames').val());
-                fileData.append('SponsorName', $('#sponsorFirstName').val());
+                fileData.append('SponsorFirstName', sponsorFirstName);
+                fileData.append('SponsorLastName', sponsorLastName);
                 fileData.append('SponsorEmailID', $('#sponsorEmail').val());
                 fileData.append('SponsorDepartment', $('#sponsorDepartment').val());
                 fileData.append('SponsorGId', $('#sponsorGid').val());
+                fileData.append('ToEmailID', $('#toEmailId').val());
+                fileData.append('FromEmailID', $('#fromEmailId').val());
+                fileData.append('CcEmailID', $('#ccEmailId').val());
                 fileData.append('isDeactivatedWorkFlow', true);
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("AddDetailsToDatabase", "Employees")',
                     dataType: "json",
-                    data: fileData ,
+                    data: fileData,
                     processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response) {
-                        $.ajax({
-                            type: "GET",
-                            url: '@Url.Action("CreateDeactivationPdf", "Pdf")',
-                            data: { 'gId': $('#employeeGid').val() },
-                            dataType: "json",
-                            success: function (response) {
-                                if (response) {
-                                    let pdfWindow = window.open("")
-                                    pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
+                    contentType: false,
+                    success: function (response) {
+                        if (response == true) {
+                            $.ajax({
+                                type: "GET",
+                                url: '@Url.Action("CreateDeactivationPdf", "Pdf")',
+                                data: { 'gId': $('#employeeGid').val() },
+                                dataType: "json",
+                                success: function (response) {
+                                    if (response) {
+                                        $("#loader-wrapper").hide();
+                                        clicked = true;
+                                        let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
+                                        pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
 
-                                    bootbox.confirm
-                                        ({
-                                            message: "Do you wish to submit? no further changes can be made to the pdf after submission",
-                                            buttons: {
-                                                confirm: {
-                                                    label: 'Yes',
-                                                    className: 'btn-class-here'
+                                        bootbox.confirm
+                                            ({
+                                                message: "Do you wish to submit? no further changes can be made to the pdf after submission",
+                                                buttons: {
+                                                    confirm: {
+                                                        label: 'Yes',
+                                                        className: 'btn-class-here'
 
+                                                    },
+                                                    cancel: {
+                                                        label: 'No',
+                                                        className: 'btn-class-here'
+                                                    }
                                                 },
-                                                cancel: {
-                                                    label: 'No',
-                                                    className: 'btn-class-here'
-                                                }
-                                            },
-                                            callback: function (result) {
-                                                if (result) {
-                                                   $.ajax({
-                                                        type: "POST",
-                                                        url: '@Url.Action("PdfAttachmentEmail", "Email")',
-                                                        data: { 'memoryStream': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
-                                                        dataType: "json",
-                                                        success: function (result) {
-                                                            if (result) {
-                                                            fileData = new FormData();
-                                                            fileData.append('EmployeeName', $('#employeeFirstName').val() + " " + $('#employeeLastName').val());
-                                                            fileData.append('EmployeeLastWorkingDate', $('#employeeLastWorkingdate').val());
-                                                            fileData.append('EmployeeGId', $('#employeeGid').val());
-                                                            fileData.append('EmployeeTeamName', $('#teamNames').val());
-                                                            fileData.append('SponsorName', $('#sponsorFirstName').val());
-                                                            fileData.append('DeactivationWorkFlowPdfAttachment', response.toString().replace('data:application/pdf;base64,', ''));
-                                                            fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
-                                                                fileData.append('WorkFlowStatus',"@managerAdminApprove");
-                                                            $.ajax({
-                                                                type: "POST",
-                                                                url: '@Url.Action("AddPendingDeactivationRequestToDatabase", "ManagerApproval")',
-                                                                data: fileData,
-                                                                processData: false,
-                                                                contentType: false,
-                                                                success: function (stream) {
-                                                                    bootbox.alert("Your form has been sent sucessfully!");
-                                                                    document.getElementById('employeeGid').value = "";
-                                                                    document.getElementById('employeeLastWorkingdate').value = "";
-                                                                    document.getElementById('teamNames').value = "";
-                                                                    $('#sponsorDetails').hide();
+                                                callback: function (result) {  
+                                                    if (result) {
+                                                        $("#loader-wrapper").show();
+                                                        $.ajax({
+                                                            type: "POST",
+                                                            url: '@Url.Action("PdfAttachmentEmail", "Email")',
+                                                            data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
+                                                            dataType: "json",
+                                                            success: function (result) {
+                                                                if (result) {
+                                                                    fileData = new FormData();
+                                                                    fileData.append('EmployeeName', $('#employeeFirstName').val() + " " + $('#employeeLastName').val());
+                                                                    fileData.append('EmployeeLastWorkingDate', $('#employeeLastWorkingdate').val());
+                                                                    fileData.append('EmployeeGId', $('#employeeGid').val());
+                                                                    fileData.append('EmployeeTeamName', $('#teamNames').val());
+                                                                    fileData.append('SponsorFirstName', sponsorFirstName);
+                                                                    fileData.append('SponsorLastName', sponsorLastName);
+                                                                    fileData.append('DeactivationWorkFlowPdfAttachment', response.toString().replace('data:application/pdf;base64,', ''));
+                                                                    fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
+                                                                    fileData.append('WorkFlowStatus', "@managerAdminApprove");
+                                                                    $.ajax({
+                                                                        type: "POST",
+                                                                        url: '@Url.Action("AddPendingDeactivationRequestToDatabase", "ManagerApproval")',
+                                                                        data: fileData,
+                                                                        processData: false,
+                                                                        contentType: false,
+                                                                        success: function (stream) {
+                                                                            $("#loader-wrapper").hide();
+                                                                            bootbox.alert("Your form has been sent sucessfully!");
+                                                                            document.getElementById('employeeGid').value = "";
+                                                                            document.getElementById('employeeLastWorkingdate').value = "";
+                                                                            document.getElementById('teamNames').value = "";
+                                                                            document.getElementById('employeeFirstName').value = "";
+                                                                            document.getElementById('employeeLastName').value = "";
+                                                                            document.getElementById('employeeEmail').value = "";
+                                                                            $('#sponsorDetails').hide();
 
+                                                                        }
+                                                                    });
                                                                 }
-                                                            });
-                                                        }
-                                                        }
-                                                    });
+                                                            }
+                                                        });
+                                                    }
+
+
                                                 }
-                                                   
-                                                
-                                            }
-                                        });
+                                            });
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+                        else {
+                            alert("Data counld not be updated. Try again")
+                        }
                     }
-                }
-            });
+                });
+            }
         });
             var Regx = "^[A-Za-z ]+$";
         function ValidateFirstName() {
@@ -299,118 +333,189 @@
 
 
 
-        </script>
+    </script>
 
-        <style>
+    <style>
+
+        #header {
+            width: 102%;
+            margin-top: 0px;
+            padding: 20px;
+            margin-bottom: 5px;
+            background-color: black;
+            height: 17%;
+            position: relative;
+        }
+
+        .headerText {
+            text-align: center;
+            font-size: 30px;
+            color: white;
+            position: absolute;
+            margin-left: 35%;
+            margin-top: 5px;
+        }
+
+        .loader-wrapper {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(1,1,1,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            border: 4px solid white;
+            animation: loader 2s infinite ease;
+        }
+
+        .loader-inner {
+            vertical-align: top;
+            display: inline-block;
+            width: 100%;
+            background-color: azure;
+            animation: loader-inner 2s infinite ease-in;
+        }
+
+        @@keyframes loader {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(180deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
+
+            75% {
+                transform: rotate(360deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes loader-inner {
+            0% {
+                height: 0%;
+            }
+
+            25% {
+                height: 0%;
+            }
+
+            50% {
+                height: 100%;
+            }
+
+            75% {
+                height: 100%;
+            }
+
+            100% {
+                height: 0%;
+            }
+        }
+
+
+
+        #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton {
+            margin-left: 90%;
+            color: white;
+        }
+
+
+            #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover {
+                font-size: 103%;
+                color: darkgrey;
+                cursor: default;
+            }
+
+
+        .form {
+            margin-top: 32px;
+            margin-left: 33%;
+        }
+
+        #TextField {
+            white-space: nowrap;
+            padding-left: 0px;
+        }
+
+        #hello {
+            color: blue;
+            font-size: 17px;
+            text-align: center;
+        }
+
+        #inputTextbox {
+            margin-left: 70px;
+            width: 400px;
+        }
+
+        .ErrorView {
+            color: red;
+            margin-left: 183px;
+        }
+
+        #submitButton:hover {
+            background-color: Highlight;
+            color: azure;
+        }
+
+        .regular-field {
+            text-align: center;
+        }
+
+        .radio-but1 {
+            margin-right: 5px;
+        }
+
+        #radio-1-txt {
+            margin-right: 10px;
+        }
+
+        @@media only screen and (max-width:880px) {
 
             #header {
-                width: 102%;
-                margin-top: 0px;
-                padding: 20px;
-                margin-bottom: 5px;
-                background-color: black;
-                height: 17%;
-                position: relative;
+                width: 130%;
             }
 
-            .headerText {
-                text-align: center;
-                font-size: 30px;
-                color: white;
-                position: absolute;
-                margin-left: 35%;
-                margin-top: 5px;
-            }
-
-
-
-            #sponsorDetailsButton, #viewReportButton, #workflowButton {
-                margin-left: 90%;
-                color: white;
-            }
-
-
-                #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover {
-                    font-size: 103%;
-                    color: darkgrey;
-                    cursor: default;
-                }
-            
-
-            .form {
-                margin-top: 32px;
-                margin-left: 33%;
-            }
-
-            #TextField {
-                white-space: nowrap;
-                padding-left: 0px;
-            }
-
-            #hello {
-                color: blue;
-                font-size: 17px;
-                text-align: center;
-            }
-
-            #inputTextbox {
-                margin-left: 70px;
-                width: 400px;
+            #configureButton, #sponsorDetailsButton, #viewReportButton {
+                background-color: blue;
             }
 
             .ErrorView {
-                color: red;
-                margin-left: 183px;
-            }
-
-            #submitButton:hover {
-                background-color: Highlight;
-                color: azure;
-            }
-
-            .regular-field {
-                text-align: center;
-            }
-
-            .radio-but1 {
-                margin-right: 5px;
-            }
-
-            #radio-1-txt {
-                margin-right: 10px;
-            }
-
-            @@media only screen and (max-width:880px) {
-                
-                #header {
-                    width: 130%;
-                }
-                #sponsorDetailsButton, #viewReportButton {
-                    background-color:blue;
-                }
-
-                .ErrorView {
                 margin-left: 80px;
-                }
-
-                #submitButton {
-                    position: center;
-                }
-
-                
             }
-        </style>
 
+            #submitButton {
+                position: center;
+            }
+        }
+    </style>
 
-    </head>
+</head>
 
     <body>
         <div id="header">
             <h2 class="headerText">Employee Deactivation Form </h2>
             <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
+            @*<div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>*@
             <div>
                 <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
-
             </div>
             <div>
                 <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
@@ -482,7 +587,7 @@
                         Last Working Date:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01"/>
+                        <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01" />
                     </div>
                 </div>
                 <div class="form-group row">
@@ -505,7 +610,7 @@
                             Sponsor Name:
                         </label>
                         <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorFirstName" readonly />
+                            <input type="text" class="form-control" id="sponsorName" readonly />
                         </div>
                     </div>
 
@@ -532,6 +637,9 @@
 
                 <div id="sponsorGidHidden">
                     <input type="text" class="form-control" id="sponsorGid" readonly />
+                    <input type="text" class="form-control" id="toEmailId" readonly />
+                    <input type="text" class="form-control" id="fromEmailId" readonly />
+                    <input type="text" class="form-control" id="ccEmailId" readonly />
                 </div>
 
                 <div id="reportingManagerEmailId">
@@ -541,7 +649,11 @@
 
                 <div class="form-group row" style="padding-left:2px">
                     <br />
-                    <input type="button" value="Generate PDF" class="btn btn-default" id="submitButton" />
+                    <input type="button" value="Preview Pdf" class="btn btn-default" id="submitButton" />
+                </div>
+
+                <div class="loader-wrapper" id="loader-wrapper">
+                    <span class="loader"><span class="loader-inner"></span></span>
                 </div>
 
             </form>

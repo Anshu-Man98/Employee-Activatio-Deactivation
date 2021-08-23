@@ -1,7 +1,6 @@
 ﻿
 <head>
     <script src="~/js/Toastr.js"></script>
-
     <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
@@ -16,6 +15,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
+            $("#loader-wrapper").hide();
 
             $.ajax({
                 type: "GET",
@@ -31,11 +31,40 @@
                     $("#tbldata").append(row);
                 }
             })
+
+           $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetConfigurationDetails", "Email")',
+                dataType: "json",
+                success: function (response) {
+                    $.each(response, function (i, item) {
+                        if (item.tokenName == "ActivationMail") {
+                            $("#ActivationMailContent").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "DeactivationMail") {
+                            $("#DeactivationMailContent").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "ReminderMail") {
+                            $("#RemainderMailContent").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "DeclinedMail") {
+                            $("#DeclinedMailContent").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "SendGrid") {
+                            $("#TokenValue").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "EmailTimer") {
+                            $("#emailTimer").val(item.tokenValue)
+                        }                       
+                    });
+                }
+            })
+
         });
 
         $(document).on("click", "#delete", function (e) {
             var $row = $(this).closest("tr"),
-                $tds = $row.find("td:nth-child(3)").text();
+                $tds = $row.find("td:nth-child(1)").text();
             bootbox.dialog({
                 message: "Are you sure you want to delete the selected sponsor details?",
                 size: "small",
@@ -46,14 +75,17 @@
                             $.ajax({
                                 type: "POST",
                                 url: '@Url.Action("DeleteSponsorDetails", "Admin")',
-                                data: { 'gId': $tds },
+                                data: { 'teamName': $tds },
                                 dataType: "json",
                                 success: function (response) {
-                                    if (response) {
+                                    if (response == true) {
                                         bootbox.alert("Sponsor detail sucessfully deleted", function () {
                                             window.location.reload();
                                         });
-                                          
+
+                                    }
+                                    else {
+                                        alert("data could not be deleted. Try again")
                                     };
 
                                 }
@@ -69,43 +101,46 @@
         });
 
         $(document).on("click", "#edit", function (e) {
-            var $row = $(this).closest("tr"),
+            var teamName = $(this).closest("tr").find("td:nth-child(1)").text();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SponsorDetailsAccordingToTeamName", "Admin")',
+                dataType: "json",
+                data: { 'teamName': teamName },
+                    success: function (response)
+                    {
+                        if (response) {
+                            $('#editTeamName').val(response.teamName);
+                            $('#editFirstName').val(response.sponsorFirstName);
+                            $('#editLastName').val(response.sponsorLastName);
+                            $('#editgid').val(response.sponsorGID);
+                            $('#editDepartment').val(response.department);
+                            $('#editRmEmail').val(response.reportingManagerEmailID);
+                            $('#editSponsorEmail').val(response.sponsorEmailID);
+                            $('#editFromEmail').val(response.cmEmailID);
+                            $('#editToEmail').val(response.sivantosPointEmailID);
+                            $('#editCcEmail').val(response.ccEmailID);
+                            openForm1();
 
-            $editTeamName = $row.find("td:nth-child(1)").text();
-            $('#editTeamName').val($editTeamName);
+                        }
+                    }
+                });
 
-            $editLastName = $row.find("td:nth-child(2)").text();
-            var sponsorName = $editLastName
-            var splitName = sponsorName.split(" ");
-            var firstName = splitName[0];
-            var lastName = splitName[1];
 
-            $('#editFirstName').val(firstName);
 
-            $('#editLastName').val(lastName);
-
-            $editgid = $row.find("td:nth-child(3)").text();
-            $('#editgid').val($editgid);
-
-            $editEmail = $row.find("td:nth-child(4)").text();
-            $('#editEmail').val($editEmail);
-
-            $editDepartment = $row.find("td:nth-child(5)").text();
-            $('#editDepartment').val($editDepartment);
-
-            $editRmEmail = $row.find("td:nth-child(6)").text();
-            $('#editRmEmail').val($editRmEmail);
-
-            openForm1();
             $(document).on("click", "#submit2", function (e) {
+                $("#loader-wrapper").show();
                 fileData = new FormData();
                 fileData.append('TeamName', $('#editTeamName').val());
                 fileData.append('SponsorFirstName', $('#editFirstName').val());
                 fileData.append('SponsorLastName', $('#editLastName').val());
-                fileData.append('SponsorEmailID', $('#editEmail').val());
+                fileData.append('SponsorEmailID', $('#editSponsorEmail').val());
                 fileData.append('SponsorGID', $('#editgid').val());
                 fileData.append('Department', $('#editDepartment').val());
                 fileData.append('ReportingManagerEmailID', $('#editRmEmail').val());
+                fileData.append('CmEmailID', $('#editFromEmail').val());
+                fileData.append('SivantosPointEmailID', $('#editToEmail').val());
+                fileData.append('CcEmailID', $('#editCcEmail').val());
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
@@ -115,9 +150,13 @@
                     contentType: false,
                     success:
                         function (response) {
-                        if (response) {
-                          
-                        }
+                            $("#loader-wrapper").hide();
+                            if (response == true) {
+                                window.location.reload();
+                            }
+                            else {
+                                alert("data could not be updated. Try again")
+                            }
                     }
 
 
@@ -129,6 +168,7 @@
         $(document).on("click", "#addButton", function (e) {
             openForm();
             $(document).on("click", "#submit1", function (e) {
+                $("#loader-wrapper").show();
                 fileData = new FormData();
                 fileData.append('TeamName', $('#teamName').val());
                 fileData.append('SponsorFirstName', $('#sponsorFirstName').val());
@@ -137,6 +177,9 @@
                 fileData.append('SponsorGID', $('#sponsorGid').val());
                 fileData.append('Department', $('#sponsorDepartment').val());
                 fileData.append('ReportingManagerEmailID', $('#reportingManEmail').val());
+                fileData.append('CmEmailID', $('#fromEmail').val());
+                fileData.append('SivantosPointEmailID', $('#toEmail').val());
+                fileData.append('CcEmailID', $('#ccEmail').val());
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
@@ -146,17 +189,43 @@
                     contentType:false,
                     success: function (response)
                     {
-                        if (response) {
+                        $("#loader-wrapper").hide();
+                        if (response == true) {
 
+                            window.location.reload();
+                        }
+                        else {
+                            alert("data could not be updated. Try again")
                         }
                     }
                 });
             });
         });
 
+        $(document).on("click", "#MailContentButton", function (e) {
+            $("#loader-wrapper").show();
+             $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddConfigurationToDatabase", "Email")',
+                    dataType: "json",
+                    data: { "SendGrid": $('#TokenValue').val(), "EmailTimer": $('#emailTimer').val()},
+                 success: function (response) {
+                     if (response == true) {
+                         $("#loader-wrapper").hide();
+                         window.location.reload();
+                         alert("Mail Configuration updated");
+                     } else {
+                         alert("data could not be updated. Try again")
+                     }
+                 }
+             });
+
+        });
+
         function openForm1()
         {
             document.getElementById("myForm1").style.display = "block";
+
         }
         function closeForm1()
         {
@@ -171,12 +240,230 @@
         {
             document.getElementById("myForm").style.display = "none";
         }
+
+        var Regx = "^[A-Za-z ]+$";
+        function ValidateTeamName() {
+            if ($('#teamName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function ValidateFirstName() {
+            if ($('#sponsorFirstName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function ValidateEditFirstName() {
+            if ($('#editFirstName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function ValidateLastName() {
+            if ($('#sponsorLastName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function ValidateEditLastName() {
+            if ($('#editLastName').val().trim().search(Regx)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        function ValidateSponsorEmail() {
+            if ($('#sponsorEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditSponsorEmail() {
+            if ($('#editSponsorEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditRMEmail() {
+            if ($('#editRmEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateRMEmail() {
+            if ($('#reportingManEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateFromEmail() {
+            if ($('#fromEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditFromEmail() {
+            if ($('#editFromEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateToEmail() {
+            if ($('#toEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function ValidateEditToEmail() {
+            if ($('#editToEmail').val().trim().search(expr)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        $(function () {
+            $("#submit1").click(function (e) {
+                if (document.getElementById('teamName').value == "" || ValidateTeamName() == true) {
+                    alert("Please provide Team Name");
+                    document.getElementById('teamName').focus();
+                    return false;
+                }
+                if (document.getElementById('sponsorFirstName').value == "" || ValidateFirstName() == true) {
+                    alert("Please provide First Name");
+                    document.getElementById('sponsorFirstName').focus();
+                    return false;
+                }
+                if (document.getElementById('sponsorLastName').value == "" || ValidateLastName() == true) {
+                    alert("Please provide Last Name");
+                    document.getElementById('sponsorLastName').focus();
+                    return false;
+                }
+                if (document.getElementById('sponsorGid').value == "") {
+                    alert("Please provide Gid");
+                    document.getElementById('sponsorGid').focus();
+                    return false;
+                }
+                if (document.getElementById('sponsorEmail').value == "" || ValidateSponsorEmail() == false) {
+                    alert("Please provide Sponsor Email");
+                    document.getElementById('sponsorEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('sponsorDepartment').value == "") {
+                    alert("Please provide sponsor department");
+                    return false;
+                }
+                if (document.getElementById('reportingManEmail').value == "" || ValidateRMEmail() == false) {
+                    alert("Please provide reporting manager email");
+                    document.getElementById('reportingManEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('fromEmail').value == "" || ValidateFromEmail() == false) {
+                    alert("Please provide CM email");
+                    document.getElementById('fromEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('toEmail').value == "" || ValidateToEmail() == false) {
+                    alert("Please provide Sivantos Activation Request Point of Contact Id");
+                    document.getElementById('toEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('ccEmail').value == "" ) {
+                    alert("Please provide cc of email");
+                    document.getElementById('ccEmail').focus();
+                    return false;
+                }
+            });
+        });
+
+        $(function () {
+            $("#submit2").click(function (e) {
+
+                if (document.getElementById('editFirstName').value == "" || ValidateEditFirstName() == true) {
+                    alert("Please provide First Name");
+                    document.getElementById('editFirstName').focus();
+                    return false;
+                }
+                if (document.getElementById('editLastName').value == "" || ValidateEditLastName() == true) {
+                    alert("Please provide Last Name");
+                    document.getElementById('editLastName').focus();
+                    return false;
+                }
+                if (document.getElementById('editgid').value == "") {
+                    alert("Please provide Gid");
+                    document.getElementById('editgid').focus();
+                    return false;
+                }
+                if (document.getElementById('editSponsorEmail').value == "" || ValidateEditSponsorEmail() == false) {
+                    alert("Please provide Sponsor Email");
+                    document.getElementById('editSponsorEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('editDepartment').value == "") {
+                    alert("Please provide sponsor department");
+                    return false;
+                }
+                if (document.getElementById('editRmEmail').value == "" || ValidateEditRMEmail() == false) {
+                    alert("Please provide Reporting manager email");
+                    document.getElementById('editRmEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('editFromEmail').value == "" || ValidateEditFromEmail() == false) {
+                    alert("Please provide CM email");
+                    document.getElementById('editFromEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('editToEmail').value == "" || ValidateEditToEmail() == false) {
+                    alert("Please provide Sivantos Activation Request Point of Contact Id");
+                    document.getElementById('editToEmail').focus();
+                    return false;
+                }
+                if (document.getElementById('editCcEmail').value == "") {
+                    alert("Please provide cc of email");
+                    document.getElementById('editCcEmail').focus();
+                    return false;
+                }
+            });
+        });
     </script>
+
     <style>
         .tablee {
             padding-left: 50px;
             padding-right: 50px;
             margin-top: 40px;
+        }
+
+        #mailConfig {
+            padding-left: 50px;
+            padding-right: 50px;
+            padding-bottom:50px;
+
         }
 
         .header {
@@ -188,6 +475,79 @@
             background-color: black;
             color: white;
             font-size: 30px;
+        }
+
+        .loader-wrapper {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(1,1,1,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            border: 4px solid white;
+            animation: loader 2s infinite ease;
+        }
+
+        .loader-inner {
+            vertical-align: top;
+            display: inline-block;
+            width: 100%;
+            background-color: azure;
+            animation: loader-inner 2s infinite ease-in;
+        }
+
+        @@keyframes loader {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(180deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
+
+            75% {
+                transform: rotate(360deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes loader-inner {
+            0% {
+                height: 0%;
+            }
+
+            25% {
+                height: 0%;
+            }
+
+            50% {
+                height: 100%;
+            }
+
+            75% {
+                height: 100%;
+            }
+
+            100% {
+                height: 0%;
+            }
         }
 
         #edit {
@@ -302,6 +662,7 @@
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(4)')" style="cursor:pointer"> Sponsor Email</th>
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(5)')" style="cursor:pointer"> Sponsor Department</th>
                     <th scope="col" onclick="w3.sortHTML('#tbldata', '.item', 'td:nth-child(6)')" style="cursor:pointer"> Reporting Manager Email</th>
+
                     <th scope="col"> Action</th>
 
                 </tr>
@@ -310,33 +671,82 @@
         </table>
 
     </div>
-
     <input type="button" value="ADD" class="btn btn-default" id="addButton" />
+
+
+    <div id="mailConfig">
+        <hr />
+
+        <h3>Email Timer</h3>
+        <div class="form-group row">
+
+
+            <div class="col-sm-3" id="inputTextbox" data-toggle="dropdown">
+                <select id="emailTimer" class="form-control">
+                    @*<option value="" selected>Choose Here</option>*@
+                    <option value="1">1 day</option>
+                    <option value="2">2 days</option>
+                    <option value="4">4 days</option>
+                    <option value="1w">1 week</option>
+                    <option value="15">15 days</option>
+                </select>
+            </div>
+        </div>
+
+
+        <hr />
+
+        <div>
+            <h3>Api Token Configuration</h3>
+        </div>
+
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Token Name:</label>
+            <textarea class="form-control" id="TokenName" rows="1" placeholder="SendGrid" readonly></textarea>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Token Value:</label>
+            <textarea class="form-control" id="TokenValue" rows="1"></textarea>
+        </div>
+
+
+        <button type="button" id="MailContentButton" class="btn btn-primary">Submit</button>
+
+    </div>
     <div id="pop1">
         <div class="form-popup" id="myForm">
             <form class="form-container">
                 <h3>Add Sponsor Details</h3>
 
                 <label for="Team"><b>Team Name</b></label>
-                <input type="text" placeholder="Team Name" id="teamName" name="team" required>
+                <input type="text" placeholder="Team Name" id="teamName" name="team" onkeyup="ValidateTeamName()" required>
 
-                <label for="fisrtname"><b>Sponsor Fisrt Name</b></label>
-                <input type="text" placeholder="First Name" id="sponsorFirstName" name="fisrtname" required>
+                <label for="firstname"><b>Sponsor First Name</b></label>
+                <input type="text" placeholder="First Name" id="sponsorFirstName" name="firstname" onkeyup="ValidateFirstName()" required>
 
                 <label for="lastname"><b>Sponsor Last Name</b></label>
-                <input type="text" placeholder="Last Name" id="sponsorLastName" name="lastname" required>
+                <input type="text" placeholder="Last Name" id="sponsorLastName" name="lastname" onkeyup="ValidateLastName()" required>
 
                 <label for="gid"><b>Sponsor GID</b></label>
                 <input type="text" placeholder="GID" id="sponsorGid" name="gid" required>
 
                 <label for="email"><b>Sponsor Email Id</b></label>
-                <input type="email" placeholder="Email Id" id="sponsorEmail" name="email" required>
+                <input type="email" placeholder="Email Id" id="sponsorEmail" name="email" onkeyup="ValidateSponsorEmail()" required>
 
                 <label for="department"><b>Sponsor Department</b></label>
                 <input type="text" placeholder="Department" id="sponsorDepartment" name="department" required>
 
                 <label for="email"><b>Reporting Manager Email Id</b></label>
-                <input type="email" placeholder="Email Id" id="reportingManEmail" name="Rmemail" required>
+                <input type="email" placeholder="Email Id" id="reportingManEmail" name="Rmemail" onkeyup="ValidateRMEmail()" required>
+
+                <label for="email"><b>CM Email Id</b></label>
+                <input type="email" value="vr.arun@siemens.com" id="fromEmail" name="Fromemail" onkeyup="ValidateFromEmail()" required>
+
+                <label for="email"><b>Sivantos Activation Request Point of Contact Email ID</b></label>
+                <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateToEmail()" required>
+
+                <label for="email"><b>Cc Email Id</b></label>
+                <input type="text" placeholder="Email Id" id="ccEmail" name="Ccemail" required>
 
 
                 <button type="submit" id="submit1" class="btn">Submit</button>
@@ -345,32 +755,40 @@
             </form>
         </div>
     </div>
-
     <div id="pop2">
         <div class="form-popup" id="myForm1">
             <form class="form-container">
                 <h3>Edit Sponsor Details</h3>
 
                 <label for="Team"><b>Team Name</b></label>
-                <input type="text" placeholder="Team Name" name="team" id="editTeamName">
+                <input type="text" placeholder="Team Name" name="team" id="editTeamName" readonly>
 
-                <label for="fisrtname"><b>Sponsor Fisrt Name</b></label>
-                <input type="text" placeholder="First Name" name="fisrtname" id="editFirstName">
+                <label for="firstname"><b>Sponsor First Name</b></label>
+                <input type="text" placeholder="First Name" name="firstname" onkeyup="ValidateEditFirstName()" id="editFirstName" required>
 
                 <label for="lastname"><b>Sponsor Last Name</b></label>
-                <input type="text" placeholder="Last Name" name="lastname" id="editLastName">
+                <input type="text" placeholder="Last Name" name="lastname" onkeyup="ValidateEditLastName()" id="editLastName" required>
 
                 <label for="gid"><b>Sponsor GID</b></label>
-                <input type="text" placeholder="GID" name="gid" id="editgid" readonly>
+                <input type="text" placeholder="GID" name="gid" id="editgid" required>
 
                 <label for="email"><b>Sponsor Email Id</b></label>
-                <input type="email" placeholder="Email Id" name="email" id="editEmail">
+                <input type="email" placeholder="Email Id" name="email" onkeyup="ValidateEditSponsorEmail()" id="editSponsorEmail" required>
 
                 <label for="department"><b>Sponsor Department</b></label>
-                <input type="text" placeholder="Department" name="department" id="editDepartment">
+                <input type="text" placeholder="Department" name="department" id="editDepartment" required>
 
                 <label for="email"><b>Reporting Manager Email Id</b></label>
-                <input type="email" placeholder="Email Id" name="Rmemail" id="editRmEmail">
+                <input type="email" placeholder="Email Id" onkeyup="ValidateEditRMEmail()" id="editRmEmail" required>
+
+                <label for="email"><b>CM Email Id</b></label>
+                <input type="email" id="editFromEmail" name="Fromemail" onkeyup="ValidateEditFromEmail()" required>
+
+                <label for="email"><b>Sivantos Activation Request Point of Contact Id</b></label>
+                <input type="email" id="editToEmail" name="Toemail" onkeyup="ValidateEditToEmail()" required>
+
+                <label for="email"><b>Cc Email Id</b></label>
+                <input type="text" id="editCcEmail" name="Ccemail" required>
 
 
                 <button type="submit" id="submit2" class="btn">Submit</button>
@@ -379,8 +797,9 @@
             </form>
         </div>
     </div>
-
-
+    <div class="loader-wrapper" id="loader-wrapper">
+        <span class="loader"><span class="loader-inner"></span></span>
+    </div>
 </body>
 
 
