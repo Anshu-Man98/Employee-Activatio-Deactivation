@@ -136,6 +136,9 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 DateTime date = Convert.ToDateTime(employee.EmployeeLastWorkingDate.ToString());
                 if (DateTime.Today == date || DateTime.Today > date)
+                { 
+                    if(employee.WorkFlowStatus == "pending")
+
                 {
                     var emailDetails = _employeeDataOperation.GetReportingEmailIds(employee.EmployeeTeamName);
                     EmailDetails details = new EmailDetails()
@@ -148,6 +151,7 @@ namespace EmployeeDeactivation.BusinessLayer
                         FileName = "DeactivationWorkflow_" + employee.EmployeeName
                     };
                     await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
+                }
                 }
             }
         }
