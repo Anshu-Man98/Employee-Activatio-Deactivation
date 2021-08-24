@@ -24,7 +24,7 @@ namespace EmployeeDeactivation.BusinessLayer
         public byte[] FillDeactivationPdfForm(string gId)
         {
             var employeeData = _employeeDataOperation.RetrieveDeactivatedEmployeeDataBasedOnGid(gId);
-            FileStream docStream = new FileStream("DeactivationPDF .pdf", FileMode.Open, FileAccess.Read);
+            FileStream docStream = new FileStream("Deactivation.pdf", FileMode.Open, FileAccess.Read);
             PdfLoadedDocument loadedDocument = new PdfLoadedDocument(docStream);
             PdfLoadedForm form = loadedDocument.Form;
             string EmailandGId =  employeeData.GId +", "+ employeeData.EmailID;
