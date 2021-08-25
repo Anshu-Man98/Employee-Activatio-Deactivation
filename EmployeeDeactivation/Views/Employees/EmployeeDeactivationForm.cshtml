@@ -129,8 +129,16 @@
             })
         });
 
-            var clicked = true;
-            $(document).on("click", "#submitButton", function (e) {
+        var clicked = true;
+        var preview = false;
+        $(document).on("click", "#previewButton , #submitButton", function (e) {
+
+            if (e.currentTarget.id == "previewButton") {
+                preview = true;
+            }
+            else {
+                preview = false;
+            }
                 if (clicked) {
                     clicked = false;
                     $("#loader-wrapper").show();
@@ -169,9 +177,10 @@
                                     if (response) {
                                         $("#loader-wrapper").hide();
                                         clicked = true;
-                                        let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
-                                        pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
-
+                                        if (preview) {
+                                            let pdfWindow = window.open("", "width=400,height=400,top=100,left=400", '_self')
+                                            pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
+                                        }
                                         bootbox.confirm
                                             ({
                                                 message: "Do you wish to submit? no further changes can be made to the pdf after submission",
@@ -244,6 +253,7 @@
                 });
             }
         });
+        
             var Regx = "^[A-Za-z ]+$";
         function ValidateFirstName() {
             if ($('#employeeFirstName').val().trim().search(Regx)) {
@@ -298,7 +308,7 @@
         }
 
         $(function () {
-            $("#submitButton").click(function (e) {
+            $("#submitButton , #previewButton ").click(function (e) {
                 if (document.getElementById('employeeFirstName').value == "" || ValidateFirstName() == false) {
                     alert("Please provide your First Name");
                     document.getElementById('employeeFirstName').focus();
@@ -468,11 +478,6 @@
         .ErrorView {
             color: red;
             margin-left: 183px;
-        }
-
-        #submitButton:hover {
-            background-color: Highlight;
-            color: azure;
         }
 
         .regular-field {
@@ -649,7 +654,8 @@
 
                 <div class="form-group row" style="padding-left:2px">
                     <br />
-                    <input type="button" value="Preview Pdf" class="btn btn-default" id="submitButton" />
+                    <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
+                    <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
                 </div>
 
                 <div class="loader-wrapper" id="loader-wrapper">

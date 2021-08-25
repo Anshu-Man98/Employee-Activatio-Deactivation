@@ -95,7 +95,14 @@
             })
         });
             var clicked = true;
-            $(document).on("click", "#submitButton", function (e) {
+            var preview = false;
+            $(document).on("click", "#previewButton , #submitButton", function (e) {
+                if (e.currentTarget.id == "previewButton") {
+                    preview = true;
+                }
+                else {
+                    preview = false;
+                }
                 if (clicked) {
                     clicked = false;
                     $("#loader-wrapper").show();
@@ -139,9 +146,10 @@
                                     if (response) {
                                         $("#loader-wrapper").hide();
                                         clicked = true;
-                                        let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
-                                        pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
-
+                                        if (preview){
+                                            let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
+                                            pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
+                                        }
                                         bootbox.confirm
                                             ({
                                                 message: "Do you wish to submit? no further changes can be made to the pdf after submission",
@@ -149,8 +157,6 @@
                                                     confirm: {
                                                         label: 'Yes',
                                                         className: 'btn-class-here'
-
-
                                                     },
                                                     cancel: {
                                                         label: 'No',
@@ -304,7 +310,7 @@
         }
 
         $(function () {
-            $("#submitButton").click(function (e) {
+            $("#submitButton , #previewButton").click(function (e) {
                 if (document.getElementById('siemensFirstName').value == "" || ValidateFirstName() == false) {
                     alert("Please provide your First Name");
                     document.getElementById('siemensFirstName').focus();
@@ -480,11 +486,6 @@
 
             #radio-1-txt {
                 margin-right: 10px;
-            }
-
-            #submitButton:hover {
-                background-color: Highlight;
-                color: azure;
             }
 
             .regular-field {
@@ -728,12 +729,13 @@
                 </div>
 
 
-                <div class="form-group row" style="padding-left:2px">
+                <div class="form-group row" style="padding-left:2px "  >
                     <br />
-                    <input type="button" value="Preview Pdf" class="btn btn-default" id="submitButton" />
+                    <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
+                    <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
                 </div>
 
-                <div class="loader-wrapper" id="loader-wrapper">
+                <div class="loader-wrapper" id="loader-wrapper" >
                     <span class="loader"><span class="loader-inner"></span></span>
                 </div>
 
