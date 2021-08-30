@@ -96,6 +96,7 @@
         });
             var clicked = true;
             var preview = false;
+            let pdfWindow = null;
             $(document).on("click", "#previewButton , #submitButton", function (e) {
                 if (e.currentTarget.id == "previewButton") {
                     preview = true;
@@ -144,10 +145,13 @@
                                 dataType: "json",
                                 success: function (response) {
                                     if (response) {
+                                        if (preview) {
+                                            pdfWindow.window.close();
+                                        }
                                         $("#loader-wrapper").hide();
                                         clicked = true;
                                         if (preview){
-                                            let pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
+                                            pdfWindow = window.open("", "width=500,height=500,top=100,left=500", '_self')
                                             pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
                                         }
                                         bootbox.confirm
@@ -165,6 +169,9 @@
                                                 },
                                                 callback: function (result) {
                                                     if (result) {
+                                                        if (preview) {
+                                                            pdfWindow.window.close();
+                                                        }
                                                         $("#loader-wrapper").show();
                                                         $.ajax({
                                                             type: "POST",
@@ -386,7 +393,7 @@
                 padding: 20px;
                 margin-bottom: 25px;
                 background-color: black;
-                height: 20%;
+                height: 22%;
                 position: relative;
             }
 
@@ -426,6 +433,11 @@
                 animation: loader-inner 2s infinite ease-in;
             }
 
+            .form-group.required .control-label:after {
+                content: "*";
+                color: red;
+            }
+
             @@keyframes loader {
               0% { transform: rotate(0deg);}
               25% { transform: rotate(180deg);}
@@ -442,13 +454,13 @@
             }
 
 
-            #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton {
-                margin-left: 90%;
+            #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton {
+                margin-left: 89%;
                 color: white;
             }
 
 
-                #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover {
+                #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover {
                     font-size: 103%;
                     color: darkgrey;
                     cursor: default;
@@ -533,7 +545,9 @@
             </div>
             <div>
                 <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
-
+            </div>
+            <div>
+                <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
             </div>
         </div>
 
@@ -546,7 +560,7 @@
 
         </div>
         <div class="form">
-            <form class="form-group" action="Create">
+            <form class="form-group required" action="Create">
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">

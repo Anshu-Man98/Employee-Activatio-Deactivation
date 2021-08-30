@@ -644,6 +644,10 @@
         {
             margin-left: 55px;
         }
+        .required:after {
+            content: " *";
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -716,34 +720,44 @@
         <div class="form-popup" id="myForm">
             <form class="form-container">
                 <h3>Add Sponsor Details</h3>
+                <div class="required">
+                    <label for="Team"><b>Team Name</b></label>
+                </div>
+                <input type="text" placeholder="Team Name" id="teamName" name="team" onkeyup="ValidateTeamName()" required>
 
-                <label for="Team"><b>Team Name</b></label>
-                <input type="text" placeholder="[mandatory field]" id="teamName" name="team" onkeyup="ValidateTeamName()" required>
-
-                <label for="firstname"><b>Sponsor First Name</b></label>
-                <input type="text" placeholder="[mandatory field]" id="sponsorFirstName" name="firstname" onkeyup="ValidateFirstName()" required>
-
-                <label for="lastname"><b>Sponsor Last Name </b></label>
-                <input type="text" placeholder="[mandatory field]" id="sponsorLastName" name="lastname" onkeyup="ValidateLastName()" required>
+                <div class="required">
+                    <label for="firstname"><b>Sponsor First Name</b></label>
+                </div>
+                <input type="text" placeholder="First Name" id="sponsorFirstName" name="firstname" onkeyup="ValidateFirstName()" required>
+                <div class="required">
+                    <label for="lastname"><b>Sponsor Last Name </b></label>
+                </div>
+                <input type="text" placeholder="Last Name" id="sponsorLastName" name="lastname" onkeyup="ValidateLastName()" required>
 
                 <label for="gid"><b>Sponsor GID</b></label>
                 <input type="text" placeholder="GID" id="sponsorGid" name="gid" required>
 
-                <label for="email"><b>Sponsor Email Id </b></label>
-                <input type="email" placeholder="[mandatory field]" id="sponsorEmail" name="email" onkeyup="ValidateSponsorEmail()" required>
-
-                <label for="department"><b>Sponsor Department </b></label>
-                <input type="text" placeholder="[mandatory field]" id="sponsorDepartment" name="department" required>
-
-                <label for="email"><b>Reporting Manager Email Id </b></label>
-                <input type="email" placeholder="[mandatory field]" id="reportingManEmail " name="Rmemail" onkeyup="ValidateRMEmail()" required>
-
-                <label for="email"><b>CM Email Id</b></label>
-                <input type="email" value="vr.arun@siemens.com" id="fromEmail" name="Fromemail" onkeyup="ValidateFromEmail()" placeholder="[mandatory field]" required>
-
-                <label for="email"><b>Sivantos Activation Request Point of Contact Email ID</b></label>
-                <input type="email" placeholder="[mandatory field]" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateToEmail()" required>
-
+                <div class="required">
+                    <label for="email"><b>Sponsor Email Id </b></label>
+                </div>
+                <input type="email" placeholder="Email Id" id="sponsorEmail" name="email" onkeyup="ValidateSponsorEmail()" required>
+                <div class="required">
+                    <label for="department"><b>Sponsor Department </b></label>
+                </div>
+                <input type="text" placeholder="Department" id="sponsorDepartment" name="department" required>
+                <div class="required">
+                    <label for="email"><b>Reporting Manager Email Id </b></label>
+                </div>
+                <input type="email" placeholder="Email Id" id="reportingManEmail " name="Rmemail" onkeyup="ValidateRMEmail()" required>
+                <div class="required">
+                    <label for="email"><b>CM Email Id</b></label>
+                </div>
+                <input type="email" value="vr.arun@siemens.com" id="fromEmail" name="Fromemail" onkeyup="ValidateFromEmail()" placeholder="Email Id" required>
+                <div class="required">
+                    <label for="email"><b>Sivantos Activation Request Point of Contact Email ID</b></label>
+                </div>
+                    <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateToEmail()" required>
+                
                 <label for="email"><b>Cc Email Id</b></label>
                 <input type="text" placeholder="CC Email" id="ccEmail" name="Ccemail" required>
 

@@ -13,6 +13,7 @@ namespace EmployeeDeactivation.Models
         public TypeOfWorkflow TypeOfWorkflow { get; set; }
         public string FileName { get; set; }
         public string EmployeeName { get; set; }
+        public string EmployeeId { get; set; }
         public ActivationEmployeeDetails ActivatedEmployee { get; set; }
     }
 }

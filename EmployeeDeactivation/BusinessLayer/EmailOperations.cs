@@ -126,8 +126,8 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeDetails = _managerApprovalOperation.GetAllPendingDeactivationWorkflows();
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
             var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
-            await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
-            await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
+            //await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
+            //await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
             await SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
         }
         private async Task SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
@@ -195,6 +195,7 @@ namespace EmployeeDeactivation.BusinessLayer
                                 FromEmailId = employee.FromEmailId,
                                 ToEmailId = approvedEmployee.ReportingManagerEmail,
                                 EmployeeName = approvedEmployee.EmployeeName,
+                                EmployeeId= employee.GId,
                                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
                             };
                             await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
@@ -254,9 +255,31 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     subject = "Deactivation workflow";
                     htmlContent = RetrieveSpecificConfiguration("DeactivationWorkflowTwoDaysBefore");
-                    if (htmlContent.Contains("+EmployeeName+"))
+                    var allDeactivationWorktasks = _managerApprovalOperation.RetrieveDeactivationTasks();
+                    foreach (var item in allDeactivationWorktasks)
                     {
-                        htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
+                        if (item.EmployeeId == details.EmployeeId)
+                        {
+                            if (item.TimesheetApproval.Trim() == "true") {
+                                htmlContent = htmlContent.Replace("<li>Ensure timesheet is approved for exiting employee</li>\n", string.Empty);
+                            }
+                            if (item.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
+                            {
+                                htmlContent = htmlContent.Replace("<li>Raise windows account deactivation request in nexus</li>\n", string.Empty);
+                            }
+                            if (item.EmployeeRemovedFromDLEmailList.Trim() == "true")
+                            {
+                                htmlContent = htmlContent.Replace("<li>Remove employee from DL email List</li>\n", string.Empty);
+                            }
+                             if (item.HardwaresCollected.Trim() == "true") {
+                                htmlContent = htmlContent.Replace("<li>Ensure all hardware are collected</li>\n", string.Empty);
+                            }
+
+                            if (htmlContent.Contains("+EmployeeName+"))
+                            {
+                                htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
+                            }
+                        }
                     }
                 }
                 if (Convert.ToInt32(typeOfWorkflow) == 5)

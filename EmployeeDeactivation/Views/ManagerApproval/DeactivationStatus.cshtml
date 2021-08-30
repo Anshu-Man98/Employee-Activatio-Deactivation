@@ -1,0 +1,266 @@
+﻿@model EmployeeDeactivation.Models.ManagerApprovalStatus
+@using System.Security.Principal
+@using System.Security.Claims
+
+<head>
+
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="~/js/bootbox.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("AllDeactivationTaskStatus", "ManagerApproval")',
+                dataType: "json",
+                success: function (response) {
+                    var card = "";
+                    var check1 = "asdad";
+                    var disable1 = "";
+                    var check2 = "";
+                    var disable2 = "";
+                    var check3 = "";
+                    var disable3 = "";
+                    var check4 = "";
+                    var disable4 = "";
+
+                    $.each(response, function (i, item) {
+                        if (item.timesheetApproval.trim() == "false") {
+                            check1 = null;
+                            disable1 = null;
+                        }
+                        else {
+                            check1 = "checked";
+                            disable1 = "disabled";
+                        }
+                            if (item.employeeRemovedFromDLEmailList.trim() == "false") {
+                                check2 = null;
+                                disable2 = null;
+                            }
+                            else {
+                                check2 = "checked";
+                                disable2 = "disabled";
+                            }
+                                if (item.hardwaresCollected.trim() == "false") {
+                                    check3 = null;
+                                    disable3 = null;
+                                }
+                                else {
+                                    check3 = "checked";
+                                    disable3 = "disabled";
+                                }
+                                    if (item.raisedWindowsDeactivationRequestNexus.trim() == "false") {
+                                        check4 = null;
+                                        disable4 = null;
+                                    }
+                                    else {
+                                        check4 = "checked";
+                                        disable4 = "disabled";
+                        }
+
+
+                        card += "<div class='card'><h3 id='emp" + item.employeeId + "' value='" + item.employeeName + "'>" + item.employeeName + "</h3><ul id='myUL' style='text-align:left'><li>Timesheet approved for exiting employee <input class='form-check-input'  type='checkbox' onchange='handleChange1(this)' " + check1 + " " + disable1 + "  id='defaultCheck1" + item.employeeId + "' style='margin-left:90px;'></li><li>Employee removed from DL email List<input class='form-check-input' type='checkbox' onchange='handleChange2(this)'  " + check2 + " " + disable2 + "  id='defaultCheck2" + item.employeeId + "' style='margin-left:113px;'></li><li>All hardwares are collected <input class='form-check-input' type='checkbox' onchange='handleChange3(this)'  " + check3 + " " + disable3 + "  id='defaultCheck3" + item.employeeId + "' style='margin-left:178px;'></li><li>Raised windows account deactivation request in nexus <input class='form-check-input' type='checkbox' onchange='handleChange4(this)'  " + check4 + " " + disable4 + "  id='defaultCheck4" + item.employeeId + "' style='margin-left:7px;'></li></ul><input type='button' value='button' class='btn btn-primary'  style='margin-right:5px' id='" + item.employeeId + "' onclick='submit(this.id)'/><input type='text' value ='" + item.employeeName + "' id='empName" + item.employeeId + "'></input><input type='text' value ='" + item.employeeId + "' id='empId" + item.employeeId + "'></input><input type='text' value ='" + item.timesheetApproval + "' id='checkbox1" + item.employeeId + "'></input><input type='text' value ='" + item.employeeRemovedFromDLEmailList + "' id='checkbox2" + item.employeeId + "'></input><input type='text' value ='" + item.hardwaresCollected + "' id='checkbox3" + item.employeeId + "'></input><input type='text' value ='" + item.raisedWindowsDeactivationRequestNexus + "' id='checkbox4" + item.employeeId + "'></input></div>";
+
+                    });
+                    $("#cards").append(card);
+
+                }
+            })
+        });
+
+        var checkbox1 = "true";
+        var checkbox2 = "true";
+        var checkbox3 = "true";
+        var checkbox4 = "true";
+        function handleChange1(checkbox) {
+            if (checkbox.checked == true || checkbox.disabled == true) {
+                alert("true");
+                checkbox1 = "true";
+            }
+            else {
+                alert("false");
+                checkbox1 = "false";
+            }
+        }
+        function handleChange2(checkbox) {
+            if (checkbox.checked == true || checkbox.disabled == true) {
+                checkbox2 = "true";
+                alert("true");
+            } else {
+                alert("false");
+                checkbox2 = "false";
+            }
+        }
+        function handleChange3(checkbox) {
+            if (checkbox.checked == true || checkbox.disabled == true) {
+                alert("true");
+                checkbox3 = "true";
+            } else {
+                alert("false");
+                checkbox3 = "false";
+            }
+        }
+        function handleChange4(checkbox) {
+            if (checkbox.checked == true || checkbox.disabled == true) {
+                alert("true");
+                checkbox4 = "true";
+            } else {
+                alert("false");
+                checkbox4 = "false";
+            }
+        }
+
+
+
+
+        function submit(clicked) {
+
+            if ($('#checkbox1' + clicked).is(':checked')) {
+                alert('true111111111111')
+
+            }
+            else {
+                alert('fajjjj')
+            }
+            fileData = new FormData();
+            //var x = "emp" + clicked;
+            //var y = "tx" + clicked;
+            fileData.append('EmployeeId', $('#empId' + clicked).val());
+            fileData.append('EmployeeName', $('#empName' + clicked).val());
+            fileData.append('TimesheetApproval', $('#checkbox1' + clicked).val().trim());
+            fileData.append('EmployeeRemovedFromDLEmailList', $('#checkbox2' + clicked).val().trim());
+            fileData.append('HardwaresCollected', $('#checkbox3' + clicked).val().trim());
+            fileData.append('RaisedWindowsDeactivationRequestNexus', $('#checkbox4' + clicked).val().trim());
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddDeactivationTaskToDatabase", "ManagerApproval")',
+                data: fileData,
+                processData: false,
+                contentType: false,
+                success: function (stream) {
+                    $("#loader-wrapper").hide();
+                    bootbox.alert("Updated sucessfully!");
+                }
+            });
+        }
+
+
+            @*bootbox.dialog({
+                message: "Are you sure you want to delete the selected sponsor details?",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        callback: function (result) {
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("DeleteSponsorDetails", "Admin")',
+                                data: { 'teamName': $tds },
+                                dataType: "json",
+                                success: function (response) {
+                                    if (response == true) {
+                                        bootbox.alert("Sponsor detail sucessfully deleted", function () {
+                                            window.location.reload();
+                                        });
+
+                                    }
+                                    else {
+                                        alert("data could not be deleted. Try again")
+                                    };
+
+                                }
+                            });
+
+                        }
+                    },
+                    cancel: {
+                        label: 'No',
+                    }
+                }
+            })*@
+
+
+
+    </script>
+
+    <style>
+        .header {
+            width: 100%;
+            margin-top: 0px;
+            padding: 20px;
+            margin-bottom: 5px;
+            text-align: center;
+            background-color: black;
+            color: white;
+            font-size: 30px;
+        }
+        .div2 {
+            width: 300px;
+            height: 300px;
+            padding: 50px;
+            border: 1px solid red;
+            align-content:center;
+            margin-left:35%;
+        }
+        body {
+            background-color: whitesmoke;
+            text-align: center;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 2px;
+            display: inline-block;
+            height: 200px;
+            margin: 1rem;
+            position: relative;
+            width: 450px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+
+            .card:hover {
+                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            }
+            #backButton{
+                margin-left:55px;
+                background-color: gray;
+                color:whitesmoke;
+            }
+    </style>
+
+
+</head>
+
+<body id="cards">
+    <div class="header">
+        <h2>Deactivation Status</h2>
+    </div>
+    <div style="position:absolute;">
+        <button type="button" class="btn btn-outline-secondary" id="backButton" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")', '_self')">Back</button>
+        @*<div>
+            <div >
+                <input id ="check1" type="text"/>
+            </div>
+            <div >
+                <input id="check2" type="text"/>
+            </div>
+            <div >
+                <input id="check3" type="text"/>
+            </div>
+            <div >
+                <input id="check4" type="text"/>
+            </div>
+        </div>*@
+    </div>
+
+</body>

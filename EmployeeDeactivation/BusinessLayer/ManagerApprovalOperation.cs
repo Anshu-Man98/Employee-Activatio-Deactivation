@@ -47,6 +47,38 @@ namespace EmployeeDeactivation.BusinessLayer
                 _context.SaveChanges();
             }
         }
+
+        public bool AddDeactivationTaskToDatabase(DeactivationStatus deactivationStatus)
+        {
+            DeactivationStatus DeactivationStatus = new DeactivationStatus()
+            {
+                EmployeeId = deactivationStatus.EmployeeId,
+                EmployeeName = deactivationStatus.EmployeeName,
+                TimesheetApproval = deactivationStatus.TimesheetApproval,
+                EmployeeRemovedFromDLEmailList = deactivationStatus.EmployeeRemovedFromDLEmailList,
+                HardwaresCollected = deactivationStatus.HardwaresCollected,
+                RaisedWindowsDeactivationRequestNexus = deactivationStatus.RaisedWindowsDeactivationRequestNexus,
+            };
+            if (deactivationStatus.TimesheetApproval.Trim() == "true" && deactivationStatus.EmployeeRemovedFromDLEmailList.Trim() == "true" && deactivationStatus.HardwaresCollected.Trim() == "true" && deactivationStatus.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
+            {
+                _context.Remove(_context.DeactivationStatus.Single(a => a.EmployeeId == deactivationStatus.EmployeeId));
+                _context.SaveChanges();
+                return true;
+            }
+            var allDeactivationTask = RetrieveDeactivationTasks();
+            foreach (var item in allDeactivationTask)
+            {
+                if (item.EmployeeId == deactivationStatus.EmployeeId)
+                {
+                    _context.Remove(_context.DeactivationStatus.Single(a => a.EmployeeId == deactivationStatus.EmployeeId));
+                    _context.SaveChanges();
+                }
+            }
+                _context.Add(DeactivationStatus);
+                _context.SaveChanges();
+            return true;
+        }
+
         public List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail)
         {
             List<ManagerApprovalStatus> pendingDeactivationWorkflows = new List<ManagerApprovalStatus>();
@@ -163,6 +195,13 @@ namespace EmployeeDeactivation.BusinessLayer
             _ = new List<ManagerApprovalStatus>();
             var allDeactivatedRequestsStatus = _context.ManagerApprovalStatus.ToList();
             return allDeactivatedRequestsStatus;
+        }
+
+        public List<DeactivationStatus> RetrieveDeactivationTasks()
+        {
+            _ = new List<DeactivationStatus>();
+            return _context.DeactivationStatus.ToList();
+            
         }
 
     }

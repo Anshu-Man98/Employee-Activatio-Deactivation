@@ -13,15 +13,20 @@ namespace EmployeeDeactivation.Controllers
     
     public class ManagerApprovalController : Controller
     {
-        private readonly IManagerApprovalOperation _managerAprovalOperation;
+        private readonly IManagerApprovalOperation _managerApprovalOperation;
 
-        public ManagerApprovalController(IManagerApprovalOperation managerAprovalOperation)
+        public ManagerApprovalController(IManagerApprovalOperation managerApprovalOperation)
         {
-            _managerAprovalOperation = managerAprovalOperation;
+            _managerApprovalOperation = managerApprovalOperation;
         }
 
         [Authorize("Admin&Manager")]
         public IActionResult ManagerApprovalPage()
+        {
+            return View();
+        }
+
+        public IActionResult DeactivationStatus()
         {
             return View();
         }
@@ -31,7 +36,21 @@ namespace EmployeeDeactivation.Controllers
         [Route("ManagerApproval/AddPendingDeactivationRequestToDatabase")]
         public void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus)
         {
-            _managerAprovalOperation.AddPendingDeactivationRequestToDatabase(managerApprovalStatus);
+            _managerApprovalOperation.AddPendingDeactivationRequestToDatabase(managerApprovalStatus);
+        }
+
+        [HttpPost]
+        [Route("ManagerApproval/AddDeactivationTaskToDatabase")]
+        public JsonResult AddDeactivationTaskToDatabase(DeactivationStatus deactivationStatus)
+        {
+           return Json(_managerApprovalOperation.AddDeactivationTaskToDatabase(deactivationStatus));
+        }
+
+        [HttpGet]
+        [Route("ManagerApproval/AllDeactivationTaskStatus")]
+        public JsonResult AllDeactivationTaskStatus()
+        {
+            return Json(_managerApprovalOperation.RetrieveDeactivationTasks());
         }
 
 
@@ -44,7 +63,7 @@ namespace EmployeeDeactivation.Controllers
             {
                 userEmail = GetUserEmail(User);
             }
-            return Json(_managerAprovalOperation.GetPendingDeactivationWorkflowForParticularManager(userEmail));
+            return Json(_managerApprovalOperation.GetPendingDeactivationWorkflowForParticularManager(userEmail));
 
         }
 
@@ -53,7 +72,7 @@ namespace EmployeeDeactivation.Controllers
         public ActionResult DownloadDeactivationPdf(string gId)
         {
            return Json("data:application/pdf;base64," + 
-               Convert.ToBase64String(_managerAprovalOperation.DownloadDeactivationPdfFromDatabase(gId)));
+               Convert.ToBase64String(_managerApprovalOperation.DownloadDeactivationPdfFromDatabase(gId)));
 
         }
 
@@ -61,14 +80,14 @@ namespace EmployeeDeactivation.Controllers
         [Route("ManagerApproval/AddApprovedDeactivationRequestToDatabase")]
         public JsonResult AddApprovedDeactivationRequestToDatabase(string gId)
         {
-            return Json(_managerAprovalOperation.ApproveRequest(gId));
+            return Json(_managerApprovalOperation.ApproveRequest(gId));
         }
 
         [HttpGet]
         [Route("ManagerApproval/AddDeniedDeactivationRequestToDatabase")]
         public JsonResult AddDeniedDeactivationRequestToDatabase(string gId)
         { 
-            return Json(_managerAprovalOperation.DeclineRequest(gId));
+            return Json(_managerApprovalOperation.DeclineRequest(gId));
         }
         private static string GetUserEmail(ClaimsPrincipal User)
         {

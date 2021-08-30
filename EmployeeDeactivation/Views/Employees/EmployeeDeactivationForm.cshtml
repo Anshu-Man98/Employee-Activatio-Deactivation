@@ -68,7 +68,7 @@
 
 
         });
-        var x = setInterval(Reminder,86400000);
+        var x = setInterval(Reminder,60000);
         function Reminder() {
             $.ajax({
                 type: "GET",
@@ -131,6 +131,7 @@
 
         var clicked = true;
         var preview = false;
+        let pdfWindow = null;
         $(document).on("click", "#previewButton , #submitButton", function (e) {
 
             if (e.currentTarget.id == "previewButton") {
@@ -178,7 +179,7 @@
                                         $("#loader-wrapper").hide();
                                         clicked = true;
                                         if (preview) {
-                                            let pdfWindow = window.open("", "width=400,height=400,top=100,left=400", '_self')
+                                            pdfWindow = window.open("", "width=400,height=400,top=100,left=400", '_self')
                                             pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
                                         }
                                         bootbox.confirm
@@ -193,11 +194,16 @@
                                                     cancel: {
                                                         label: 'No',
                                                         className: 'btn-class-here'
+
                                                     }
                                                 },
-                                                callback: function (result) {  
+                                                callback: function (result) {
                                                     if (result) {
+                                                        if (preview) {
+                                                            pdfWindow.window.close();
+                                                        }
                                                         $("#loader-wrapper").show();
+
                                                         $.ajax({
                                                             type: "POST",
                                                             url: '@Url.Action("PdfAttachmentEmail", "Email")',
@@ -222,20 +228,38 @@
                                                                         processData: false,
                                                                         contentType: false,
                                                                         success: function (stream) {
-                                                                            $("#loader-wrapper").hide();
-                                                                            bootbox.alert("Your form has been sent sucessfully!");
-                                                                            document.getElementById('employeeGid').value = "";
-                                                                            document.getElementById('employeeLastWorkingdate').value = "";
-                                                                            document.getElementById('teamNames').value = "";
-                                                                            document.getElementById('employeeFirstName').value = "";
-                                                                            document.getElementById('employeeLastName').value = "";
-                                                                            document.getElementById('employeeEmail').value = "";
-                                                                            $('#sponsorDetails').hide();
-
+                                                                                fileData = new FormData();
+                                                                                fileData.append('EmployeeId', $('#employeeGid').val());
+                                                                                fileData.append('EmployeeName', $('#employeeFirstName').val() + " " + $('#employeeLastName').val());
+                                                                                fileData.append('TimesheetApproval', "false");
+                                                                                fileData.append('EmployeeRemovedFromDLEmailList', "false");
+                                                                                fileData.append('HardwaresCollected', "false");
+                                                                                fileData.append('RaisedWindowsDeactivationRequestNexus', "false");
+                                                                            $.ajax({
+                                                                                type: "POST",
+                                                                                url: '@Url.Action("AddDeactivationTaskToDatabase", "ManagerApproval")',
+                                                                                data: fileData,
+                                                                                processData: false,
+                                                                                contentType: false,
+                                                                                success: function (stream) {
+                                                                                    $("#loader-wrapper").hide();
+                                                                                    bootbox.alert("Your form has been sent sucessfully!");
+                                                                                    document.getElementById('employeeGid').value = "";
+                                                                                    document.getElementById('employeeLastWorkingdate').value = "";
+                                                                                    document.getElementById('teamNames').value = "";
+                                                                                    document.getElementById('employeeFirstName').value = "";
+                                                                                    document.getElementById('employeeLastName').value = "";
+                                                                                    document.getElementById('employeeEmail').value = "";
+                                                                                    $('#sponsorDetails').hide();
+                                                                                }
+                                                                            });
+                                                                        
                                                                         }
                                                                     });
                                                                 }
+
                                                             }
+
                                                         });
                                                     }
 
@@ -253,7 +277,7 @@
                 });
             }
         });
-        
+
             var Regx = "^[A-Za-z ]+$";
         function ValidateFirstName() {
             if ($('#employeeFirstName').val().trim().search(Regx)) {
@@ -353,7 +377,7 @@
             padding: 20px;
             margin-bottom: 5px;
             background-color: black;
-            height: 20%;
+            height: 22%;
             position: relative;
         }
 
@@ -441,13 +465,13 @@
 
 
 
-        #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton {
-            margin-left: 90%;
+        #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton {
+            margin-left: 89%;
             color: white;
         }
 
 
-            #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover {
+            #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover {
                 font-size: 103%;
                 color: darkgrey;
                 cursor: default;
@@ -491,9 +515,12 @@
         #radio-1-txt {
             margin-right: 10px;
         }
+        .form-group.required .control-label:after {
+            content: "*";
+            color: red;
+        }
 
         @@media only screen and (max-width:880px) {
-
             #header {
                 width: 130%;
             }
@@ -524,7 +551,9 @@
             </div>
             <div>
                 <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
-
+            </div>
+            <div>
+                <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
             </div>
         </div>
         <br/>
@@ -540,7 +569,7 @@
         </div>
 
         <div class="form">
-            <form class="form-group" action="Create">
+            <form class="form-group required" action="Create">
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">

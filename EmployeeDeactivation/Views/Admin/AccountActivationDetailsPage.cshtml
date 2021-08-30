@@ -23,15 +23,69 @@
     <script src="~/js/bootbox.js"></script>
     <script type="text/javascript">
 
-        function deactivationPage() {
-            
+        $(document).ready(function () {
+            getPagination('#Tabla');
+            $('#maxRows option:last').prop('selected', true).trigger('change');
+        });
+
+        function getPagination(table) {
+
+            $('#maxRows').on('change', function (e) {
+                $('.pagination').html(''); // reset pagination
+                var trnum = 0; // reset tr counter
+                var maxRows = parseInt($(this).val()); // get Max Rows from select option
+                var totalRows = $(table + ' tbody tr').length; // numbers of rows
+                $(table + ' tr:gt(0)').each(function () { // each TR in  table and not the header
+                    trnum++; // Start Counter
+                    if (trnum > maxRows) { // if tr number gt maxRows
+
+                        $(this).hide(); // fade it out
+                    }
+                    if (trnum <= maxRows) {
+                        $(this).show();
+                    } // else fade in Important in case if it ..
+                }); //  was fade out to fade it in
+                if (totalRows > maxRows) { // if tr total rows gt max rows option
+                    var pagenum = Math.ceil(totalRows / maxRows); // ceil total(rows/maxrows) to get ..
+                    //	numbers of pages
+                    for (var i = 1; i <= pagenum;) { // for each page append pagination li
+                        $('.pagination').append('<li class"wp" data-page="' + i + '">\<span>' + i++ + '<span class="sr-only">(current)</span></span>\</li>').show();
+                    } // end for i
+                } // end if row count > max rows
+                $('.pagination li:first-child').addClass('active'); // add active class to the first li
+                $('.pagination li').on('click', function () { // on click each page
+                    var pageNum = $(this).attr('data-page'); // get it's number
+                    var trIndex = 0; // reset tr counter
+                    $('.pagination li').removeClass('active'); // remove active class from all li
+                    $(this).addClass('active'); // add active class to the clicked
+                    $(table + ' tr:gt(0)').each(function () { // each tr in table not the header
+                        trIndex++; // tr index counter
+                        // if tr index gt maxRows*pageNum or lt maxRows*pageNum-maxRows fade if out
+                        if (trIndex > (maxRows * pageNum) || trIndex <= ((maxRows * pageNum) - maxRows)) {
+                            $(this).hide();
+                        } else {
+                            $(this).show();
+                        } //else fade in
+                    }); // end of for each tr in table
+                }); // end of on click pagination list
+
+
+            });
+
+            // end of on select change
+
+
+
+            // END OF PAGINATION
+        }
+
+        function deactivationPage() { 
             if ($('#deact').val() == "Deactivation") {
                 window.open('@Url.Action("AccountDeactivationDatePage", "Admin")', '_self');
 
             }
             
         }
-
         function filterRows() {
 
             var from = $('#datefilterfrom').val();
@@ -45,7 +99,7 @@
             var dateFrom = moment(from);
             var dateTo = moment(to);
 
-            $('#testTable tr').each(function (i, tr) {
+            $('#Tabla tr').each(function (i, tr) {
 
                 var val = $(tr).find("td:nth-child(7)").text();
                 var dateVal = moment(val, "DD/MM/YYYY");
@@ -112,45 +166,72 @@
         </div>
     </div>
 
-    <div id="TableDeact" class="table-responsive">
-        <table id="testTable" class="table" border="1">
-            <thead>
-                <tr>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(1)')" style="cursor:pointer">Name</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(2)')" style="cursor:pointer">Email ID</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(3)')" style="cursor:pointer">GID</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(4)')" style="cursor:pointer">Team</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(5)')" style="cursor:pointer">Role</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(6)')" style="cursor:pointer">Gender</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(7)')" style="cursor:pointer">Date Of Birth</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Place of Birth</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Address</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Phone No.</th>
-                    <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Nationality</th>
-                </tr>
-            </thead>
-            @foreach (EmployeeDetails details in Model)
-            {
-                <tbody>
+    <div class="container-fluid">
 
-                    <tr class=item>
+        <div class="row col-md-12 col-xs-12">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-condensed table-bordered" id="Tabla">
+                    <thead>
+                        <tr>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(1)')" style="cursor:pointer">Name</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(2)')" style="cursor:pointer">Email ID</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(3)')" style="cursor:pointer">GID</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(4)')" style="cursor:pointer">Team</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(5)')" style="cursor:pointer">Role</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(6)')" style="cursor:pointer">Gender</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(7)')" style="cursor:pointer">Date Of Birth</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Place of Birth</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Address</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Phone No.</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Nationality</th>
+                        </tr>
+                    </thead>
+                    @foreach (EmployeeDetails details in Model)
+                    {
+                        <div class="row">
+                            <div class="input col-md-1 col-xs-2">
+                                <!--		Show Numbers Of Rows 		-->
+                                <select class="form-control" name="state" id="maxRows">
+                                    <option value="5000">Show ALL Rows</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <tbody id="TablaFamilias">
 
-                        <td>@details.FirstName @details.LastName</td>
-                        <td>@details.EmailID</td>
-                        <td>@details.GId</td>
-                        <td>@details.TeamName</td>
-                        <td>@details.Role</td>
-                        <td>@details.Gender</td>
-                        <td>@details.DateOfBirth.Day - @details.DateOfBirth.Month - @details.DateOfBirth.Year</td>
-                        <td>@details.PlaceOfBirth</td>
-                        <td>@details.Address</td>
-                        <td>@details.PhoneNo</td>
-                        <td>@details.Nationality</td>
-                    </tr>
-                </tbody>
-            }
-        </table>
-    </div>
+                            <tr class="info">
+
+                                <td>@details.FirstName @details.LastName <span class="hidden-xs"></span> </td>
+                                <td>@details.EmailID <span class="hidden-xs"></span></td>
+                                <td>@details.GId <span class="hidden-xs"></span></td>
+                                <td>@details.TeamName <span class="hidden-xs"></span></td>
+                                <td>@details.Role <span class="hidden-xs"></span></td>
+                                <td>@details.Gender</td>
+                                <td>@details.DateOfBirth.Day - @details.DateOfBirth.Month - @details.DateOfBirth.Year  <span class="hidden-xs"></span></td>
+                                <td>@details.PlaceOfBirth <span class="hidden-xs"></span></td>
+                                <td>@details.Address <span class="hidden-xs"></span></td>
+                                <td>@details.PhoneNo <span class="hidden-xs"></span></td>
+                                <td>@details.Nationality  </td>
+                            </tr>
+                        </tbody>
+                        <tfoot></tfoot>
+                        <div>
+                            <nav>
+                                <ul class="pagination"></ul>
+                            </nav>
+                        </div>
+                    }
+                </table>
+            </div>
+            </div>
+</div>
+
+
+
+
+
 </body>
 </html>
 
