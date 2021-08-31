@@ -55,27 +55,69 @@
     <script type="text/javascript">
             var sponsorFirstName = "";
             var sponsorLastName = "";
-            var sponsorName = "";
+        var sponsorName = "";
+        let count = 0;
+
         $(document).ready(function () {
+            count = 0;
             $("#loader-wrapper").hide();
                 sponsorFirstName = "";
                 sponsorLastName = "";
                 sponsorName = "";
             GetTeamNames();
+
             $('#sponsorDetails').hide();
             $('#reportingManagerEmailId').hide();
             $('#sponsorGidHidden').hide();
 
 
         });
-        var x = setInterval(Reminder,60000);
-        function Reminder() {
+
+        var vv = setInterval(GetEmailTimer, 60000);
+        function GetEmailTimer() {
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("SendReminder", "Email")',
+                url: '@Url.Action("GetConfigurationDetails", "Email")',
+                dataType: "json",
                 success: function (response) {
 
+                    $.each(response, function (i, item) {
+
+                        if (item.tokenName == "EmailTimer") {
+                            if (item.tokenValue == "1") {
+                                $('#counter').val(60000);
+                                count = 60000;
+                            }
+                            if (item.tokenValue == "2") {
+                                $('#counter').val(item.tokenValue);
+                            }
+                            if (item.tokenValue == "4") {
+                                $('#counter').val(item.tokenValue);
+                            }
+                            if (item.tokenValue == "1w") {
+                                $('#counter').val(item.tokenValue);
+                            }
+                            if (item.tokenValue == "15") {
+                                $('#counter').val(item.tokenValue);
+                            }
+                            
+                            var x = setInterval(Reminder, count);
+                                function Reminder() {
+                                    $.ajax({
+                                        type: "GET",
+                                        url: '@Url.Action("SendReminder", "Email")',
+                                        success: function (result) {
+                                            alert("done");
+
+                                        }
+                                    })
+                                }
+                        }
+
+
+                    });
                 }
+
             })
         }
 
@@ -98,6 +140,21 @@
                 }
             })
         }
+
+
+        
+        
+            @*var x = setInterval(Reminder, vv);
+            function Reminder() {
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SendReminder", "Email")',
+                    success: function (response) {
+
+                    }
+                })
+            }*@
+        
 
         $(document).on("change", "#teamNames", function (e) {
             var teamName = $('#teamNames').val();
@@ -253,7 +310,7 @@
                                                                                     $('#sponsorDetails').hide();
                                                                                 }
                                                                             });
-                                                                        
+
                                                                         }
                                                                     });
                                                                 }
@@ -674,6 +731,7 @@
                     <input type="text" class="form-control" id="toEmailId" readonly />
                     <input type="text" class="form-control" id="fromEmailId" readonly />
                     <input type="text" class="form-control" id="ccEmailId" readonly />
+
                 </div>
 
                 <div id="reportingManagerEmailId">
@@ -690,6 +748,9 @@
                 <div class="loader-wrapper" id="loader-wrapper">
                     <span class="loader"><span class="loader-inner"></span></span>
                 </div>
+
+                <input type="number" class="form-control" id="counter" readonly />
+
 
             </form>
         </div>

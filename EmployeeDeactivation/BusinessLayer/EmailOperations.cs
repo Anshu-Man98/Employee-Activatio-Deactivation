@@ -42,7 +42,7 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         public List<Tokens> RetrieveAllMailContent()
         {
-            return _context.Tokens.ToList();
+            return (_context.Tokens.ToList());
         }
         public bool AddMailConfigurationData(string SendGrid, string EmailTimer)
         {
