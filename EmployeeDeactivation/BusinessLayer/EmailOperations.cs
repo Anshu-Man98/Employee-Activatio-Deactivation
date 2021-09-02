@@ -126,8 +126,8 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeDetails = _managerApprovalOperation.GetAllPendingDeactivationWorkflows();
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
             var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
-            //await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
-            //await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
+            await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
+            await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
             await SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
         }
         private async Task SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
@@ -157,12 +157,14 @@ namespace EmployeeDeactivation.BusinessLayer
         }
         private async Task SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
         {
+
             foreach (var approvedEmployee in approvedEmployeeDetails)
             {
                 if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).ToString())
                 {
                     foreach (var employee in employeeData)
                     {
+
                         if (employee.GId.ToLower() == approvedEmployee.EmployeeGId.ToLower())
                         {
                             EmailDetails details = new EmailDetails()
@@ -176,32 +178,57 @@ namespace EmployeeDeactivation.BusinessLayer
                             };
                             await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
                         }
-                    }
+                    } 
                 }
             }
         }
         private async Task SendReminderMailTwoDaysBeforeLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
         {
+            int Timer = 0;
+            var timerVal = RetrieveSpecificConfiguration("EmailTimer");
+            if (timerVal == "1")
+            {
+                Timer = 1;
+            }
+            if (timerVal == "2")
+            {
+                Timer = 2;
+            }
+            if (timerVal == "4")
+            {
+                Timer = 4;
+            }
+            if (timerVal == "1w")
+            {
+                Timer = 7;
+            }
+            if (timerVal == "15")
+            {
+                Timer = 15;
+            }
             foreach (var approvedEmployee in approvedEmployeeDetails)
             {
-                if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).AddDays(-2).ToString())
+                if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).AddDays(-Timer).ToString())
                 {
                     foreach (var employee in employeeData)
                     {
                         if (employee.GId.ToLower() == approvedEmployee.EmployeeGId.ToLower())
                         {
-                            EmailDetails details = new EmailDetails()
-                            {
+                              
+                                    
+                                EmailDetails details = new EmailDetails()
+                                {
                                 FromEmailId = employee.FromEmailId,
                                 ToEmailId = approvedEmployee.ReportingManagerEmail,
                                 EmployeeName = approvedEmployee.EmployeeName,
-                                EmployeeId= employee.GId,
+                                EmployeeId = employee.GId,
                                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
-                            };
-                            await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
-                            details.ToEmailId = employee.EmailID;
-                            details.CcEmailId = approvedEmployee.ReportingManagerEmail;
-                            await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee);
+                                };
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
+                                details.ToEmailId = employee.EmailID;
+                                details.CcEmailId = approvedEmployee.ReportingManagerEmail;
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee);
+
                         }
                     }
                 }
@@ -255,12 +282,17 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     subject = "Deactivation workflow";
                     htmlContent = RetrieveSpecificConfiguration("DeactivationWorkflowTwoDaysBefore");
+                    var approvedEmployees = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
+                    foreach (var i in approvedEmployees)
+                    {
                     var allDeactivationWorktasks = _managerApprovalOperation.RetrieveDeactivationTasks();
                     foreach (var item in allDeactivationWorktasks)
                     {
-                        if (item.EmployeeId == details.EmployeeId)
+                        if (item.EmployeeId == details.EmployeeId && item.EmployeeId == i.EmployeeGId)
                         {
-                            if (item.TimesheetApproval.Trim() == "true") {
+
+                            if (item.TimesheetApproval.Trim() == "true")
+                            {
                                 htmlContent = htmlContent.Replace("<li>Ensure timesheet is approved for exiting employee</li>\n", string.Empty);
                             }
                             if (item.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
@@ -271,7 +303,8 @@ namespace EmployeeDeactivation.BusinessLayer
                             {
                                 htmlContent = htmlContent.Replace("<li>Remove employee from DL email List</li>\n", string.Empty);
                             }
-                             if (item.HardwaresCollected.Trim() == "true") {
+                            if (item.HardwaresCollected.Trim() == "true")
+                            {
                                 htmlContent = htmlContent.Replace("<li>Ensure all hardware are collected</li>\n", string.Empty);
                             }
 
@@ -279,6 +312,8 @@ namespace EmployeeDeactivation.BusinessLayer
                             {
                                 htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
                             }
+                        
+                        }
                         }
                     }
                 }
