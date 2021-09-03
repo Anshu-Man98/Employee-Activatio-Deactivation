@@ -111,19 +111,20 @@
 
     <style>
 
-        #dateInput {
-            margin-left: 40px;
-            background-color:aqua;
+        #toggel {
+            margin-left: 55px;
         }
 
-        #TableDeact {
-            padding-left: 50px;
-            padding-right: 50px;
-            margin-top: 100px;
+        #dateInput {
+            margin-left: 40px;
         }
 
         th {
             white-space: nowrap;
+        }
+
+        #responsiveTable {
+            margin-left: 30px;
         }
 
         .header {
@@ -136,8 +137,17 @@
             color: white;
             font-size: 30px;
         }
+
         button {
             margin-left: 55px;
+        }
+
+        #pageno {
+            position: inherit;
+            padding: 5px;
+            margin-top: 60px;
+            margin-left: 55px;
+            margin-right: 100px;
         }
         
     </style>
@@ -149,12 +159,22 @@
     <button type="button" class="btn btn-outline-secondary" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")', '_self')">Back</button>
 
     <div id="dateInput">
+        <div class="input col-md-2">
+            <h5>Show records:</h5>
+            <!--		Show Numbers Of Rows 		-->
+            <select class="form-control" name="state" id="maxRows">
+                <option value="5000">Show all records</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+            </select>
+        </div>
         <div class="col-md-3">
-            <h5>Date from:</h5>
+            <h5>DOB from:</h5>
             <input type="date" class="form-control" id="datefilterfrom" data-date-split-input="true" onchange="filterRows()">
         </div>
         <div class="col-md-3">
-            <h5>Date to:</h5>
+            <h5>DOB to:</h5>
             <input type="date" class="form-control" id="datefilterto" data-date-split-input="true" onchange="filterRows()">
         </div>
         <div class="col-md-3">
@@ -166,7 +186,13 @@
         </div>
     </div>
 
-    <div class="container-fluid">
+    <div id="pageno">
+
+        <ul class="pagination"></ul>
+
+    </div>
+
+    <div class="container-fluid" id="responsiveTable">
 
         <div class="row col-md-12 col-xs-12">
             <div class="table-responsive">
@@ -188,17 +214,6 @@
                     </thead>
                     @foreach (EmployeeDetails details in Model)
                     {
-                        <div class="row">
-                            <div class="input col-md-1 col-xs-2">
-                                <!--		Show Numbers Of Rows 		-->
-                                <select class="form-control" name="state" id="maxRows">
-                                    <option value="5000">Show ALL Rows</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                </select>
-                            </div>
-                        </div>
                         <tbody id="TablaFamilias">
 
                             <tr class="info">
@@ -216,17 +231,12 @@
                                 <td>@details.Nationality  </td>
                             </tr>
                         </tbody>
-                        <tfoot></tfoot>
-                        <div>
-                            <nav>
-                                <ul class="pagination"></ul>
-                            </nav>
-                        </div>
                     }
+                    <tfoot></tfoot>
                 </table>
             </div>
-            </div>
-</div>
+        </div>
+    </div>
 
 
 
