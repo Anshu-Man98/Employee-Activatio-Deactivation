@@ -8,13 +8,13 @@
     var managerDisplay = "none";
     var adminDisplay = "none";
 
-    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("48b47645-cabb-4ca9-8749-5e1e79b1a9dc"))) == true)
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("cac297fa-e30d-4085-bf10-06e38a94b3f7"))) == true)
     {
         adminDisplay = "block";
 
 
     }
-    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"))) == true)
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("1f6eeeba-fa1a-4d51-bbba-f0bf6b2a7d4f"))) == true)
     {
         managerDisplay = "block";
         adminDisplay = "block";
