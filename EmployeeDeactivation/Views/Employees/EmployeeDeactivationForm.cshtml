@@ -375,24 +375,20 @@
     </script>
 
     <style>
-
         #header {
-            width: 102%;
-            margin-top: 0px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 5px;
             background-color: black;
-            height: 22%;
-            position: relative;
+            color:azure;
         }
 
-        .headerText {
+        #headerText {
             text-align: center;
             font-size: 30px;
             color: white;
             position: absolute;
             margin-left: 35%;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
         .loader-wrapper {
@@ -546,9 +542,9 @@
 
 </head>
 
-    <body>
-        <div id="header">
-            <h2 class="headerText">Employee Deactivation Form </h2>
+<body>
+        <nav class="navbar navbar sticky-top" id="header">
+            <a class="navbar-brand" id="headerText">Employee Deactivation Form</a>
             <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
             <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
             <div>
@@ -560,147 +556,148 @@
             <div>
                 <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
             </div>
-        </div>
-        <br/>
+        </nav>
 
-        <div class="regular-field" id="act/de_toggel" style="display:@adminDisplay" >
+    <br />
 
-            <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
-            <label for="radio-six" id="radio-1-txt">Deactivation Form</label>
+    <div class="regular-field" id="act/de_toggel" style="display:@adminDisplay">
 
-            <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
-            <label for="radio-seven">Activation Form</label>
+        <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
+        <label for="radio-six" id="radio-1-txt">Deactivation Form</label>
 
-        </div>
+        <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
+        <label for="radio-seven">Activation Form</label>
 
-        <div class="form">
-            <form class="form-group required" action="Create">
+    </div>
+
+    <div class="form">
+        <form class="form-group required" action="Create">
+
+            <div class="form-group row">
+                <label class="control-label col-sm-1" id="TextField">
+                    First Name:
+                </label>
+                <div class="col-sm-3" id="inputTextbox">
+                    <input type="text" value=@firstName class="form-control" id="employeeFirstName" onkeyup="ValidateFirstName()" placeholder="First Name" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label id="employeeFNameError" hidden class="ErrorView">only Alphabets are allowed</label>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-sm-1" id="TextField">
+                    Last Name:
+                </label>
+                <div class="col-sm-3" id="inputTextbox">
+                    <input type="text" value=@lastName " " class="form-control" id="employeeLastName" onkeyup="ValidateLastName()" placeholder="Last Name" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label id="employeeLNameError" hidden class="ErrorView">only Alphabets are allowed</label>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-sm-1" id="TextField">
+                    GID:
+                </label>
+                <div class="col-sm-3" id="inputTextbox">
+                    <input type="text" class="form-control" id="employeeGid" placeholder="GID" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-sm-1" id="TextField">
+                    Email:
+                </label>
+                <div class="col-sm-3" id="inputTextbox">
+                    <input type="text" value=@emailId class="form-control" id="employeeEmail" placeholder="Email" onkeyup="ValidateEmail()" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label id="employeeEmailError" hidden class="ErrorView">Invalid Email Format</label>
+            </div>
+
+            <div class="form-group row">
+                <label class="control-label col-sm-1" id="TextField">
+                    Last Working Date:
+                </label>
+                <div class="col-sm-3" id="inputTextbox">
+                    <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label id="employeeDateError" hidden class="ErrorView">Last Working Date must be in the future</label>
+            </div>
+
+            <div class="form-group row">
+                <label id="TextField" class="control-label col-sm-1">
+                    Select Team :
+                </label>
+                <div class="col-sm-3" id="inputTextbox">
+                    <select id="teamNames" class="form-control"></select>
+                </div>
+            </div>
+
+            <div id="sponsorDetails">
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">
-                        First Name:
+                        Sponsor Name:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" value=@firstName class="form-control" id="employeeFirstName" onkeyup="ValidateFirstName()" placeholder="First Name" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="employeeFNameError" hidden class="ErrorView">only Alphabets are allowed</label>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Last Name:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" value=@lastName " " class="form-control" id="employeeLastName" onkeyup="ValidateLastName()" placeholder="Last Name" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="employeeLNameError" hidden class="ErrorView">only Alphabets are allowed</label>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        GID:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="employeeGid" placeholder="GID" />
+                        <input type="text" class="form-control" id="sponsorName" readonly />
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">
-                        Email:
+                        Sponsor Email:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" value=@emailId class="form-control" id="employeeEmail" placeholder="Email" onkeyup="ValidateEmail()" />
+                        <input type="text" class="form-control" id="sponsorEmail" readonly />
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label id="employeeEmailError" hidden class="ErrorView">Invalid Email Format</label>
                 </div>
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">
-                        Last Working Date:
+                        Sponsor Department:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="employeeDateError" hidden class="ErrorView">Last Working Date must be in the future</label>
-                </div>
-
-                <div class="form-group row">
-                    <label id="TextField" class="control-label col-sm-1">
-                        Select Team :
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <select id="teamNames" class="form-control"></select>
+                        <input type="text" class="form-control" id="sponsorDepartment" readonly />
                     </div>
                 </div>
 
-                <div id="sponsorDetails">
 
-                    <div class="form-group row">
-                        <label class="control-label col-sm-1" id="TextField">
-                            Sponsor Name:
-                        </label>
-                        <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorName" readonly />
-                        </div>
-                    </div>
+            </div>
 
-                    <div class="form-group row">
-                        <label class="control-label col-sm-1" id="TextField">
-                            Sponsor Email:
-                        </label>
-                        <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorEmail" readonly />
-                        </div>
-                    </div>
+            <div id="sponsorGidHidden">
+                <input type="text" class="form-control" id="sponsorGid" readonly />
+                <input type="text" class="form-control" id="toEmailId" readonly />
+                <input type="text" class="form-control" id="fromEmailId" readonly />
+                <input type="text" class="form-control" id="ccEmailId" readonly />
 
-                    <div class="form-group row">
-                        <label class="control-label col-sm-1" id="TextField">
-                            Sponsor Department:
-                        </label>
-                        <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorDepartment" readonly />
-                        </div>
-                    </div>
+            </div>
+
+            <div id="reportingManagerEmailId">
+                <input type="text" class="form-control" id="reportingManagerEmail" readonly />
+            </div>
 
 
-                </div>
+            <div class="form-group row" style="padding-left:2px">
+                <br />
+                <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
+                <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
+            </div>
 
-                <div id="sponsorGidHidden">
-                    <input type="text" class="form-control" id="sponsorGid" readonly />
-                    <input type="text" class="form-control" id="toEmailId" readonly />
-                    <input type="text" class="form-control" id="fromEmailId" readonly />
-                    <input type="text" class="form-control" id="ccEmailId" readonly />
-
-                </div>
-
-                <div id="reportingManagerEmailId">
-                    <input type="text" class="form-control" id="reportingManagerEmail" readonly />
-                </div>
-
-
-                <div class="form-group row" style="padding-left:2px">
-                    <br />
-                    <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
-                    <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
-                </div>
-
-                <div class="loader-wrapper" id="loader-wrapper">
-                    <span class="loader"><span class="loader-inner"></span></span>
-                </div>
+            <div class="loader-wrapper" id="loader-wrapper">
+                <span class="loader"><span class="loader-inner"></span></span>
+            </div>
 
 
 
 
-            </form>
-        </div>
-    </body>
+        </form>
+    </div>
+</body>
 }

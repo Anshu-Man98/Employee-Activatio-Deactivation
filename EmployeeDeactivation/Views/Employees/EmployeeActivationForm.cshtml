@@ -388,22 +388,18 @@
         <style>
 
             #header {
-                width: 102%;
-                margin-top: 0px;
-                padding: 20px;
+                padding: 15px;
                 margin-bottom: 25px;
                 background-color: black;
-                height: 22%;
-                position: relative;
             }
 
-            .headerText {
+            #headerText {
                 text-align: center;
                 font-size: 30px;
                 color: white;
                 position: absolute;
                 margin-left: 35%;
-                margin-top: 5px;
+                margin-top: 6px;
             }
 
             .loader-wrapper {
@@ -535,226 +531,226 @@
     </head>
 
     <body>
-        <div id="header">
-            <h2 class="headerText">Employee Activation Form </h2>
-            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
-            <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
-            <div>
-                <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
+        <nav class="navbar navbar sticky-top" id="header">
+                <a class="navbar-brand" id="headerText">Employee Activation Form </a>
+                <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
+                <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
+                <div>
+                    <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
+
+                </div>
+                <div>
+                    <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
+                </div>
+                <div>
+                    <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
+                </div>
+            </nav>
+
+            <div class="regular-field">
+                <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
+                <label for="radio-seven" id="radio-1-txt">Deactivation Form</label>
+
+                <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
+                <label for="radio-six" id="radio-1-txt">Activation Form</label>
 
             </div>
-            <div>
-                <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
-            </div>
-            <div>
-                <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
-            </div>
-        </div>
-
-        <div class="regular-field">
-            <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
-            <label for="radio-seven" id="radio-1-txt">Deactivation Form</label>
-
-            <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
-            <label for="radio-six" id="radio-1-txt">Activation Form</label>
-
-        </div>
-        <div class="form">
-            <form class="form-group required" action="Create">
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        First Name:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="siemensFirstName" onkeyup="ValidateFirstName()" placeholder="First Name" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="siemensFNameError" hidden class="ErrorView">only Alphabets are allowed</label>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Last Name:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="siemensLastName" onkeyup="ValidateLastName()" placeholder="Last Name" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="siemensLNameError" hidden class="ErrorView">only Alphabets are allowed</label>
-                </div>
-
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Siemens Email Id:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="siemensEmail" placeholder="Email" onkeyup="ValidateEmail()" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="siemensEmailError" hidden class="ErrorView">Invalid Email Format</label>
-                </div>
-
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Siemens GID:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="siemensGid" placeholder="GID" />
-                    </div>
-                </div>
-
-
-                <div class="form-group row">
-                    <label id="TextField" class="control-label col-sm-1">
-                        Select Team :
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <select id="teamNames" class="form-control"></select>
-                    </div>
-                </div>
-
-                <div id="sponsorDetails">
+            <div class="form">
+                <form class="form-group required" action="Create">
 
                     <div class="form-group row">
                         <label class="control-label col-sm-1" id="TextField">
-                            Sponsor Name:
+                            First Name:
                         </label>
                         <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorName" readonly />
+                            <input type="text" class="form-control" id="siemensFirstName" onkeyup="ValidateFirstName()" placeholder="First Name" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label id="siemensFNameError" hidden class="ErrorView">only Alphabets are allowed</label>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Last Name:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="siemensLastName" onkeyup="ValidateLastName()" placeholder="Last Name" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label id="siemensLNameError" hidden class="ErrorView">only Alphabets are allowed</label>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Siemens Email Id:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="siemensEmail" placeholder="Email" onkeyup="ValidateEmail()" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label id="siemensEmailError" hidden class="ErrorView">Invalid Email Format</label>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Siemens GID:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="siemensGid" placeholder="GID" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label id="TextField" class="control-label col-sm-1">
+                            Select Team :
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <select id="teamNames" class="form-control"></select>
+                        </div>
+                    </div>
+
+                    <div id="sponsorDetails">
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-1" id="TextField">
+                                Sponsor Name:
+                            </label>
+                            <div class="col-sm-3" id="inputTextbox">
+                                <input type="text" class="form-control" id="sponsorName" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-1" id="TextField">
+                                Sponsor Email:
+                            </label>
+                            <div class="col-sm-3" id="inputTextbox">
+                                <input type="text" class="form-control" id="sponsorEmail" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="control-label col-sm-1" id="TextField">
+                                Sponsor Department:
+                            </label>
+                            <div class="col-sm-3" id="inputTextbox">
+                                <input type="text" class="form-control" id="sponsorDepartment" readonly />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="sponsorGidHidden">
+                        <input type="text" class="form-control" id="sponsorGid" readonly />
+                    </div>
+
+                    <div id="reportingManagerEmailId">
+                        <input type="text" class="form-control" id="reportingManagerEmail" readonly />
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Role:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="role" placeholder="Role" />
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label id="TextField" class="control-label col-sm-1">
+                            Gender:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <select id="gender" class="form-control">
+                                <option value="" selected>Choose Here</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Date Of Birth:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="date" class="form-control" id="dateOfBirth" onchange="checkDate()" min="1940-05-01" max="2015-01-01" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label id="dobError" hidden class="ErrorView">Date of birth should not be in the future</label>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Place of Birth:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="placeOfBirth" placeholder="POB" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label id="pobError" hidden class="ErrorView">only Alphabets are allowed</label>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Address:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="address" placeholder="address" />
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="control-label col-sm-1" id="TextField">
-                            Sponsor Email:
+                            Phone no:
                         </label>
                         <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorEmail" readonly />
+                            <input type="text" class="form-control" id="phoneNo" onkeyup="Validatephonenumber()" placeholder="Phone No" />
                         </div>
+                    </div>
+                    <div class="form-group row">
+                        <label id="employeePhoneNoError" hidden class="ErrorView">only numbers are accepted </label>
                     </div>
 
                     <div class="form-group row">
                         <label class="control-label col-sm-1" id="TextField">
-                            Sponsor Department:
+                            Nationality:
                         </label>
                         <div class="col-sm-3" id="inputTextbox">
-                            <input type="text" class="form-control" id="sponsorDepartment" readonly />
+                            <input type="text" class="form-control" id="nationality" onkeyup="ValidateNationality()" placeholder="Nationality" />
                         </div>
                     </div>
-
-                </div>
-                <div id="sponsorGidHidden">
-                    <input type="text" class="form-control" id="sponsorGid" readonly />
-                </div>
-
-                <div id="reportingManagerEmailId">
-                    <input type="text" class="form-control" id="reportingManagerEmail" readonly />
-                </div>
-
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Role:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="role" placeholder="Role" />
+                    <div class="form-group row">
+                        <label id="nationalityError" hidden class="ErrorView">only Alphabets are allowed</label>
                     </div>
-                </div>
 
 
-                <div class="form-group row">
-                    <label id="TextField" class="control-label col-sm-1">
-                        Gender:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <select id="gender" class="form-control">
-                            <option value="" selected>Choose Here</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Others">Others</option>
-                        </select>
+                    <div class="form-group row" style="padding-left:2px ">
+                        <br />
+                        <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
+                        <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
                     </div>
-                </div>
 
-
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Date Of Birth:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="date" class="form-control" id="dateOfBirth" onchange="checkDate()" min="1940-05-01" max="2015-01-01" />
+                    <div class="loader-wrapper" id="loader-wrapper">
+                        <span class="loader"><span class="loader-inner"></span></span>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label id="dobError" hidden class="ErrorView">Date of birth should not be in the future</label>
-                </div>
 
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Place of Birth:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="placeOfBirth" placeholder="POB" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="pobError" hidden class="ErrorView">only Alphabets are allowed</label>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Address:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="address" placeholder="address" />
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Phone no:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="phoneNo" onkeyup="Validatephonenumber()" placeholder="Phone No" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="employeePhoneNoError" hidden class="ErrorView">only numbers are accepted </label>
-                </div>
-
-                <div class="form-group row">
-                    <label class="control-label col-sm-1" id="TextField">
-                        Nationality:
-                    </label>
-                    <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="nationality" onkeyup="ValidateNationality()" placeholder="Nationality" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label id="nationalityError" hidden class="ErrorView">only Alphabets are allowed</label>
-                </div>
-
-
-                <div class="form-group row" style="padding-left:2px "  >
-                    <br />
-                    <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
-                    <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
-                </div>
-
-                <div class="loader-wrapper" id="loader-wrapper" >
-                    <span class="loader"><span class="loader-inner"></span></span>
-                </div>
-
-            </form>
-        </div>
+                </form>
+            </div>
     </body>
 }
 
