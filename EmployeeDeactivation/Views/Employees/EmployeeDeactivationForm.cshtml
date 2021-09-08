@@ -71,7 +71,7 @@
 
         });
 
-       
+
 
         function GetTeamNames() {
             $.ajax({
@@ -92,7 +92,7 @@
                 }
             })
         }
-        
+
         @*var x = setInterval(Reminder, 60000);
             function Reminder() {
                 $.ajax({
@@ -203,6 +203,7 @@
                                                     }
                                                 },
                                                 callback: function (result) {
+
                                                     if (result) {
                                                         if (preview) {
                                                             pdfWindow.window.close();
@@ -267,9 +268,22 @@
 
                                                         });
                                                     }
+                                                    if (result == false) {
+                                                      $.ajax({
+                                                        type: "GET",
+                                                        url: '@Url.Action("CreateDeactivationPdf", "Pdf")',
+                                                        data: { 'gId': $('#employeeGid').val() },
+                                                        dataType: "json",
+                                                          success: function (response) {
+
+                                                          alert("done")}
+
+                                                    });
+                                                    }
 
 
                                                 }
+
                                             });
                                     }
                                 }
@@ -419,6 +433,11 @@
             animation: loader-inner 2s infinite ease-in;
         }
 
+        body{
+           
+            overflow-x:hidden;
+        }
+
         @@keyframes loader {
             0% {
                 transform: rotate(0deg);
@@ -466,7 +485,7 @@
 
 
         #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton {
-            margin-left: 89%;
+            margin-left: 91%;
             color: white;
         }
 

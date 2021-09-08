@@ -31,6 +31,11 @@ namespace EmployeeDeactivation.Controllers
             return View();
         }
 
+        public IActionResult ActivationStatus()
+        {
+            return View();
+        }
+
 
         [HttpPost]
         [Route("ManagerApproval/AddPendingDeactivationRequestToDatabase")]
@@ -52,6 +57,13 @@ namespace EmployeeDeactivation.Controllers
         {
             return Json(_managerApprovalOperation.RetrieveDeactivationTasks());
         }
+
+        //[HttpGet]
+        //[Route("ManagerApproval/AllActivationTaskStatus")]
+        //public JsonResult AllActivationTaskStatus()
+        //{
+        //    return Json(_managerApprovalOperation.RetrieveDeactivationTasks());
+        //}
 
 
         [HttpGet]

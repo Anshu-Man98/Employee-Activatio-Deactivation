@@ -71,6 +71,21 @@ namespace EmployeeDeactivation.BusinessLayer
             return employeeDetails;
         }
 
+        public bool DeleteDeactivationDetails(string gId)
+        {
+            var deactivatedEmployees = RetrieveAllDeactivatedEmployees();
+            foreach (var deactivatedEmployee in deactivatedEmployees)
+            {
+                if (deactivatedEmployee.GId.ToLower() == gId.ToLower())
+                {
+                    _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == gId));
+                    _context.SaveChanges();
+                }
+            }
+            return true;
+
+        }
+
         public List<EmployeeDetails> RetrieveAllActivationWorkFlow()
         {
             var activatedEmployees = _context.ActivationWorkflow.ToList();

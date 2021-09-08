@@ -41,5 +41,11 @@ namespace EmployeeDeactivation.Controllers
         {
             return Json(_employeeDataOperation.SavePdfToDatabase(pdf, gId));
         }
+        [HttpPost]
+        [Route("Employees/DeleteDeactivationDetails")]
+        public JsonResult DeleteDeactivationDetails(string gId)
+        {
+            return Json(_employeeDataOperation.DeleteDeactivationDetails(gId));
+        }
     }
 }

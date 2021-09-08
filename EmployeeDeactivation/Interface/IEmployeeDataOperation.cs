@@ -18,5 +18,6 @@ namespace EmployeeDeactivation.Interface
         string[] GetReportingEmailIds(string teamName);
         List<Teams> RetrieveAllSponsorDetails();
         bool SavePdfToDatabase(byte[] pdf, string gId);
+        bool DeleteDeactivationDetails(string gId);
     }
 }
