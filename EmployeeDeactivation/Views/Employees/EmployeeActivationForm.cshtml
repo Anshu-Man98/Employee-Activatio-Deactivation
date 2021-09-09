@@ -128,6 +128,7 @@
                 fileData.append('Address', $('#address').val());
                 fileData.append('PhoneNo', $('#phoneNo').val());
                 fileData.append('Nationality', $('#nationality').val());
+                fileData.append('ActivationDate', new Date().toLocaleDateString());
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("AddDetailsToDatabase", "Employees")',

@@ -9,6 +9,9 @@ namespace EmployeeDeactivation.Models
         DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay = 4,
         DeactivationWorkFlowReminderEmployee =5,
         Activation = 6, 
-        DeclinedEmail = 7
+        DeclinedEmail = 7,
+        ActivationWorkFlowRemainderToManager = 8,
+        ActivationWorkFlowRemainderToEmployee = 9
+
     }
 }

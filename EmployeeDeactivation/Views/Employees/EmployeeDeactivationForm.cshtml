@@ -270,14 +270,11 @@
                                                     }
                                                     if (result == false) {
                                                       $.ajax({
-                                                        type: "GET",
-                                                        url: '@Url.Action("CreateDeactivationPdf", "Pdf")',
+                                                        type: "POST",
+                                                        url: '@Url.Action("DeleteDeactivationDetails", "Employees")',
                                                         data: { 'gId': $('#employeeGid').val() },
                                                         dataType: "json",
-                                                          success: function (response) {
-
-                                                          alert("done")}
-
+                                                          success: function (r) { }
                                                     });
                                                     }
 
