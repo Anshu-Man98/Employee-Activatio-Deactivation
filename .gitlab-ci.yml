@@ -1,4 +1,5 @@
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# This file is a template, and might need editing before it works on your project.
+﻿# To contribute improvements to CI/CD templates, please follow the Development guide at:
 # https://docs.gitlab.com/ee/development/cicd/templates.html
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/dotNET-Core.yml
@@ -17,7 +18,7 @@
 # See other available tags for .NET Core: https://hub.docker.com/r/microsoft/dotnet
 # Learn more about Docker tags: https://docs.docker.com/glossary/?term=tag
 # and the Docker itself: https://opensource.com/resources/what-docker
-#image: microsoft/dotnet:latest
+image: microsoft/dotnet:latest
 
 # ### Define variables
 #
@@ -83,8 +84,8 @@ cache:
 # in the root of project repository, so its content can be cached.
 #
 # Learn more about GitLab cache: https://docs.gitlab.com/ee/ci/caching/index.html
-before_script:
-  - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
+#before_script:
+ # - 'dotnet restore --packages $NUGET_PACKAGES_DIRECTORY'
 
 build:
   stage: build
