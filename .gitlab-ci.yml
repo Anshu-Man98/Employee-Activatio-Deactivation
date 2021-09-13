@@ -37,8 +37,7 @@ variables:
 
 stages:
   - build
-  - test
-  - deploy
+
 
 build_job:
   stage: build
