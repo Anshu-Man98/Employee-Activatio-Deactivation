@@ -6,6 +6,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -119,18 +120,19 @@ namespace EmployeeDeactivation.BusinessLayer
                 FileName = String.Empty
             };
             await SendEmailAsync(details, TypeOfWorkflow.DeclinedEmail);
-
         }
+
+
         public async Task SendReminderEmail()
         {
             var employeeDetails = _managerApprovalOperation.GetAllPendingDeactivationWorkflows();
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
             var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
             var activationEmployeeData = _employeeDataOperation.RetrieveAllActivationWorkFlow();
-            await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
-            await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
-            await SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
-            //await SendReminderMailForActivationTask(activationEmployeeData);
+            //await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
+            //await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
+            //await SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
+            await SendReminderMailForActivationTask(activationEmployeeData);
         }
         private async Task SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
         {
@@ -216,7 +218,6 @@ namespace EmployeeDeactivation.BusinessLayer
                     {
                         if (employee.GId.ToLower() == approvedEmployee.EmployeeGId.ToLower())
                         {
-                              
                                     
                                 EmailDetails details = new EmailDetails()
                                 {
@@ -237,29 +238,32 @@ namespace EmployeeDeactivation.BusinessLayer
             }
         }
 
-        //private async Task SendReminderMailForActivationTask(List<EmployeeDetails> activationEmployeeData)
-        //{
-        //    foreach (var activatedEmployee in activationEmployeeData)
-        //    {
-        //        if (DateTime.Today.ToString() == Convert.ToDateTime(activatedEmployee.ActivationDate).AddDays(2).ToString())
-        //        {
+        private async Task SendReminderMailForActivationTask(List<EmployeeDetails> activationEmployeeData)
+        {
+            foreach (var activatedEmployee in activationEmployeeData)
+            {
+                if (DateTime.Today.ToString() == Convert.ToDateTime(activatedEmployee.ActivationDate).AddDays(4).ToString())
+                {
 
-
-        //                    EmailDetails details = new EmailDetails()
-        //                    {
-        //                        FromEmailId = activatedEmployee.FromEmailId,
-        //                        ToEmailId = activatedEmployee.ReportingManagerEmail,
-        //                        EmployeeName = activatedEmployee.FirstName + activatedEmployee.LastName,
-        //                        EmployeeId = activatedEmployee.GId,
-        //                        ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
-        //                    };
-        //                    await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
-        //                    details.ToEmailId = activatedEmployee.EmailID;
-        //                    details.CcEmailId = activatedEmployee.ReportingManagerEmail;
-        //                    await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee);
-        //        }
-        //    }
-        //}
+                    var emailDetails = _employeeDataOperation.GetReportingEmailIds(activatedEmployee.TeamName);
+                    EmailDetails details = new EmailDetails()
+                    {
+                        FromEmailId = emailDetails[0],
+                        ToEmailId = activatedEmployee.ReportingManagerEmail,
+                        EmployeeName = activatedEmployee.FirstName +" "+ activatedEmployee.LastName,
+                        EmployeeId = activatedEmployee.GId,
+                        ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
+                    };
+                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager);
+                    details.ToEmailId = "1by16cs072@bmsit.in";
+                    details.CcEmailId = activatedEmployee.ReportingManagerEmail;
+                    await SendEmailAsync(details, TypeOfWorkflow.EmailToVivek);
+                    details.ToEmailId = activatedEmployee.EmailID;
+                    details.WfhAttachment = true;
+                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee);
+                }
+            }
+        }
         private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {
             try
@@ -381,7 +385,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (Convert.ToInt32(typeOfWorkflow) == 8)
                 {
                     subject = "Activation workflow";
-                    htmlContent = "Dear manager,<br> <br> +EmployeeName+ will be joining the 'House of Siemens' <br><br> In order to facilitate on-boarding of +EmployeeName+ with Siemens effectively, please ensure to complete the following tasks. <br><ol><li> Update Consolidated IoT resources list <a href= 'https://teams.microsoft.com/l/file/085270FB-8157-4748-AB95-090E525B38AD?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=xlsx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FInventoryDatabase.xlsx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'>Click here</a></li> <li> Birthday list to be updated <a href= 'https://teams.microsoft.com/l/file/6ED5BFBB-F186-41E5-A1CA-BF405FB2111F?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=docx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FWSA%20AU-Inventory.docx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'> Click here </a></li> <li> Add email id to project/ team distribution list</li> <li> Initiate hardware shipment request in DTS / ISE office admin form for machine and accessories or Initiate office visit request in DTS / ISE office admin form incase member travelling to office for machine pickup</li> <li> Update member details in EDMT tool </li> <li> Induction plan assignment </li> <li> Update induction training record <a href = 'https://teams.microsoft.com/l/file/085270FB-8157-4748-AB95-090E525B38AD?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=xlsx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FInventoryDatabase.xlsx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'> Click here </a></li></ol><br><br>Thank you."; ;
+                    htmlContent = "Dear manager,<br> <br> +EmployeeName+ will be joining the 'House of Siemens'. <br><br> In order to facilitate on-boarding of +EmployeeName+ with Siemens effectively, please ensure to complete the following tasks. <br><ol><li> Update Consolidated IoT resources list <a href= 'https://teams.microsoft.com/l/file/085270FB-8157-4748-AB95-090E525B38AD?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=xlsx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FInventoryDatabase.xlsx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'>Click here</a></li> <li> Birthday list to be updated <a href= 'https://teams.microsoft.com/l/file/6ED5BFBB-F186-41E5-A1CA-BF405FB2111F?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=docx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FWSA%20AU-Inventory.docx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'> Click here </a></li> <li> Add email id to project/ team distribution list</li> <li> Add member to Timesheet</li> <li> Initiate hardware shipment request in DTS / ISE office admin form for machine and accessories or Initiate office visit request in DTS / ISE office admin form incase member travelling to office for machine pickup</li> <li> Update member details in EDMT tool </li> <li> Induction plan assignment </li> <li> Update induction training record <a href = 'https://teams.microsoft.com/l/file/085270FB-8157-4748-AB95-090E525B38AD?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=xlsx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FInventoryDatabase.xlsx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'> Click here </a></li> <li> Update Vivek's ecampus list</li></ol><br><br>Thank you.";
 
                     if (htmlContent.Contains("+EmployeeName+"))
                     {
@@ -389,6 +393,32 @@ namespace EmployeeDeactivation.BusinessLayer
                     }
 
                 }
+
+                if (Convert.ToInt32(typeOfWorkflow) == 9)
+                {
+                    subject = "Activation workflow";
+                    htmlContent = "Hi +EmployeeName+,<br><br>Welcome to the family of Siemens.<br><br>We have WFH enablers and internet benefits which you can avail. Another important aspect is about filling of Siemens Health app on daily basis. Please install it from the Play store and select suitable options based on the current covid situation. This is very important for tracking Health of all our Siemens Employee.<br><br><b>Attached two emails will give more clarification about Internet and Work from home enablers.</b><br><br>Thank you";
+
+                    if (htmlContent.Contains("+EmployeeName+"))
+                    {
+                        htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
+                    }
+
+                }
+
+                if (Convert.ToInt32(typeOfWorkflow) == 10)
+                {
+                    subject = "Activation workflow";
+                    htmlContent = "Hi Vivek,<br><br>We have a new joinee +EmployeeName+, please assign AU domain WBT for +EmployeeName+ .<br><br>Thank you";
+
+                    if (htmlContent.Contains("+EmployeeName+"))
+                    {
+                        htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
+                    }
+
+                }
+
+
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
                 if (emailAddress.Count > 0)
                 {
@@ -397,6 +427,13 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null)
                 {
                     msg.AddAttachment(filename: details.FileName + ".pdf", Convert.ToBase64String(details.ActivatedEmployee.ActivationWorkFlowPdfAttachment));
+                }
+                if (details.WfhAttachment == true)
+                {
+                    FileStream Reimbursement = new FileStream("ReimbursementBroadbandOrMobileData.msg", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    msg.AddAttachment(filename: "ReimbursementBroadbandOrMobileData.msg", Convert.ToString(Reimbursement));
+                    FileStream Wfh = new FileStream("EnablingWorkFromHomeFurther.msg", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                    msg.AddAttachment(filename: "EnablingWorkFromHomeFurther.msg", Convert.ToString(Wfh));
                 }
                 _ = await sendGridClientApiKey.SendEmailAsync(msg);
             }

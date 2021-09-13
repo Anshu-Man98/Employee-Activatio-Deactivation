@@ -11,7 +11,8 @@ namespace EmployeeDeactivation.Models
         Activation = 6, 
         DeclinedEmail = 7,
         ActivationWorkFlowRemainderToManager = 8,
-        ActivationWorkFlowRemainderToEmployee = 9
+        ActivationWorkFlowRemainderToEmployee = 9,
+        EmailToVivek = 10
 
     }
 }

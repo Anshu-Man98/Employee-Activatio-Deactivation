@@ -15,5 +15,6 @@ namespace EmployeeDeactivation.Models
         public string EmployeeName { get; set; }
         public string EmployeeId { get; set; }
         public ActivationEmployeeDetails ActivatedEmployee { get; set; }
+        public bool WfhAttachment {get; set;}
     }
 }
