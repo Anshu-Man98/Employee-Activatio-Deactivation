@@ -7,12 +7,13 @@ namespace EmployeeDeactivation.Interface
 {
     public interface IEmailOperation
     {
-         Task SendReminderEmail();
-        Task SendEmailDeclined(string gId, string employeeName);
+        Task SendReminderEmail();
+        //Task SendEmailDeclined(string gId, string employeeName);
         bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf);
-        bool AddMailConfigurationData(/*string ActivationMail, string DeactivationMail, string ReminderMail, string DeclinedMail, */string SendGrid, string EmailTimer);
+        bool AddMailConfigurationData(string SendGrid, string EmailTimer);
         //string RetrieveSpecificConfiguration(string key);
         List<Tokens> RetrieveAllMailContent();
+        bool AddMailContentData(string ActivationMailInitiated, string DeactivationMailInitiated, /*string DeclinedMail,*/ string DeactivationMailLastWorkingDayToSponsor, /*string DeactivationMailLastWorkingDayToManager,*/ string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder);
 
     }
 }

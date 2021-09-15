@@ -24,10 +24,18 @@ namespace EmployeeDeactivation.Controllers
 
         [HttpPost]
         [Route("Email/AddConfigurationToDatabase")]
-        public JsonResult AddConfigurationToDatabase(/*string ActivationMail , string DeactivationMail, string ReminderMail, string DeclinedMail,*/ string SendGrid, string EmailTimer)
+        public JsonResult AddConfigurationToDatabase(string SendGrid, string EmailTimer)
         {
 
-            return Json(_emailOperation.AddMailConfigurationData(/*ActivationMail, DeactivationMail, ReminderMail, DeclinedMail, */SendGrid, EmailTimer));
+            return Json(_emailOperation.AddMailConfigurationData(SendGrid, EmailTimer));
+        }
+
+        [HttpPost]
+        [Route("Email/AddMailContentToDatabase")]
+        public JsonResult AddMailContentToDatabase(string ActivationMailInitiated, string DeactivationMailInitiated, /*string DeclinedMail,*/ string DeactivationMailLastWorkingDayToSponsor, /*string DeactivationMailLastWorkingDayToManager,*/ string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder)
+        {
+
+            return Json(_emailOperation.AddMailContentData(ActivationMailInitiated, DeactivationMailInitiated, /*DeclinedMail,*/ DeactivationMailLastWorkingDayToSponsor, /*DeactivationMailLastWorkingDayToManager,*/ DeactivationWorkflowDaysBeforeRemainder, DeactivationWorkflowToEmployeeRemainder));
         }
 
         [HttpPost]
@@ -44,11 +52,11 @@ namespace EmployeeDeactivation.Controllers
         [Route("Email/SendReminder")]
         public void SendReminder() => _emailOperation.SendReminderEmail();
 
-        [HttpPost]
-        [Route("Email/DeclineEmail")]
-        public void DeclineEmail(string gId, string employeeName)
-        {
-            _emailOperation.SendEmailDeclined(gId, employeeName);
-        }
+        //[HttpPost]
+        //[Route("Email/DeclineEmail")]
+        //public void DeclineEmail(string gId, string employeeName)
+        //{
+        //    _emailOperation.SendEmailDeclined(gId, employeeName);
+        //}
     }
 }

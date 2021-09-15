@@ -58,6 +58,8 @@ namespace EmployeeDeactivation.BusinessLayer
                 EmployeeRemovedFromDLEmailList = deactivationStatus.EmployeeRemovedFromDLEmailList,
                 HardwaresCollected = deactivationStatus.HardwaresCollected,
                 RaisedWindowsDeactivationRequestNexus = deactivationStatus.RaisedWindowsDeactivationRequestNexus,
+                TimerDate = deactivationStatus.TimerDate,
+                LastWorkingDate = deactivationStatus.TimerDate,
             };
             if (deactivationStatus.TimesheetApproval.Trim() == "true" && deactivationStatus.EmployeeRemovedFromDLEmailList.Trim() == "true" && deactivationStatus.HardwaresCollected.Trim() == "true" && deactivationStatus.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
             {
@@ -174,6 +176,20 @@ namespace EmployeeDeactivation.BusinessLayer
                 }
             }
             return approvedDeactivationWorkflows;
+        }
+
+        public string GetApprovedDeactivationWorkReportingManagerEmailflowsBasedOnGid(string gid)
+        {
+            var allDeactivationWorkflow = GetAllApprovedDeactivationWorkflows();
+            foreach (var item in allDeactivationWorkflow)
+            {
+                if (gid.ToLower() == item.EmployeeGId.ToLower())
+                {
+                    return item.ReportingManagerEmail;
+                }
+            }
+            return null;
+            
         }
 
         public List<ManagerApprovalStatus> GetAllDeclinedDeactivationWorkflows()

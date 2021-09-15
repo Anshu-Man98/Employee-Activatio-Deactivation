@@ -13,6 +13,7 @@ namespace EmployeeDeactivation.Interface
         List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail);
         List<ManagerApprovalStatus> GetAllPendingDeactivationWorkflows();
         List<ManagerApprovalStatus> GetAllApprovedDeactivationWorkflows();
+        string GetApprovedDeactivationWorkReportingManagerEmailflowsBasedOnGid(string gid);
         List<DeactivationStatus> RetrieveDeactivationTasks();
         bool ApproveRequest(string gId);
         bool DeclineRequest(string gId);

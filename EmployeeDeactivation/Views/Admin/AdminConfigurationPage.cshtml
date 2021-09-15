@@ -22,26 +22,35 @@
                 dataType: "json",
                 success: function (response) {
                     $.each(response, function (i, item) {
-                        if (item.tokenName == "ActivationMail") {
+                        if (item.tokenName == "ActivationMailInitiated") {
                             $("#ActivationMailContent").val(item.tokenValue)
                         }
                         if (item.tokenName == "DeactivationMailInitiated") {
                             $("#DeactivationMailContent").val(item.tokenValue)
                         }
-                        if (item.tokenName == "DeclinedMail") {
-                            $("#DeclinedMailContent").val(item.tokenValue)
+                        //if (item.tokenName == "DeclinedMail") {
+                        //    $("#DeclinedMailContent").val(item.tokenValue)
+                        //}
+                        if (item.tokenName == "DeactivationWorkflowDaysBeforeRemainder") {
+                            $("#RemainderMailToManagerDaysBeforeDeactivationWorkflow").val(item.tokenValue)
                         }
-                        if (item.tokenName == "DeactivationMailLastWorkingDay") {
+                        if (item.tokenName == "DeactivationWorkflowToEmployeeRemainder") {
+                            $("#RemainderMailToEmployeeDaysBeforeDeactivationWorkflow").val(item.tokenValue)
+                        }
+                        if (item.tokenName == "DeactivationMailLastWorkingDayToSponsor") {
                             $("#DeactivationMailToSponsor").val(item.tokenValue)
                         }
-                        if (item.tokenName == "DeactivationMailOnLastWorkingDay") {
-                            $("#RemainderMailToManagerUnapproveworkflow").val(item.tokenValue)
+                        //if (item.tokenName == "DeactivationMailLastWorkingDayToManager") {
+                        //    $("#RemainderMailToManagerUnapproveworkflow").val(item.tokenValue)
+                        //}
+                        if (item.tokenName == "ActivationWorkFlowRemainderToManager") {
+                            $("#RemainderMailToManagerActivationTask").val(item.tokenValue)
                         }
-                        if (item.tokenName == "DeactivationWorkflowTwoDaysBefore") {
-                            $("#RemainderMailToManagerTwoDaysBefore").val(item.tokenValue)
+                        if (item.tokenName == "ActivationWorkFlowRemainderToEmployee") {
+                            $("#RemainderMailToEmployeeActivationTask").val(item.tokenValue)
                         }
-                        if (item.tokenName == "DeactivationWorkflowToEmployee") {
-                            $("#RemainderMailToEmployeeTwoDaysBefore").val(item.tokenValue)
+                        if (item.tokenName == "EmailToVivek") {
+                            $("#AssignAUdomainWBT").val(item.tokenValue)
                         }
 
                     });
@@ -55,9 +64,9 @@
             $("#loader-wrapper").show();
              $.ajax({
                     type: "POST",
-                    url: '@Url.Action("AddConfigurationToDatabase", "Email")',
+                    url: '@Url.Action("AddMailContentToDatabase", "Email")',
                     dataType: "json",
-                 data: { "ActivationMail": $('#ActivationMailContent').val(), "DeactivationMailInitiated": $('#DeactivationMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val(), "DeactivationMailLastWorkingDay": $('#DeactivationMailToSponsor').val(), "DeactivationMailOnLastWorkingDay": $('#RemainderMailToManagerUnapproveworkflow').val(), "DeactivationWorkflowTwoDaysBefore": $('#RemainderMailToManagerTwoDaysBefore').val(), "DeactivationWorkflowToEmployee": $('#RemainderMailToEmployeeTwoDaysBefore').val()},
+                 data: { "ActivationMailInitiated": $('#ActivationMailContent').val(), "DeactivationMailInitiated": $('#DeactivationMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val(), "DeactivationMailLastWorkingDayToSponsor": $('#DeactivationMailToSponsor').val(), "DeactivationMailLastWorkingDayToManager": $('#RemainderMailToManagerUnapproveworkflow').val(), "DeactivationWorkflowDaysBeforeRemainder": $('#RemainderMailToManagerTwoDaysBefore').val(), "DeactivationWorkflowToEmployeeRemainder": $('#RemainderMailToEmployeeTwoDaysBefore').val()},
                  success: function (response) {
                      if (response == true) {
                          $("#loader-wrapper").hide();
@@ -106,37 +115,55 @@
         <div>
             <div class="form-group">
                 <label for="exampleFormControlTextarea1">Activation Mail:</label>
-                <textarea class="form-control" id="ActivationMailContent" rows="2"></textarea>
+                <textarea class="form-control" id="ActivationMailContent" rows="4"></textarea>
             </div>
             <div class="form-group">
                 <label for="exampleFormControlTextarea1">Deactivation Mail:</label>
-                <textarea class="form-control" id="DeactivationMailContent" rows="2"></textarea>
+                <textarea class="form-control" id="DeactivationMailContent" rows="4"></textarea>
             </div>
-            <div class="form-group">
-                <label for="exampleFormControlTextarea1">Declined Mail:</label>
-                <textarea class="form-control" id="DeclinedMailContent" rows="2"></textarea>
-            </div>
+
+            @*//For future implementation*@
             @*<div class="form-group">
-                    <label for="exampleFormControlTextarea1">Remainder Mail for Deactivation:</label>
-                    <textarea class="form-control" id="RemainderMailContent" rows="2"></textarea>
-                </div>*@
+            <label for="exampleFormControlTextarea1">Declined Mail:</label>
+            <textarea class="form-control" id="DeclinedMailContent" rows="4"></textarea>
+        </div>*@
 
             <div class="form-group">
                 <label for="exampleFormControlTextarea1">Deactivation Mail to Sponsor on employee last working day:</label>
-                <textarea class="form-control" id="DeactivationMailToSponsor" rows="2"></textarea>
+                <textarea class="form-control" id="DeactivationMailToSponsor" rows="4"></textarea>
+            </div>
+
+            @*//For future implementation*@
+            @*<div class="form-group">
+            <label for="exampleFormControlTextarea1">Remainder mail to manager on last working day of employee to approve deactivation workflow :</label>
+            <textarea class="form-control" id="RemainderMailToManagerUnapproveworkflow" rows="4"></textarea>
+        </div>*@
+
+
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Remainder mail to manager to completing the deactivation workflow tasks :</label>
+                <textarea class="form-control" id="RemainderMailToManagerDaysBeforeDeactivationWorkflow" rows="4"></textarea>
             </div>
             <div class="form-group">
-                <label for="exampleFormControlTextarea1">Remainder mail to manager on last working day of employee to approve deactivation workflow :</label>
-                <textarea class="form-control" id="RemainderMailToManagerUnapproveworkflow" rows="2"></textarea>
+                <label for="exampleFormControlTextarea1">Remainder mail to Employee to completing the deactivation workflow tasks :</label>
+                <textarea class="form-control" id="RemainderMailToEmployeeDaysBeforeDeactivationWorkflow" rows="4"></textarea>
             </div>
+
             <div class="form-group">
-                <label for="exampleFormControlTextarea1">Remainder mail to manager two before last working day of employee :</label>
-                <textarea class="form-control" id="RemainderMailToManagerTwoDaysBefore" rows="2"></textarea>
+                <label for="exampleFormControlTextarea1">Remainder mail to Manager to completing the activation workflow tasks :</label>
+                <textarea class="form-control" id="RemainderMailToManagerActivationTask" rows="4"></textarea>
             </div>
+
             <div class="form-group">
-                <label for="exampleFormControlTextarea1">Remainder mail to Employee two before last working day of employee :</label>
-                <textarea class="form-control" id="RemainderMailToEmployeeTwoDaysBefore" rows="2"></textarea>
+                <label for="exampleFormControlTextarea1">Remainder mail to Employee to completing the activation workflow tasks :</label>
+                <textarea class="form-control" id="RemainderMailToEmployeeActivationTask" rows="4"></textarea>
             </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Mail for assigning AU domain WBT :</label>
+                <textarea class="form-control" id="AssignAUdomainWBT" rows="4"></textarea>
+            </div>
+
         </div>
         <button type="button" id="MailContentButton" class="btn btn-primary">Submit</button>
     </div>

@@ -93,7 +93,7 @@
             })
         }
 
-        @*var x = setInterval(Reminder, 60000);
+        @*var x = setInterval(Reminder, 120000);
             function Reminder() {
                 $.ajax({
                     type: "GET",
@@ -241,6 +241,7 @@
                                                                                 fileData.append('EmployeeRemovedFromDLEmailList', "false");
                                                                                 fileData.append('HardwaresCollected', "false");
                                                                                 fileData.append('RaisedWindowsDeactivationRequestNexus', "false");
+                                                                                fileData.append('TimerDate', $('#employeeLastWorkingdate').val());
                                                                             $.ajax({
                                                                                 type: "POST",
                                                                                 url: '@Url.Action("AddDeactivationTaskToDatabase", "ManagerApproval")',

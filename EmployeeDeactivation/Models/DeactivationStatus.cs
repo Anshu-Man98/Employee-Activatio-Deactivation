@@ -15,6 +15,8 @@ namespace EmployeeDeactivation.Models
         public string EmployeeRemovedFromDLEmailList { get; set; }
         public string HardwaresCollected { get; set; }
         public string RaisedWindowsDeactivationRequestNexus { get; set; }
+        public DateTime TimerDate { get; set; }
+        public DateTime LastWorkingDate { get; set; }
 
     }
 }
