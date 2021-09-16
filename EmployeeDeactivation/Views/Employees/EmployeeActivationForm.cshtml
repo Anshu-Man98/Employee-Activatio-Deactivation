@@ -58,7 +58,7 @@
                         $('<option selected disabled hidden></option>').val('').html('Choose Here')
                     );
                     $.each(response, function (i, item) {
-                        
+
                         $('#teamNames').append($('<option>', {
                             value: item.teamName,
                             text: item.teamName
@@ -98,7 +98,7 @@
             var preview = false;
             let pdfPreviewWindow = null;
             $(document).on("click", "#previewButton , #submitButton", function (e) {
-                
+
                 if (e.currentTarget.id == "previewButton") {
                     preview = true;
                 }
@@ -181,32 +181,59 @@
                                                                     url: '@Url.Action("PdfAttachmentEmail", "Email")',
                                                                     data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'siemensGID': $('#siemensGid').val(), 'isActivationPDf': true },
                                                                     success: function (response) {
-                                                                        if (response) {
-                                                                            $("#loader-wrapper").hide();
-                                                                            bootbox.alert("Your form has been sent sucessfully!");
-                                                                            document.getElementById('siemensFirstName').value = "";
-                                                                            document.getElementById('siemensLastName').value = "";
-                                                                            document.getElementById('siemensEmail').value = "";
-                                                                            document.getElementById('siemensGid').value = "";
-                                                                            document.getElementById('teamNames').value = "";
-                                                                            document.getElementById('role').value = "";
-                                                                            document.getElementById('gender').value = "";
-                                                                            document.getElementById('dateOfBirth').value = "";
-                                                                            document.getElementById('placeOfBirth').value = "";
-                                                                            document.getElementById('address').value = "";
-                                                                            document.getElementById('phoneNo').value = "";
-                                                                            document.getElementById('nationality').value = "";
-                                                                            $('#sponsorDetails').hide();
-                                                                        }
-                                                                        else {
-                                                                            alert("Sorry, an issue has occured please try again")
-                                                                        }
+                                                                            fileData = new FormData();
+                                                                        fileData.append('EmployeeId', $('#employeeGid').val());
+                                                                        fileData.append('EmployeeName', $('#employeeFirstName').val() + " " + $('#employeeLastName').val());
+                                                                        fileData.append('UpdateConsolidateIoTResourcesList', "false");
+                                                                        fileData.append('BirthdayListUpdated', "false");
+                                                                        fileData.append('EmailIdAddedToTeamDL', "false");
+                                                                        fileData.append('MemberAddedToTimesheet', "false");
+                                                                        fileData.append('InitiateHardwareShipmentRequest', "false");
+                                                                        fileData.append('MemberDetailsUpdatedInEDMTTool', "false");
+                                                                        fileData.append('InductionPlanAssignment', "false");
+                                                                        fileData.append('InductionTrainingRecordUpdated', "false");
+                                                                        fileData.append('VivekEcampusListUpdated', "false");
+                                                                        fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
+                                                                        fileData.append('ActivationDate', $('#employeeLastWorkingdate').val());
+                                                                        $.ajax({
+                                                                            type: "POST",
+                                                                            url: '@Url.Action("AddActivationTaskToDatabase", "ManagerApproval")',
+                                                                            data: fileData,
+                                                                            processData: false,
+                                                                            contentType: false,
+                                                                            success: function (stream) {
+                                                                                $("#loader-wrapper").hide();
+                                                                                bootbox.alert("Your form has been sent sucessfully!");
+                                                                                document.getElementById('siemensFirstName').value = "";
+                                                                                document.getElementById('siemensLastName').value = "";
+                                                                                document.getElementById('siemensEmail').value = "";
+                                                                                document.getElementById('siemensGid').value = "";
+                                                                                document.getElementById('teamNames').value = "";
+                                                                                document.getElementById('role').value = "";
+                                                                                document.getElementById('gender').value = "";
+                                                                                document.getElementById('dateOfBirth').value = "";
+                                                                                document.getElementById('placeOfBirth').value = "";
+                                                                                document.getElementById('address').value = "";
+                                                                                document.getElementById('phoneNo').value = "";
+                                                                                document.getElementById('nationality').value = "";
+                                                                                $('#sponsorDetails').hide();
+                                                                            }
+                                                                        });
                                                                     }
 
                                                                 });
                                                             }
                                                         })
 
+                                                    }
+                                                    if (result == false) {
+                                                      $.ajax({
+                                                        type: "POST",
+                                                        url: '@Url.Action("DeleteActivationDetails", "Employees")',
+                                                          data: { 'gId': $('#siemensGid').val() },
+                                                        dataType: "json",
+                                                          success: function (r) { }
+                                                    });
                                                     }
                                                 }
                                             });
@@ -221,7 +248,7 @@
                 });
             }
             });
-            
+
 
             function Validatephonenumber() {
                 var phoneno = /^[0-9+-\s]+$/;

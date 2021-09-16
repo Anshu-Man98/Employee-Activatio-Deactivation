@@ -83,7 +83,6 @@ namespace EmployeeDeactivation.BusinessLayer
                 }
             }
             return true;
-
         }
 
         public List<EmployeeDetails> RetrieveAllActivationWorkFlow()
@@ -98,6 +97,19 @@ namespace EmployeeDeactivation.BusinessLayer
             return employeeDetails;
         }
 
+        public bool DeleteActivationDetails(string gId)
+        {
+            var activatedEmployees = RetrieveAllActivationWorkFlow();
+            foreach (var activatedEmployee in activatedEmployees)
+            {
+                if (activatedEmployee.GId.ToLower() == gId.ToLower())
+                {
+                    _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == gId));
+                    _context.SaveChanges();
+                }
+            }
+            return true;
+        }
 
         public bool SavePdfToDatabase(byte[] pdf, string gId)
         {

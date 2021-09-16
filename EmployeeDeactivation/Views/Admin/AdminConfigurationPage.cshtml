@@ -28,9 +28,7 @@
                         if (item.tokenName == "DeactivationMailInitiated") {
                             $("#DeactivationMailContent").val(item.tokenValue)
                         }
-                        //if (item.tokenName == "DeclinedMail") {
-                        //    $("#DeclinedMailContent").val(item.tokenValue)
-                        //}
+                       
                         if (item.tokenName == "DeactivationWorkflowDaysBeforeRemainder") {
                             $("#RemainderMailToManagerDaysBeforeDeactivationWorkflow").val(item.tokenValue)
                         }
@@ -40,18 +38,22 @@
                         if (item.tokenName == "DeactivationMailLastWorkingDayToSponsor") {
                             $("#DeactivationMailToSponsor").val(item.tokenValue)
                         }
-                        //if (item.tokenName == "DeactivationMailLastWorkingDayToManager") {
-                        //    $("#RemainderMailToManagerUnapproveworkflow").val(item.tokenValue)
-                        //}
+                        
                         if (item.tokenName == "ActivationWorkFlowRemainderToManager") {
                             $("#RemainderMailToManagerActivationTask").val(item.tokenValue)
                         }
                         if (item.tokenName == "ActivationWorkFlowRemainderToEmployee") {
                             $("#RemainderMailToEmployeeActivationTask").val(item.tokenValue)
                         }
-                        if (item.tokenName == "EmailToVivek") {
+                        if (item.tokenName == "EmailToAssignAUdomainWBT") {
                             $("#AssignAUdomainWBT").val(item.tokenValue)
                         }
+                         //if (item.tokenName == "DeclinedMail") {
+                        //    $("#DeclinedMailContent").val(item.tokenValue)
+                        //}
+                        //if (item.tokenName == "DeactivationMailLastWorkingDayToManager") {
+                        //    $("#RemainderMailToManagerUnapproveworkflow").val(item.tokenValue)
+                        //}
 
                     });
                 }
@@ -66,7 +68,7 @@
                     type: "POST",
                     url: '@Url.Action("AddMailContentToDatabase", "Email")',
                     dataType: "json",
-                 data: { "ActivationMailInitiated": $('#ActivationMailContent').val(), "DeactivationMailInitiated": $('#DeactivationMailContent').val(), "DeclinedMail": $('#DeclinedMailContent').val(), "DeactivationMailLastWorkingDayToSponsor": $('#DeactivationMailToSponsor').val(), "DeactivationMailLastWorkingDayToManager": $('#RemainderMailToManagerUnapproveworkflow').val(), "DeactivationWorkflowDaysBeforeRemainder": $('#RemainderMailToManagerTwoDaysBefore').val(), "DeactivationWorkflowToEmployeeRemainder": $('#RemainderMailToEmployeeTwoDaysBefore').val()},
+                 data: { "ActivationMailInitiated": $('#ActivationMailContent').val(), "DeactivationMailInitiated": $('#DeactivationMailContent').val(), "DeactivationMailLastWorkingDayToSponsor": $('#DeactivationMailToSponsor').val(), "DeactivationWorkflowDaysBeforeRemainder": $('#RemainderMailToManagerDaysBeforeDeactivationWorkflow').val(), "DeactivationWorkflowToEmployeeRemainder": $('#RemainderMailToEmployeeDaysBeforeDeactivationWorkflow').val(), "ActivationWorkFlowRemainderToManager": $('#RemainderMailToManagerActivationTask').val(), "ActivationWorkFlowRemainderToEmployee": $('#RemainderMailToEmployeeActivationTask').val(), "EmailToAssignAUdomainWBT": $('#AssignAUdomainWBT').val() /* ,"DeclinedMail": $('#DeclinedMailContent').val(),*/ /*"DeactivationMailLastWorkingDayToManager": $('#RemainderMailToManagerUnapproveworkflow').val()*/},
                  success: function (response) {
                      if (response == true) {
                          $("#loader-wrapper").hide();

@@ -13,7 +13,7 @@ namespace EmployeeDeactivation.Interface
         bool AddMailConfigurationData(string SendGrid, string EmailTimer);
         //string RetrieveSpecificConfiguration(string key);
         List<Tokens> RetrieveAllMailContent();
-        bool AddMailContentData(string ActivationMailInitiated, string DeactivationMailInitiated, /*string DeclinedMail,*/ string DeactivationMailLastWorkingDayToSponsor, /*string DeactivationMailLastWorkingDayToManager,*/ string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder);
+        bool AddMailContentData(string ActivationMailInitiated, string DeactivationMailInitiated, string DeactivationMailLastWorkingDayToSponsor, string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder, string ActivationWorkFlowRemainderToManager, string ActivationWorkFlowRemainderToEmployee, string EmailToAssignAUdomainWBT /*, string DeclinedMail, string DeactivationMailLastWorkingDayToManager*/);
 
     }
 }

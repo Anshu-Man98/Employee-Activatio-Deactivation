@@ -32,10 +32,10 @@ namespace EmployeeDeactivation.Controllers
 
         [HttpPost]
         [Route("Email/AddMailContentToDatabase")]
-        public JsonResult AddMailContentToDatabase(string ActivationMailInitiated, string DeactivationMailInitiated, /*string DeclinedMail,*/ string DeactivationMailLastWorkingDayToSponsor, /*string DeactivationMailLastWorkingDayToManager,*/ string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder)
+        public JsonResult AddMailContentToDatabase(string ActivationMailInitiated, string DeactivationMailInitiated,  string DeactivationMailLastWorkingDayToSponsor, string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder ,string ActivationWorkFlowRemainderToManager, string ActivationWorkFlowRemainderToEmployee, string EmailToAssignAUdomainWBT /*, string DeclinedMail, string DeactivationMailLastWorkingDayToManager*/)
         {
 
-            return Json(_emailOperation.AddMailContentData(ActivationMailInitiated, DeactivationMailInitiated, /*DeclinedMail,*/ DeactivationMailLastWorkingDayToSponsor, /*DeactivationMailLastWorkingDayToManager,*/ DeactivationWorkflowDaysBeforeRemainder, DeactivationWorkflowToEmployeeRemainder));
+            return Json(_emailOperation.AddMailContentData(ActivationMailInitiated, DeactivationMailInitiated, DeactivationMailLastWorkingDayToSponsor , DeactivationWorkflowDaysBeforeRemainder, DeactivationWorkflowToEmployeeRemainder, ActivationWorkFlowRemainderToManager, ActivationWorkFlowRemainderToEmployee, EmailToAssignAUdomainWBT /*, DeactivationMailLastWorkingDayToManager, DeclinedMail*/));
         }
 
         [HttpPost]

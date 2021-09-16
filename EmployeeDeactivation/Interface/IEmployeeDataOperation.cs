@@ -19,5 +19,6 @@ namespace EmployeeDeactivation.Interface
         List<Teams> RetrieveAllSponsorDetails();
         bool SavePdfToDatabase(byte[] pdf, string gId);
         bool DeleteDeactivationDetails(string gId);
+        bool DeleteActivationDetails(string gId);
     }
 }

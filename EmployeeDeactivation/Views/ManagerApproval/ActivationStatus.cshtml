@@ -20,11 +20,11 @@
 
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("AllDeactivationTaskStatus", "ManagerApproval")',
+                url: '@Url.Action("GetActivationTaskStatusForManager", "ManagerApproval")',
                 dataType: "json",
                 success: function (response) {
                     var card = "";
-                    var check1 = "asdad";
+                    var check1 = "";
                     var disable1 = "";
                     var check2 = "";
                     var disable2 = "";
@@ -34,7 +34,7 @@
                     var disable4 = "";
 
                     $.each(response, function (i, item) {
-                        if (item.timesheetApproval.trim() == "false") {
+                        if (item.UpdateConsolidateIoTResourcesList.trim() == "false") {
                             check1 = null;
                             disable1 = null;
                         }
@@ -42,7 +42,7 @@
                             check1 = "checked";
                             disable1 = "disabled";
                         }
-                            if (item.employeeRemovedFromDLEmailList.trim() == "false") {
+                        if (item.BirthdayListUpdated.trim() == "false") {
                                 check2 = null;
                                 disable2 = null;
                             }
@@ -50,7 +50,7 @@
                                 check2 = "checked";
                                 disable2 = "disabled";
                             }
-                                if (item.hardwaresCollected.trim() == "false") {
+                        if (item.EmailIdAddedToTeamDL.trim() == "false") {
                                     check3 = null;
                                     disable3 = null;
                                 }
@@ -58,7 +58,7 @@
                                     check3 = "checked";
                                     disable3 = "disabled";
                                 }
-                                    if (item.raisedWindowsDeactivationRequestNexus.trim() == "false") {
+                        if (item.MemberAddedToTimesheet.trim() == "false") {
                                         check4 = null;
                                         disable4 = null;
                                     }
@@ -66,9 +66,41 @@
                                         check4 = "checked";
                                         disable4 = "disabled";
                         }
+                        if (item.InitiateHardwareShipmentRequest.trim() == "false") {
+                            check5 = null;
+                            disable5 = null;
+                        }
+                        else {
+                            check5 = "checked";
+                            disable5 = "disabled";
+                        }
+                        if (item.MemberDetailsUpdatedInEDMTTool.trim() == "false") {
+                            check6 = null;
+                            disable6 = null;
+                        }
+                        else {
+                            check6 = "checked";
+                            disable6 = "disabled";
+                        }
+                        if (item.InductionPlanAssignment.trim() == "false") {
+                            check7 = null;
+                            disable7 = null;
+                        }
+                        else {
+                            check7 = "checked";
+                            disable7 = "disabled";
+                        }
+                        if (item.VivekEcampusListUpdated.trim() == "false") {
+                            check8 = null;
+                            disable8 = null;
+                        }
+                        else {
+                            check8 = "checked";
+                            disable8 = "disabled";
+                        }
 
 
-                        card += "<div class='card'><h3 id='emp" + item.employeeId + "' value='" + item.employeeName + "'>" + item.employeeName + "</h3><ul id='myUL' style='text-align:left'><li>Timesheet approved for exiting employee <input class='form-check-input'  type='checkbox' onchange='handleChange1(this)' " + check1 + " " + disable1 + "  id='defaultCheck1" + item.employeeId + "' style='margin-left:90px;'></li><li>Employee removed from DL email List<input class='form-check-input' type='checkbox' onchange='handleChange2(this)'  " + check2 + " " + disable2 + "  id='defaultCheck2" + item.employeeId + "' style='margin-left:113px;'></li><li>All hardwares are collected <input class='form-check-input' type='checkbox' onchange='handleChange3(this)'  " + check3 + " " + disable3 + "  id='defaultCheck3" + item.employeeId + "' style='margin-left:178px;'></li><li>Raised windows account deactivation request in nexus <input class='form-check-input' type='checkbox' onchange='handleChange4(this)'  " + check4 + " " + disable4 + "  id='defaultCheck4" + item.employeeId + "' style='margin-left:7px;'></li></ul><input type='button' value='submit' class='btn btn-primary'  style='margin-right:5px' id='" + item.employeeId + "' onclick='submit(this.id)'/><input type='hidden' value ='" + item.employeeName + "' id='empName" + item.employeeId + "'></input><input type='hidden' value ='" + item.employeeId + "' id='empId" + item.employeeId + "'></input><input type='hidden' value ='" + item.timesheetApproval + "' id='checkbox1" + item.employeeId + "'></input><input type='hidden' value ='" + item.employeeRemovedFromDLEmailList + "' id='checkbox2" + item.employeeId + "'></input><input type='hidden' value ='" + item.hardwaresCollected + "' id='checkbox3" + item.employeeId + "'></input><input type='hidden' value ='" + item.raisedWindowsDeactivationRequestNexus + "' id='checkbox4" + item.employeeId + "'></input></div>";
+                        card += "<div class='card'><h3 id='emp" + item.employeeId + "' value='" + item.employeeName + "'>" + item.employeeName + "</h3><ul id='myUL' style='text-align:left'><li>Updated Consolidate IoT Resources List <input class='form-check-input'  type='checkbox' onchange='handleChange1(this)' " + check1 + " " + disable1 + "  id='defaultCheck1" + item.employeeId + "' style='margin-left:90px;'></li><li>Employee Birthday List Updated<input class='form-check-input' type='checkbox' onchange='handleChange2(this)'  " + check2 + " " + disable2 + "  id='defaultCheck2" + item.employeeId + "' style='margin-left:113px;'></li><li>Email-Id added to team/project distribution list <input class='form-check-input' type='checkbox' onchange='handleChange3(this)'  " + check3 + " " + disable3 + "  id='defaultCheck3" + item.employeeId + "' style='margin-left:178px;'></li><li>Member added to timesheet <input class='form-check-input' type='checkbox' onchange='handleChange4(this)'  " + check4 + " " + disable4 + "  id='defaultCheck4" + item.employeeId + "' style='margin-left:7px;'></li><li>Initiated hardware shipment request <input class='form-check-input'  type='checkbox' onchange='handleChange5(this)' " + check5 + " " + disable5 + "  id='defaultCheck5" + item.employeeId + "' style='margin-left:90px;'></li> <li>Member details Updated in EDMT tool <input class='form-check-input'  type='checkbox' onchange='handleChange6(this)' " + check6 + " " + disable6 + "  id='defaultCheck6" + item.employeeId + "' style='margin-left:90px;'></li> <li>Induction plan assignment <input class='form-check-input'  type='checkbox' onchange='handleChange7(this)' " + check7 + " " + disable7 + "  id='defaultCheck7" + item.employeeId + "' style='margin-left:90px;'></li> </ul><input type='button' value='submit' class='btn btn-primary'  style='margin-right:5px' id='" + item.employeeId + "' onclick='submit(this.id)'/><input type='hidden' value ='" + item.employeeName + "' id='empName" + item.employeeId + "'></input><input type='hidden' value ='" + item.employeeId + "' id='empId" + item.employeeId + "'></input><input type='hidden' value ='" + item.timesheetApproval + "' id='checkbox1" + item.employeeId + "'></input><input type='hidden' value ='" + item.employeeRemovedFromDLEmailList + "' id='checkbox2" + item.employeeId + "'></input><input type='hidden' value ='" + item.hardwaresCollected + "' id='checkbox3" + item.employeeId + "'></input><input type='hidden' value ='" + item.raisedWindowsDeactivationRequestNexus + "' id='checkbox4" + item.employeeId + "'></input></div>";
 
                     });
                     $("#cards").append(card);

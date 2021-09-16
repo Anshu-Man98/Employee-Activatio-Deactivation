@@ -75,7 +75,7 @@ namespace EmployeeDeactivation.BusinessLayer
             }
         }
 
-        public bool AddMailContentData(string ActivationMailInitiated, string DeactivationMailInitiated, /*string DeclinedMail,*/ string DeactivationMailLastWorkingDayToSponsor, /*string DeactivationMailLastWorkingDayToManager,*/ string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder)
+        public bool AddMailContentData(string ActivationMailInitiated, string DeactivationMailInitiated, string DeactivationMailLastWorkingDayToSponsor, string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder, string ActivationWorkFlowRemainderToManager, string ActivationWorkFlowRemainderToEmployee, string EmailToAssignAUdomainWBT /*, string DeclinedMail, string DeactivationMailLastWorkingDayToManager*/)
         {
             try
             {
@@ -99,11 +99,7 @@ namespace EmployeeDeactivation.BusinessLayer
                         Config.TokenValue = DeactivationMailLastWorkingDayToSponsor;
                         _context.SaveChanges();
                     }
-                    //if (Config.TokenName == "DeactivationMailLastWorkingDayToManager")
-                    //{
-                    //    Config.TokenValue = DeactivationMailLastWorkingDayToManager;
-                    //    _context.SaveChanges();
-                    //}
+                    
                     if (Config.TokenName == "DeactivationWorkflowToEmployeeRemainder")
                     {
                         Config.TokenValue = DeactivationWorkflowToEmployeeRemainder;
@@ -114,6 +110,26 @@ namespace EmployeeDeactivation.BusinessLayer
                         Config.TokenValue = DeactivationWorkflowDaysBeforeRemainder;
                         _context.SaveChanges();
                     }
+                    if (Config.TokenName == "ActivationWorkFlowRemainderToManager")
+                    {
+                        Config.TokenValue = ActivationWorkFlowRemainderToManager;
+                        _context.SaveChanges();
+                    }
+                    if (Config.TokenName == "ActivationWorkFlowRemainderToEmployee")
+                    {
+                        Config.TokenValue = ActivationWorkFlowRemainderToEmployee;
+                        _context.SaveChanges();
+                    }
+                    if (Config.TokenName == "EmailToAssignAUdomainWBT")
+                    {
+                        Config.TokenValue = EmailToAssignAUdomainWBT;
+                        _context.SaveChanges();
+                    }
+                    //if (Config.TokenName == "DeactivationMailLastWorkingDayToManager")
+                    //{
+                    //    Config.TokenValue = DeactivationMailLastWorkingDayToManager;
+                    //    _context.SaveChanges();
+                    //}
                     //if (Config.TokenName == "DeclinedMail")
                     //{
                     //    Config.TokenValue = DeclinedMail;
@@ -275,7 +291,7 @@ namespace EmployeeDeactivation.BusinessLayer
             foreach (var Employees in DeactivationStatusEmployeeDetails)
             {
                 
-                    if (DateTime.Today.ToString() == Convert.ToDateTime(Employees.TimerDate).AddDays(-Timer).ToString())
+                    if (DateTime.Today.ToString() == Convert.ToDateTime(Employees.TimerDate).AddDays(-Timer).ToString() && DateTime.Today < Convert.ToDateTime(Employees.LastWorkingDate))
 
                     {
 
@@ -480,7 +496,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (Convert.ToInt32(typeOfWorkflow) == 10)
                 {
                     subject = "Activation workflow";
-                    htmlContent = RetrieveSpecificConfiguration("EmailToVivek");
+                    htmlContent = RetrieveSpecificConfiguration("EmailToAssignAUdomainWBT");
 
                     if (htmlContent.Contains("+EmployeeName+"))
                     {

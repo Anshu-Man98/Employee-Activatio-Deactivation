@@ -81,6 +81,44 @@ namespace EmployeeDeactivation.BusinessLayer
             return true;
         }
 
+        public bool AddActivationTaskToDatabase(ActivationStatus activationStatus)
+        {
+            ActivationStatus ActivationStatus = new ActivationStatus()
+            {
+                EmployeeId = activationStatus.EmployeeId,
+                EmployeeName = activationStatus.EmployeeName,
+                UpdateConsolidateIoTResourcesList = activationStatus.UpdateConsolidateIoTResourcesList,
+                BirthdayListUpdated = activationStatus.BirthdayListUpdated,
+                EmailIdAddedToTeamDL = activationStatus.EmailIdAddedToTeamDL,
+                MemberAddedToTimesheet = activationStatus.MemberAddedToTimesheet,
+                MemberDetailsUpdatedInEDMTTool = activationStatus.MemberDetailsUpdatedInEDMTTool,
+                InductionPlanAssignment = activationStatus.InductionPlanAssignment,
+                InductionTrainingRecordUpdated = activationStatus.InductionTrainingRecordUpdated,
+                VivekEcampusListUpdated = activationStatus.VivekEcampusListUpdated,
+                ReportingManagerEmail = activationStatus.ReportingManagerEmail,
+                TimerDate = activationStatus.ActivationDate,
+                ActivationDate = activationStatus.ActivationDate,
+            };
+            if (activationStatus.UpdateConsolidateIoTResourcesList.Trim() == "true" && activationStatus.BirthdayListUpdated.Trim() == "true" && activationStatus.EmailIdAddedToTeamDL.Trim() == "true" && activationStatus.MemberAddedToTimesheet.Trim() == "true" && activationStatus.MemberDetailsUpdatedInEDMTTool.Trim() == "true" && activationStatus.InductionPlanAssignment.Trim() == "true" && activationStatus.InductionTrainingRecordUpdated.Trim() == "true" && activationStatus.VivekEcampusListUpdated.Trim() == "true")
+            {
+                _context.Remove(_context.ActivationStatus.Single(a => a.EmployeeId == activationStatus.EmployeeId));
+                _context.SaveChanges();
+                return true;
+            }
+            var allActivationTask = RetrieveActivationTasks();
+            foreach (var item in allActivationTask)
+            {
+                if (item.EmployeeId == activationStatus.EmployeeId)
+                {
+                    _context.Remove(_context.ActivationStatus.Single(a => a.EmployeeId == activationStatus.EmployeeId));
+                    _context.SaveChanges();
+                }
+            }
+            _context.Add(ActivationStatus);
+            _context.SaveChanges();
+            return true;
+        }
+
         public List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail)
         {
             List<ManagerApprovalStatus> pendingDeactivationWorkflows = new List<ManagerApprovalStatus>();
@@ -94,6 +132,34 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             return pendingDeactivationWorkflows;
         }
+
+        public List<ActivationStatus> GetActivationTasksForParticularManager(string userEmail)
+        {
+            List<ActivationStatus> activationTasks = new List<ActivationStatus>();
+            var allActivationTask = RetrieveActivationTasks();
+            foreach (var item in allActivationTask)
+            {
+                if (item.ReportingManagerEmail == userEmail)
+                {
+                    activationTasks.Add(item);
+                }
+            }
+            return activationTasks;
+        }
+
+        //public List<DeactivationStatus> GetDeactivationTasksForParticularManager(string userEmail)
+        //{
+        //    List<DeactivationStatus> deactivationTasks = new List<DeactivationStatus>();
+        //    var allActivationTask = RetrieveActivationTasks();
+        //    foreach (var item in allActivationTask)
+        //    {
+        //        if (item.ReportingManagerEmail == userEmail)
+        //        {
+        //            deactivationTasks.Add(item);
+        //        }
+        //    }
+        //    return activationTasks;
+        //}
 
         public byte[] DownloadDeactivationPdfFromDatabase(string gId)
         {
@@ -218,6 +284,13 @@ namespace EmployeeDeactivation.BusinessLayer
             _ = new List<DeactivationStatus>();
             return _context.DeactivationStatus.ToList();
             
+        }
+
+        public List<ActivationStatus> RetrieveActivationTasks()
+        {
+            _ = new List<ActivationStatus>();
+            return _context.ActivationStatus.ToList();
+
         }
 
     }

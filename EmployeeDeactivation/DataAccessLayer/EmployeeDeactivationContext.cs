@@ -19,7 +19,8 @@ namespace EmployeeDeactivation.Data
         public DbSet<Models.ActivationEmployeeDetails> ActivationWorkflow { get; set; }
         public DbSet<Models.Tokens> Tokens { get; set; }
         public DbSet<Models.DeactivationStatus> DeactivationStatus { get; set; }
-        
-        
+        public DbSet<Models.ActivationStatus> ActivationStatus { get; set; }
+
+
     }
 }

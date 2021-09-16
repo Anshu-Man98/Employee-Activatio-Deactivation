@@ -15,8 +15,12 @@ namespace EmployeeDeactivation.Interface
         List<ManagerApprovalStatus> GetAllApprovedDeactivationWorkflows();
         string GetApprovedDeactivationWorkReportingManagerEmailflowsBasedOnGid(string gid);
         List<DeactivationStatus> RetrieveDeactivationTasks();
+        List<ActivationStatus> RetrieveActivationTasks();
         bool ApproveRequest(string gId);
         bool DeclineRequest(string gId);
         bool AddDeactivationTaskToDatabase(DeactivationStatus deactivationStatus);
+        bool AddActivationTaskToDatabase(ActivationStatus activationStatus);
+        List<ActivationStatus> GetActivationTasksForParticularManager(string userEmail);
+
     }
 }
