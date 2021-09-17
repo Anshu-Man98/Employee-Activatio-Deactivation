@@ -60,6 +60,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 RaisedWindowsDeactivationRequestNexus = deactivationStatus.RaisedWindowsDeactivationRequestNexus,
                 TimerDate = deactivationStatus.TimerDate,
                 LastWorkingDate = deactivationStatus.TimerDate,
+                ReportingManagerEmail = deactivationStatus.ReportingManagerEmail,
             };
             if (deactivationStatus.TimesheetApproval.Trim() == "true" && deactivationStatus.EmployeeRemovedFromDLEmailList.Trim() == "true" && deactivationStatus.HardwaresCollected.Trim() == "true" && deactivationStatus.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
             {
@@ -91,6 +92,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 BirthdayListUpdated = activationStatus.BirthdayListUpdated,
                 EmailIdAddedToTeamDL = activationStatus.EmailIdAddedToTeamDL,
                 MemberAddedToTimesheet = activationStatus.MemberAddedToTimesheet,
+                InitiateHardwareShipmentRequest = activationStatus.InitiateHardwareShipmentRequest,
                 MemberDetailsUpdatedInEDMTTool = activationStatus.MemberDetailsUpdatedInEDMTTool,
                 InductionPlanAssignment = activationStatus.InductionPlanAssignment,
                 InductionTrainingRecordUpdated = activationStatus.InductionTrainingRecordUpdated,
@@ -99,7 +101,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 TimerDate = activationStatus.ActivationDate,
                 ActivationDate = activationStatus.ActivationDate,
             };
-            if (activationStatus.UpdateConsolidateIoTResourcesList.Trim() == "true" && activationStatus.BirthdayListUpdated.Trim() == "true" && activationStatus.EmailIdAddedToTeamDL.Trim() == "true" && activationStatus.MemberAddedToTimesheet.Trim() == "true" && activationStatus.MemberDetailsUpdatedInEDMTTool.Trim() == "true" && activationStatus.InductionPlanAssignment.Trim() == "true" && activationStatus.InductionTrainingRecordUpdated.Trim() == "true" && activationStatus.VivekEcampusListUpdated.Trim() == "true")
+            if (activationStatus.UpdateConsolidateIoTResourcesList.Trim() == "true" && activationStatus.BirthdayListUpdated.Trim() == "true" && activationStatus.EmailIdAddedToTeamDL.Trim() == "true" && activationStatus.MemberAddedToTimesheet.Trim() == "true" && activationStatus.InitiateHardwareShipmentRequest.Trim() == "true" && activationStatus.MemberDetailsUpdatedInEDMTTool.Trim() == "true" && activationStatus.InductionPlanAssignment.Trim() == "true" && activationStatus.InductionTrainingRecordUpdated.Trim() == "true" && activationStatus.VivekEcampusListUpdated.Trim() == "true")
             {
                 _context.Remove(_context.ActivationStatus.Single(a => a.EmployeeId == activationStatus.EmployeeId));
                 _context.SaveChanges();
@@ -147,19 +149,19 @@ namespace EmployeeDeactivation.BusinessLayer
             return activationTasks;
         }
 
-        //public List<DeactivationStatus> GetDeactivationTasksForParticularManager(string userEmail)
-        //{
-        //    List<DeactivationStatus> deactivationTasks = new List<DeactivationStatus>();
-        //    var allActivationTask = RetrieveActivationTasks();
-        //    foreach (var item in allActivationTask)
-        //    {
-        //        if (item.ReportingManagerEmail == userEmail)
-        //        {
-        //            deactivationTasks.Add(item);
-        //        }
-        //    }
-        //    return activationTasks;
-        //}
+        public List<DeactivationStatus> GetDeactivationTasksForParticularManager(string userEmail)
+        {
+            List<DeactivationStatus> deactivationTasks = new List<DeactivationStatus>();
+            var allDeactivationTask = RetrieveDeactivationTasks();
+            foreach (var item in allDeactivationTask)
+            {
+                if (item.ReportingManagerEmail == userEmail)
+                {
+                    deactivationTasks.Add(item);
+                }
+            }
+            return deactivationTasks;
+        }
 
         public byte[] DownloadDeactivationPdfFromDatabase(string gId)
         {

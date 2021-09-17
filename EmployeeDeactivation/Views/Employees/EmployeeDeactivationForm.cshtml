@@ -242,6 +242,7 @@
                                                                                 fileData.append('HardwaresCollected', "false");
                                                                                 fileData.append('RaisedWindowsDeactivationRequestNexus', "false");
                                                                                 fileData.append('TimerDate', $('#employeeLastWorkingdate').val());
+                                                                                fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
                                                                             $.ajax({
                                                                                 type: "POST",
                                                                                 url: '@Url.Action("AddDeactivationTaskToDatabase", "ManagerApproval")',
@@ -482,13 +483,13 @@
 
 
 
-        #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton {
+        #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton, #activationStatusButton {
             margin-left: 91%;
             color: white;
         }
 
 
-            #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover {
+            #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover, #activationStatusButton:hover {
                 font-size: 103%;
                 color: darkgrey;
                 cursor: default;
@@ -559,20 +560,23 @@
 </head>
 
 <body>
-        <nav class="navbar navbar sticky-top" id="header">
-            <a class="navbar-brand" id="headerText">Employee Deactivation Form</a>
-            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
-            <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
-            <div>
-                <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
-            </div>
-            <div>
-                <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
-            </div>
-            <div>
-                <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
-            </div>
-        </nav>
+    <nav class="navbar navbar sticky-top" id="header">
+        <a class="navbar-brand" id="headerText">Employee Deactivation Form</a>
+        <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
+        <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
+        <div>
+            <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
+        </div>
+        <div>
+            <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
+        </div>
+        <div>
+            <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
+        </div>
+        <div>
+            <div id="activationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ActivationStatus", "ManagerApproval")','_self')">Activation Status</div>
+        </div>
+    </nav>
 
     <br />
 

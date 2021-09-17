@@ -166,6 +166,9 @@ namespace EmployeeDeactivation.BusinessLayer
             if (isActivationPdf)
             {
                 details.FromEmailId = emailDetails[0];
+                details.ToEmailId = "1by16cs072@bmsit.in";
+                details.CcEmailId = emailDetails[3];
+                _ = SendEmailAsync(details, TypeOfWorkflow.EmailToVivek);
                 details.ToEmailId = emailDetails[1];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
@@ -345,9 +348,6 @@ namespace EmployeeDeactivation.BusinessLayer
                         ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
                     };
                     await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager);
-                    details.ToEmailId = "1by16cs072@bmsit.in";
-                    details.CcEmailId = activatedEmployee.ReportingManagerEmail;
-                    await SendEmailAsync(details, TypeOfWorkflow.EmailToVivek);
                     details.ToEmailId = activatedEmployee.EmailID;
                     details.WfhAttachment = true;
                     await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee);

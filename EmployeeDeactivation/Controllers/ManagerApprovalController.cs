@@ -51,12 +51,18 @@ namespace EmployeeDeactivation.Controllers
            return Json(_managerApprovalOperation.AddDeactivationTaskToDatabase(deactivationStatus));
         }
 
-        [HttpGet]
-        [Route("ManagerApproval/AllDeactivationTaskStatus")]
-        public JsonResult AllDeactivationTaskStatus()
+        [HttpGet] 
+        [Route("ManagerApproval/GetDeactivationTaskStatusForManager")]
+        public JsonResult GetDeactivationTaskStatusForManager()
         {
-            return Json(_managerApprovalOperation.RetrieveDeactivationTasks());
+            string userEmail = "";
+            if (User.Identity.IsAuthenticated)
+            {
+                userEmail = GetUserEmail(User);
+            }
+            return Json(_managerApprovalOperation.GetDeactivationTasksForParticularManager(userEmail));
         }
+
 
         [HttpPost] /*Activation*/
         [Route("ManagerApproval/AddActivationTaskToDatabase")]

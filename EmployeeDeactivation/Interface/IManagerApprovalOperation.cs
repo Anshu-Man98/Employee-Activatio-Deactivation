@@ -21,6 +21,7 @@ namespace EmployeeDeactivation.Interface
         bool AddDeactivationTaskToDatabase(DeactivationStatus deactivationStatus);
         bool AddActivationTaskToDatabase(ActivationStatus activationStatus);
         List<ActivationStatus> GetActivationTasksForParticularManager(string userEmail);
+        List<DeactivationStatus> GetDeactivationTasksForParticularManager(string userEmail);
 
     }
 }
