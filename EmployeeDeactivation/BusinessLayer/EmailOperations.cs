@@ -333,27 +333,67 @@ namespace EmployeeDeactivation.BusinessLayer
 
         private async Task SendReminderMailForActivationTask(List<EmployeeDetails> activationEmployeeData)
         {
-            foreach (var activatedEmployee in activationEmployeeData)
+            try
             {
-                if (DateTime.Today.ToString() == Convert.ToDateTime(activatedEmployee.ActivationDate).AddDays(4).ToString())
+                int Timer = 0;
+                var timerVal = RetrieveSpecificConfiguration("EmailTimer");
+                if (timerVal == "1")
                 {
+                    Timer = 1;
+                }
+                if (timerVal == "2")
+                {
+                    Timer = 2;
+                }
+                if (timerVal == "4")
+                {
+                    Timer = 4;
+                }
+                if (timerVal == "1w")
+                {
+                    Timer = 7;
+                }
+                if (timerVal == "15")
+                {
+                    Timer = 15;
+                }
 
-                    var emailDetails = _employeeDataOperation.GetReportingEmailIds(activatedEmployee.TeamName);
-                    EmailDetails details = new EmailDetails()
+                var ActivationStatusEmployeeDetails = _context.ActivationStatus.ToList();
+                foreach (var Employees in ActivationStatusEmployeeDetails)
+                {
+                    if (DateTime.Today.ToString() == Convert.ToDateTime(Employees.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Employees.ActivationDate).AddDays(16))
+
                     {
-                        FromEmailId = emailDetails[0],
-                        ToEmailId = activatedEmployee.ReportingManagerEmail,
-                        EmployeeName = activatedEmployee.FirstName +" "+ activatedEmployee.LastName,
-                        EmployeeId = activatedEmployee.GId,
-                        ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
-                    };
-                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager);
-                    details.ToEmailId = activatedEmployee.EmailID;
-                    details.WfhAttachment = true;
-                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee);
+                        foreach (var activatedEmployee in activationEmployeeData)
+                        {
+                            if (activatedEmployee.GId.ToLower() == Employees.EmployeeId.ToLower())
+                            {
+
+                                var emailDetails = _employeeDataOperation.GetReportingEmailIds(activatedEmployee.TeamName);
+                                EmailDetails details = new EmailDetails()
+                                {
+                                    FromEmailId = emailDetails[0],
+                                    ToEmailId = activatedEmployee.ReportingManagerEmail,
+                                    EmployeeName = activatedEmployee.FirstName + " " + activatedEmployee.LastName,
+                                    EmployeeId = activatedEmployee.GId,
+                                    ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
+                                };
+                                await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager);
+                                details.ToEmailId = activatedEmployee.EmailID;
+                                details.WfhAttachment = true;
+                                await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee);
+                            }
+                        }
+                    }
                 }
             }
+            catch
+            {
+
+            }
         }
+
+
         private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
         {
             try

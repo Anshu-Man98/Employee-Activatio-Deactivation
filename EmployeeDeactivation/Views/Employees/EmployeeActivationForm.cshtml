@@ -194,7 +194,7 @@
                                                                         fileData.append('InductionTrainingRecordUpdated', "false");
                                                                         fileData.append('VivekEcampusListUpdated', "false");
                                                                         fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
-                                                                        fileData.append('ActivationDate', $('#employeeLastWorkingdate').val());
+                                                                        fileData.append('ActivationDate', new Date().toLocaleDateString());
                                                                         $.ajax({
                                                                             type: "POST",
                                                                             url: '@Url.Action("AddActivationTaskToDatabase", "ManagerApproval")',
@@ -457,6 +457,10 @@
                 color: red;
             }
 
+            body {
+                overflow-x: hidden;
+            }
+
             @@keyframes loader {
               0% { transform: rotate(0deg);}
               25% { transform: rotate(180deg);}
@@ -480,7 +484,7 @@
 
 
                 #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover, #activationStatusButton:hover{
-                    font-size: 103%;
+                    font-size: 102%;
                     color: darkgrey;
                     cursor: default;
                 }

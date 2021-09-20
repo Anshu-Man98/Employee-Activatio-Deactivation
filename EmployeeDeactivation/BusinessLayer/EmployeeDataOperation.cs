@@ -104,7 +104,7 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if (activatedEmployee.GId.ToLower() == gId.ToLower())
                 {
-                    _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == gId));
+                    _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == gId));
                     _context.SaveChanges();
                 }
             }
