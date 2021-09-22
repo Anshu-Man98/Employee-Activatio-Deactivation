@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.BusinessLayer
 {
-    public class ManagerApprovalOperation: IManagerApprovalOperation
+    public class ManagerApprovalOperation : IManagerApprovalOperation
     {
         private readonly EmployeeDeactivationContext _context;
         public ManagerApprovalOperation(EmployeeDeactivationContext context)
@@ -30,18 +30,18 @@ namespace EmployeeDeactivation.BusinessLayer
                 SponsorFirstName = managerApprovalStatus.SponsorFirstName,
                 SponsorLastName = managerApprovalStatus.SponsorLastName,
                 DeactivationWorkFlowPdfAttachment = managerApprovalStatus.DeactivationWorkFlowPdfAttachment,
-                ReportingManagerEmail= managerApprovalStatus.ReportingManagerEmail,
+                ReportingManagerEmail = managerApprovalStatus.ReportingManagerEmail,
                 WorkFlowStatus = managerApprovalStatus.WorkFlowStatus
             };
             var pendingDeactivationWorkflow = RetrieveDeactivationDetails();
             foreach (var item in pendingDeactivationWorkflow)
             {
-                if(item.EmployeeGId==managerApprovalStatus.EmployeeGId)
+                if (item.EmployeeGId == managerApprovalStatus.EmployeeGId)
                 {
                     count++;
                 }
             }
-            if(count==0)
+            if (count == 0)
             {
                 _context.Add(ManagerApprovalStatus);
                 _context.SaveChanges();
@@ -59,7 +59,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 HardwaresCollected = deactivationStatus.HardwaresCollected,
                 RaisedWindowsDeactivationRequestNexus = deactivationStatus.RaisedWindowsDeactivationRequestNexus,
                 TimerDate = deactivationStatus.TimerDate,
-                LastWorkingDate = deactivationStatus.TimerDate,
+                LastWorkingDate = deactivationStatus.LastWorkingDate,
                 ReportingManagerEmail = deactivationStatus.ReportingManagerEmail,
             };
             if (deactivationStatus.TimesheetApproval.Trim() == "true" && deactivationStatus.EmployeeRemovedFromDLEmailList.Trim() == "true" && deactivationStatus.HardwaresCollected.Trim() == "true" && deactivationStatus.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
@@ -77,8 +77,8 @@ namespace EmployeeDeactivation.BusinessLayer
                     _context.SaveChanges();
                 }
             }
-                _context.Add(DeactivationStatus);
-                _context.SaveChanges();
+            _context.Add(DeactivationStatus);
+            _context.SaveChanges();
             return true;
         }
 
@@ -171,7 +171,7 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if (item.EmployeeGId.ToLower() == gId.ToLower())
                 {
-                   return item.DeactivationWorkFlowPdfAttachment;
+                    return item.DeactivationWorkFlowPdfAttachment;
                 }
             }
             return pdf;
@@ -257,7 +257,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 }
             }
             return null;
-            
+
         }
 
         public List<ManagerApprovalStatus> GetAllDeclinedDeactivationWorkflows()
@@ -285,7 +285,7 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             _ = new List<DeactivationStatus>();
             return _context.DeactivationStatus.ToList();
-            
+
         }
 
         public List<ActivationStatus> RetrieveActivationTasks()
@@ -296,5 +296,5 @@ namespace EmployeeDeactivation.BusinessLayer
         }
 
     }
-    
+
 }

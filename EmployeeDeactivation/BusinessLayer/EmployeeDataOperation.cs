@@ -4,7 +4,9 @@ using EmployeeDeactivation.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace EmployeeDeactivation.BusinessLayer
 {
@@ -133,7 +135,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 return false;
             }
         }
-     
+
         public EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId)
         {
             var employeeDetails = RetrieveAllDeactivatedEmployees();
@@ -153,13 +155,13 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if (item.GId.ToLower() == gid.ToLower())
                 {
-                    return new string[] { item.EmailID, item.TeamName,item.CcEmailId };
-                    
+                    return new string[] { item.EmailID, item.TeamName, item.CcEmailId };
+
                 }
-                
+
             }
 
-             return new string[] { };
+            return new string[] { };
         }
 
         public EmployeeDetails RetrieveActivationDataBasedOnGid(string gId)
@@ -199,9 +201,46 @@ namespace EmployeeDeactivation.BusinessLayer
             }
         }
         public List<Teams> RetrieveAllSponsorDetails()
+
         {
-            return (_context.Teams.ToList());
-            
+            try
+            {
+                return (_context.Teams.ToList());
+            }
+            catch (Exception e)
+            {
+
+
+                string fileName = @"C:\Temp\LogError1.txt";
+
+
+                if (File.Exists(fileName))
+
+                {
+
+                    File.Delete(fileName);
+
+                }
+
+                // Create a new file     
+
+                using (FileStream fs = File.Create(fileName))
+
+                {
+
+                    // Add some text to file    
+
+                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
+
+                    fs.Write(title, 0, title.Length);
+                    byte[] text = new UTF8Encoding(true).GetBytes("ERROR------------------> " + e.StackTrace);
+
+                    fs.Write(text);
+                    return null;
+
+                }
+            }
+
         }
 
         #endregion

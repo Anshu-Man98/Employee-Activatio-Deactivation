@@ -99,7 +99,7 @@ namespace EmployeeDeactivation.BusinessLayer
                         Config.TokenValue = DeactivationMailLastWorkingDayToSponsor;
                         _context.SaveChanges();
                     }
-                    
+
                     if (Config.TokenName == "DeactivationWorkflowToEmployeeRemainder")
                     {
                         Config.TokenValue = DeactivationWorkflowToEmployeeRemainder;
@@ -205,9 +205,9 @@ namespace EmployeeDeactivation.BusinessLayer
             var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
             var activationEmployeeData = _employeeDataOperation.RetrieveAllActivationWorkFlow();
             //await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
-            //await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
-            await SendReminderMailTwoDaysBeforeLastWorkingDay(approvedEmployeeDetails, employeeData);
-            //await SendReminderMailForActivationTask(activationEmployeeData);
+            await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
+            await SendReminderMailForDeactivationTask(approvedEmployeeDetails, employeeData);
+            await SendReminderMailForActivationTask(activationEmployeeData);
         }
 
         //private async Task SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
@@ -259,42 +259,43 @@ namespace EmployeeDeactivation.BusinessLayer
                             };
                             await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
                         }
-                    } 
+                    }
                 }
             }
         }
-        private async Task SendReminderMailTwoDaysBeforeLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
+        private async Task SendReminderMailForDeactivationTask(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
         {
-            try { 
-            int Timer = 0;
-            var timerVal = RetrieveSpecificConfiguration("EmailTimer");
-            if (timerVal == "1")
+            try
             {
-                Timer = 1;
-            }
-            if (timerVal == "2")
-            {
-                Timer = 2;
-            }
-            if (timerVal == "4")
-            {
-                Timer = 4;
-            }
-            if (timerVal == "1w")
-            {
-                Timer = 7;
-            }
-            if (timerVal == "15")
-            {
-                Timer = 15;
-            }
+                int Timer = 0;
+                var timerVal = RetrieveSpecificConfiguration("EmailTimer");
+                if (timerVal == "1")
+                {
+                    Timer = 1;
+                }
+                if (timerVal == "2")
+                {
+                    Timer = 2;
+                }
+                if (timerVal == "4")
+                {
+                    Timer = 4;
+                }
+                if (timerVal == "1w")
+                {
+                    Timer = 7;
+                }
+                if (timerVal == "15")
+                {
+                    Timer = 15;
+                }
 
-            var DeactivationStatusEmployeeDetails = _context.DeactivationStatus.ToList();
+                var DeactivationStatusEmployeeDetails = _context.DeactivationStatus.ToList();
 
-            foreach (var Employees in DeactivationStatusEmployeeDetails)
-            {
-                
-                    if (DateTime.Today.ToString() == Convert.ToDateTime(Employees.TimerDate).AddDays(-Timer).ToString() && DateTime.Today < Convert.ToDateTime(Employees.LastWorkingDate))
+                foreach (var Employees in DeactivationStatusEmployeeDetails)
+                {
+
+                    if (DateTime.Today.ToString() == Convert.ToDateTime(Employees.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Employees.LastWorkingDate))
 
                     {
 
@@ -324,9 +325,10 @@ namespace EmployeeDeactivation.BusinessLayer
                         }
                     }
                 }
-                
+
             }
-            catch { 
+            catch
+            {
             }
 
         }
@@ -368,6 +370,9 @@ namespace EmployeeDeactivation.BusinessLayer
                         {
                             if (activatedEmployee.GId.ToLower() == Employees.EmployeeId.ToLower())
                             {
+                                DateTime TimerDate = Convert.ToDateTime(Employees.TimerDate).AddDays(Timer);
+                                Employees.TimerDate = TimerDate;
+                                _context.SaveChanges();
 
                                 var emailDetails = _employeeDataOperation.GetReportingEmailIds(activatedEmployee.TeamName);
                                 EmailDetails details = new EmailDetails()
@@ -445,7 +450,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     var allDeactivationWorktasks = _managerApprovalOperation.RetrieveDeactivationTasks();
                     foreach (var item in allDeactivationWorktasks)
                     {
-                        if (item.EmployeeId == details.EmployeeId )
+                        if (item.EmployeeId == details.EmployeeId)
                         {
 
                             if (item.TimesheetApproval.Trim() == "true")
@@ -469,10 +474,10 @@ namespace EmployeeDeactivation.BusinessLayer
                             {
                                 htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
                             }
-                        
+
                         }
-                        }
-                    
+                    }
+
                 }
                 if (Convert.ToInt32(typeOfWorkflow) == 5)
                 {

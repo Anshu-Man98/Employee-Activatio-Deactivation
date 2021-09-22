@@ -24,7 +24,7 @@
         adminDisplay = "block";
         lastName = null;
         firstName = null;
-        emailId =null;
+        emailId = null;
         managerAdminApprove = "approve";
 
     }
@@ -38,21 +38,21 @@
         managerAdminApprove = "approve";
     }
 
-<head>
+    <head>
 
 
-    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
-    <meta charset="utf-8">
-    <script scr="jquery-2.1.4.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
+        <meta charset="utf-8">
+        <script scr="jquery-2.1.4.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    <script src="~/js/bootbox.js"></script>
-    <script type="text/javascript">
+        <script src="~/js/bootbox.js"></script>
+        <script type="text/javascript">
             var sponsorFirstName = "";
             var sponsorLastName = "";
             var sponsorName = "";
@@ -241,7 +241,9 @@
                                                                                 fileData.append('EmployeeRemovedFromDLEmailList', "false");
                                                                                 fileData.append('HardwaresCollected', "false");
                                                                                 fileData.append('RaisedWindowsDeactivationRequestNexus', "false");
-                                                                                fileData.append('TimerDate', $('#employeeLastWorkingdate').val());
+                                                                            fileData.append('TimerDate', new Date().toLocaleDateString());
+                                                                            fileData.append('LastWorkingDate', $('#employeeLastWorkingdate').val());
+
                                                                                 fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
                                                                             $.ajax({
                                                                                 type: "POST",
@@ -385,339 +387,339 @@
 
 
 
-    </script>
+        </script>
 
-    <style>
-        #header {
-            padding: 15px;
-            margin-bottom: 17px;
-            background-color: black;
-        }
-
-        #headerText {
-            text-align: center;
-            font-size: 30px;
-            color: white;
-            position: absolute;
-            margin-left: 35%;
-            margin-top: 5px;
-        }
-
-        .loader-wrapper {
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: rgba(1,1,1,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loader {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            position: relative;
-            border: 4px solid white;
-            animation: loader 2s infinite ease;
-        }
-
-        .loader-inner {
-            vertical-align: top;
-            display: inline-block;
-            width: 100%;
-            background-color: azure;
-            animation: loader-inner 2s infinite ease-in;
-        }
-
-        body{
-           
-            overflow-x:hidden;
-        }
-
-        @@keyframes loader {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            25% {
-                transform: rotate(180deg);
-            }
-
-            50% {
-                transform: rotate(180deg);
-            }
-
-            75% {
-                transform: rotate(360deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @@keyframes loader-inner {
-            0% {
-                height: 0%;
-            }
-
-            25% {
-                height: 0%;
-            }
-
-            50% {
-                height: 100%;
-            }
-
-            75% {
-                height: 100%;
-            }
-
-            100% {
-                height: 0%;
-            }
-        }
-
-
-
-        #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton, #activationStatusButton {
-            margin-left: 91%;
-            color: white;
-        }
-
-
-            #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover, #activationStatusButton:hover {
-                font-size: 102%;
-                color: darkgrey;
-                cursor: default;
-            }
-
-
-        .form {
-            margin-top: 32px;
-            margin-left: 33%;
-        }
-
-        #TextField {
-            white-space: nowrap;
-            padding-left: 0px;
-        }
-
-        #hello {
-            color: blue;
-            font-size: 17px;
-            text-align: center;
-        }
-
-        #inputTextbox {
-            margin-left: 70px;
-            width: 400px;
-        }
-
-        .ErrorView {
-            color: red;
-            margin-left: 183px;
-        }
-
-        .regular-field {
-            text-align: center;
-        }
-
-        .radio-but1 {
-            margin-right: 5px;
-        }
-
-        #radio-1-txt {
-            margin-right: 10px;
-        }
-        .form-group.required .control-label:after {
-            content: "*";
-            color: red;
-        }
-
-        @@media only screen and (max-width:880px) {
+        <style>
             #header {
-                width: 130%;
+                padding: 15px;
+                margin-bottom: 17px;
+                background-color: black;
             }
 
-            #configureButton, #sponsorDetailsButton, #viewReportButton {
-                background-color: blue;
+            #headerText {
+                text-align: center;
+                font-size: 30px;
+                color: white;
+                position: absolute;
+                margin-left: 35%;
+                margin-top: 5px;
+            }
+
+            .loader-wrapper {
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: rgba(1,1,1,0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .loader {
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                position: relative;
+                border: 4px solid white;
+                animation: loader 2s infinite ease;
+            }
+
+            .loader-inner {
+                vertical-align: top;
+                display: inline-block;
+                width: 100%;
+                background-color: azure;
+                animation: loader-inner 2s infinite ease-in;
+            }
+
+            body {
+                overflow-x: hidden;
+            }
+
+            @@keyframes loader {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                25% {
+                    transform: rotate(180deg);
+                }
+
+                50% {
+                    transform: rotate(180deg);
+                }
+
+                75% {
+                    transform: rotate(360deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @@keyframes loader-inner {
+                0% {
+                    height: 0%;
+                }
+
+                25% {
+                    height: 0%;
+                }
+
+                50% {
+                    height: 100%;
+                }
+
+                75% {
+                    height: 100%;
+                }
+
+                100% {
+                    height: 0%;
+                }
+            }
+
+
+
+            #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton, #activationStatusButton {
+                margin-left: 91%;
+                color: white;
+            }
+
+
+                #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover, #activationStatusButton:hover {
+                    font-size: 102%;
+                    color: darkgrey;
+                    cursor: default;
+                }
+
+
+            .form {
+                margin-top: 32px;
+                margin-left: 33%;
+            }
+
+            #TextField {
+                white-space: nowrap;
+                padding-left: 0px;
+            }
+
+            #hello {
+                color: blue;
+                font-size: 17px;
+                text-align: center;
+            }
+
+            #inputTextbox {
+                margin-left: 70px;
+                width: 400px;
             }
 
             .ErrorView {
-                margin-left: 80px;
+                color: red;
+                margin-left: 183px;
             }
 
-            #submitButton {
-                position: center;
+            .regular-field {
+                text-align: center;
             }
-        }
-    </style>
 
-</head>
+            .radio-but1 {
+                margin-right: 5px;
+            }
 
-<body>
-    <nav class="navbar navbar sticky-top" id="header">
-        <a class="navbar-brand" id="headerText">Employee Deactivation Form</a>
-        <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
-        <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
-        <div>
-            <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
+            #radio-1-txt {
+                margin-right: 10px;
+            }
+
+            .form-group.required .control-label:after {
+                content: "*";
+                color: red;
+            }
+
+            @@media only screen and (max-width:880px) {
+                #header {
+                    width: 130%;
+                }
+
+                #configureButton, #sponsorDetailsButton, #viewReportButton {
+                    background-color: blue;
+                }
+
+                .ErrorView {
+                    margin-left: 80px;
+                }
+
+                #submitButton {
+                    position: center;
+                }
+            }
+        </style>
+
+    </head>
+
+    <body>
+        <nav class="navbar navbar sticky-top" id="header">
+            <a class="navbar-brand" id="headerText">Employee Deactivation Form</a>
+            <div id="sponsorDetailsButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminPage", "Admin")','_self')">Sponsor Details</div>
+            <div id="configureButton" style="display:@managerDisplay" onclick="window.open('@Url.Action("AdminConfigurationPage", "Admin")','_self')">Configuration</div>
+            <div>
+                <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
+            </div>
+            <div>
+                <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
+            </div>
+            <div>
+                <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
+            </div>
+            <div>
+                <div id="activationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ActivationStatus", "ManagerApproval")','_self')">Activation Status</div>
+            </div>
+        </nav>
+
+        <br />
+
+        <div class="regular-field" id="act/de_toggel" style="display:@adminDisplay">
+
+            <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
+            <label for="radio-six" id="radio-1-txt">Deactivation Form</label>
+
+            <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
+            <label for="radio-seven">Activation Form</label>
+
         </div>
-        <div>
-            <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
-        </div>
-        <div>
-            <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
-        </div>
-        <div>
-            <div id="activationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ActivationStatus", "ManagerApproval")','_self')">Activation Status</div>
-        </div>
-    </nav>
 
-    <br />
-
-    <div class="regular-field" id="act/de_toggel" style="display:@adminDisplay">
-
-        <input type="radio" id="radio-six" name="notaswitch-one" value="yes" checked onchange="window.open('@Url.Action("EmployeeDeactivationForm", "Employees")','_self')" />
-        <label for="radio-six" id="radio-1-txt">Deactivation Form</label>
-
-        <input type="radio" id="radio-seven" name="notaswitch-one" value="maybe" onclick="window.open('@Url.Action("EmployeeActivationForm", "Employees")','_self')" />
-        <label for="radio-seven">Activation Form</label>
-
-    </div>
-
-    <div class="form">
-        <form class="form-group required" action="Create">
-
-            <div class="form-group row">
-                <label class="control-label col-sm-1" id="TextField">
-                    First Name:
-                </label>
-                <div class="col-sm-3" id="inputTextbox">
-                    <input type="text" value=@firstName class="form-control" id="employeeFirstName" onkeyup="ValidateFirstName()" placeholder="First Name" />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label id="employeeFNameError" hidden class="ErrorView">only Alphabets are allowed</label>
-            </div>
-
-            <div class="form-group row">
-                <label class="control-label col-sm-1" id="TextField">
-                    Last Name:
-                </label>
-                <div class="col-sm-3" id="inputTextbox">
-                    <input type="text" value=@lastName " " class="form-control" id="employeeLastName" onkeyup="ValidateLastName()" placeholder="Last Name" />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label id="employeeLNameError" hidden class="ErrorView">only Alphabets are allowed</label>
-            </div>
-
-            <div class="form-group row">
-                <label class="control-label col-sm-1" id="TextField">
-                    GID:
-                </label>
-                <div class="col-sm-3" id="inputTextbox">
-                    <input type="text" class="form-control" id="employeeGid" placeholder="GID" />
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="control-label col-sm-1" id="TextField">
-                    Email:
-                </label>
-                <div class="col-sm-3" id="inputTextbox">
-                    <input type="text" value=@emailId class="form-control" id="employeeEmail" placeholder="Email" onkeyup="ValidateEmail()" />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label id="employeeEmailError" hidden class="ErrorView">Invalid Email Format</label>
-            </div>
-
-            <div class="form-group row">
-                <label class="control-label col-sm-1" id="TextField">
-                    Last Working Date:
-                </label>
-                <div class="col-sm-3" id="inputTextbox">
-                    <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01" />
-                </div>
-            </div>
-            <div class="form-group row">
-                <label id="employeeDateError" hidden class="ErrorView">Last Working Date must be in the future</label>
-            </div>
-
-            <div class="form-group row">
-                <label id="TextField" class="control-label col-sm-1">
-                    Select Team :
-                </label>
-                <div class="col-sm-3" id="inputTextbox">
-                    <select id="teamNames" class="form-control"></select>
-                </div>
-            </div>
-
-            <div id="sponsorDetails">
+        <div class="form">
+            <form class="form-group required" action="Create">
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">
-                        Sponsor Name:
+                        First Name:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="sponsorName" readonly />
+                        <input type="text" value=@firstName class="form-control" id="employeeFirstName" onkeyup="ValidateFirstName()" placeholder="First Name" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label id="employeeFNameError" hidden class="ErrorView">only Alphabets are allowed</label>
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-sm-1" id="TextField">
+                        Last Name:
+                    </label>
+                    <div class="col-sm-3" id="inputTextbox">
+                        <input type="text" value=@lastName " " class="form-control" id="employeeLastName" onkeyup="ValidateLastName()" placeholder="Last Name" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label id="employeeLNameError" hidden class="ErrorView">only Alphabets are allowed</label>
+                </div>
+
+                <div class="form-group row">
+                    <label class="control-label col-sm-1" id="TextField">
+                        GID:
+                    </label>
+                    <div class="col-sm-3" id="inputTextbox">
+                        <input type="text" class="form-control" id="employeeGid" placeholder="GID" />
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">
-                        Sponsor Email:
+                        Email:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="sponsorEmail" readonly />
+                        <input type="text" value=@emailId class="form-control" id="employeeEmail" placeholder="Email" onkeyup="ValidateEmail()" />
                     </div>
+                </div>
+                <div class="form-group row">
+                    <label id="employeeEmailError" hidden class="ErrorView">Invalid Email Format</label>
                 </div>
 
                 <div class="form-group row">
                     <label class="control-label col-sm-1" id="TextField">
-                        Sponsor Department:
+                        Last Working Date:
                     </label>
                     <div class="col-sm-3" id="inputTextbox">
-                        <input type="text" class="form-control" id="sponsorDepartment" readonly />
+                        <input type="date" class="form-control" id="employeeLastWorkingdate" onchange="checkDate()" min="2021-05-01" max="2050-01-01" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label id="employeeDateError" hidden class="ErrorView">Last Working Date must be in the future</label>
+                </div>
+
+                <div class="form-group row">
+                    <label id="TextField" class="control-label col-sm-1">
+                        Select Team :
+                    </label>
+                    <div class="col-sm-3" id="inputTextbox">
+                        <select id="teamNames" class="form-control"></select>
                     </div>
                 </div>
 
+                <div id="sponsorDetails">
 
-            </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Sponsor Name:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="sponsorName" readonly />
+                        </div>
+                    </div>
 
-            <div id="sponsorGidHidden">
-                <input type="text" class="form-control" id="sponsorGid" readonly />
-                <input type="text" class="form-control" id="toEmailId" readonly />
-                <input type="text" class="form-control" id="fromEmailId" readonly />
-                <input type="text" class="form-control" id="ccEmailId" readonly />
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Sponsor Email:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="sponsorEmail" readonly />
+                        </div>
+                    </div>
 
-            </div>
-
-            <div id="reportingManagerEmailId">
-                <input type="text" class="form-control" id="reportingManagerEmail" readonly />
-            </div>
-
-
-            <div class="form-group row" style="padding-left:2px">
-                <br />
-                <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
-                <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
-            </div>
-
-            <div class="loader-wrapper" id="loader-wrapper">
-                <span class="loader"><span class="loader-inner"></span></span>
-            </div>
+                    <div class="form-group row">
+                        <label class="control-label col-sm-1" id="TextField">
+                            Sponsor Department:
+                        </label>
+                        <div class="col-sm-3" id="inputTextbox">
+                            <input type="text" class="form-control" id="sponsorDepartment" readonly />
+                        </div>
+                    </div>
 
 
+                </div>
+
+                <div id="sponsorGidHidden">
+                    <input type="text" class="form-control" id="sponsorGid" readonly />
+                    <input type="text" class="form-control" id="toEmailId" readonly />
+                    <input type="text" class="form-control" id="fromEmailId" readonly />
+                    <input type="text" class="form-control" id="ccEmailId" readonly />
+
+                </div>
+
+                <div id="reportingManagerEmailId">
+                    <input type="text" class="form-control" id="reportingManagerEmail" readonly />
+                </div>
 
 
-        </form>
-    </div>
-</body>
+                <div class="form-group row" style="padding-left:2px">
+                    <br />
+                    <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
+                    <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
+                </div>
+
+                <div class="loader-wrapper" id="loader-wrapper">
+                    <span class="loader"><span class="loader-inner"></span></span>
+                </div>
+
+
+
+
+            </form>
+        </div>
+    </body>
 }
