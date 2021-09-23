@@ -47,11 +47,11 @@ namespace EmployeeDeactivation
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var server = Configuration["DBServer"] ?? "localhost";
-            var port = Configuration["DBPort"] ?? "1433";
-            var user = Configuration["DBUser"] ?? "SA";
-            var password = Configuration["DBPassword"] ?? "1234@Abcd";
-            var database = Configuration["Database"] ?? "EmployeeDeactivationContext-ad1fce0f-4b85-42a1-9c48-4572137b7d8d";
+            //var server = Configuration["DBServer"] ?? "localhost";
+            //var port = Configuration["DBPort"] ?? "1433";
+            //var user = Configuration["DBUser"] ?? "SA";
+            //var password = Configuration["DBPassword"] ?? "1234@Abcd";
+            //var database = Configuration["Database"] ?? "EmployeeDeactivationContext-ad1fce0f-4b85-42a1-9c48-4572137b7d8d";
 
 
 
