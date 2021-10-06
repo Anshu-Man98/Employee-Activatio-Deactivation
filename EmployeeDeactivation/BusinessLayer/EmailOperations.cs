@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.BusinessLayer
@@ -45,6 +46,7 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             return (_context.Tokens.ToList());
         }
+
         public bool AddMailConfigurationData(string SendGrid, string EmailTimer)
         {
             try
@@ -160,19 +162,20 @@ namespace EmployeeDeactivation.BusinessLayer
                 details.ToEmailId = emailDetails[0];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowInitiated);
+                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowInitiated,null,null);
 
             }
             if (isActivationPdf)
             {
                 details.FromEmailId = emailDetails[0];
                 details.ToEmailId = "1by16cs072@bmsit.in";
-                details.CcEmailId = emailDetails[3];
-                _ = SendEmailAsync(details, TypeOfWorkflow.EmailToVivek);
+                details.CcEmailId ="anshumansunil98@gmail.com";
+                details.FileName = null;
+                _ = SendEmailAsync(details, TypeOfWorkflow.EmailToVivek,null,null);
                 details.ToEmailId = emailDetails[1];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                _ = SendEmailAsync(details, TypeOfWorkflow.Activation);
+                _ = SendEmailAsync(details, TypeOfWorkflow.Activation,null,null);
             }
             return true;
         }
@@ -204,10 +207,13 @@ namespace EmployeeDeactivation.BusinessLayer
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
             var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
             var activationEmployeeData = _employeeDataOperation.RetrieveAllActivationWorkFlow();
+            var deactivationStatusEmployeeDetails = _managerApprovalOperation.RetrieveDeactivationTasksBasedOnDate();
+            var activationStatusEmployeeDetails = _managerApprovalOperation.RetrieveActivationTasksBasedOnDate();
+            var deactTask = _managerApprovalOperation.RetrieveDeactivationTasks();
             //await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
-            await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails, employeeData);
-            await SendReminderMailForDeactivationTask(approvedEmployeeDetails, employeeData);
-            await SendReminderMailForActivationTask(activationEmployeeData);
+            //await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails);
+            //await SendReminderMailForDeactivationTask(deactivationStatusEmployeeDetails);
+            await SendReminderMailForActivationTask(activationStatusEmployeeDetails);
         }
 
         //private async Task SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(List<ManagerApprovalStatus> employeeDetails)
@@ -236,170 +242,168 @@ namespace EmployeeDeactivation.BusinessLayer
         //    }
         //}
 
-        private async Task SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
+        private async Task SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails)
         {
-
-            foreach (var approvedEmployee in approvedEmployeeDetails)
+            var empdata = _employeeDataOperation.RetrieveDeactivationWorkFlowBaseonDate(DateTime.Today.ToString());
+            foreach (var DatedEmployee in empdata)
             {
-                if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).ToString())
+
+                foreach (var approvedEmployee in approvedEmployeeDetails)
                 {
-                    foreach (var employee in employeeData)
+                    if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).ToString())
                     {
 
-                        if (employee.GId.ToLower() == approvedEmployee.EmployeeGId.ToLower())
+                        if (DatedEmployee.GId == approvedEmployee.EmployeeGId)
                         {
                             EmailDetails details = new EmailDetails()
+
                             {
-                                FromEmailId = employee.FromEmailId,
-                                ToEmailId = employee.SponsorEmailID,
-                                CcEmailId = _employeeDataOperation.GetDeactivatedEmployeeDetails(employee.GId)[2],
+                                FromEmailId = DatedEmployee.FromEmailId,
+                                ToEmailId = DatedEmployee.SponsorEmailID,
+                                CcEmailId = DatedEmployee.CcEmailId,
                                 EmployeeName = approvedEmployee.EmployeeName,
                                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                                 FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
                             };
-                            await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay);
+                            await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay,null,null);
                         }
                     }
                 }
             }
         }
-        private async Task SendReminderMailForDeactivationTask(List<ManagerApprovalStatus> approvedEmployeeDetails, List<EmployeeDetails> employeeData)
+
+        private async Task SendReminderMailForDeactivationTask(List<DeactivationStatus> deactivationStatusEmployeeDetails)
         {
             try
             {
-                int Timer = 0;
-                var timerVal = RetrieveSpecificConfiguration("EmailTimer");
-                if (timerVal == "1")
-                {
-                    Timer = 1;
-                }
-                if (timerVal == "2")
-                {
-                    Timer = 2;
-                }
-                if (timerVal == "4")
-                {
-                    Timer = 4;
-                }
-                if (timerVal == "1w")
-                {
-                    Timer = 7;
-                }
-                if (timerVal == "15")
-                {
-                    Timer = 15;
-                }
 
-                var DeactivationStatusEmployeeDetails = _context.DeactivationStatus.ToList();
-
-                foreach (var Employees in DeactivationStatusEmployeeDetails)
+                foreach (var Employees in deactivationStatusEmployeeDetails)
                 {
-
-                    if (DateTime.Today.ToString() == Convert.ToDateTime(Employees.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Employees.LastWorkingDate))
-
-                    {
-
-                        foreach (var employee in employeeData)
-                        {
-                            if (employee.GId.ToLower() == Employees.EmployeeId.ToLower())
-                            {
-                                var ReportingManager = _managerApprovalOperation.GetApprovedDeactivationWorkReportingManagerEmailflowsBasedOnGid(employee.GId);
-                                DateTime TimerDate = Convert.ToDateTime(Employees.TimerDate).AddDays(Timer);
-                                Employees.TimerDate = TimerDate;
-                                _context.SaveChanges();
 
                                 EmailDetails details = new EmailDetails()
                                 {
-                                    FromEmailId = employee.FromEmailId,
-                                    ToEmailId = ReportingManager,
+                                    FromEmailId = Employees.FromEmail,
+                                    ToEmailId = Employees.ReportingManagerEmail,
                                     EmployeeName = Employees.EmployeeName,
-                                    EmployeeId = employee.GId,
+                                    EmployeeId = Employees.EmployeeId,
                                     ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
                                 };
-                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay);
-                                details.ToEmailId = employee.EmailID;
-                                details.CcEmailId = ReportingManager;
-                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee);
+                                DeactivationStatus deactivationTask = new DeactivationStatus()
+                                {
+                                    TimesheetApproval = Employees.TimesheetApproval,
+                                    EmployeeRemovedFromDLEmailList = Employees.EmployeeRemovedFromDLEmailList,
+                                    HardwaresCollected = Employees.HardwaresCollected,
+                                    RaisedWindowsDeactivationRequestNexus = Employees.RaisedWindowsDeactivationRequestNexus,
+                                 };
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay, deactivationTask,null);
+                                details.ToEmailId = Employees.EmployeeEmail;
+                                details.CcEmailId = Employees.ReportingManagerEmail;
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee, null,null);
+                }
+            }
+            catch (Exception e)
+            {
+                string fileName = @"C:\Temp\ErrorDeactivationTaskRemainder.txt";
 
-                            }
-                        }
-                    }
+
+                if (File.Exists(fileName))
+
+                {
+
+                    File.Delete(fileName);
+
                 }
 
-            }
-            catch
-            {
+                // Create a new file     
+
+                using (FileStream fs = File.Create(fileName))
+
+                {
+
+                    // Add some text to file    
+
+                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
+
+                    fs.Write(title, 0, title.Length);
+                    byte[] text = new UTF8Encoding(true).GetBytes("ERROR Retrive from ------------------> " + e.StackTrace);
+
+                    fs.Write(text);
+                    
+
+                }
             }
 
         }
 
-        private async Task SendReminderMailForActivationTask(List<EmployeeDetails> activationEmployeeData)
+        private async Task SendReminderMailForActivationTask(List<ActivationStatus> activationStatusEmployeeDetails)
         {
             try
             {
-                int Timer = 0;
-                var timerVal = RetrieveSpecificConfiguration("EmailTimer");
-                if (timerVal == "1")
+                
+                foreach (var Employees in activationStatusEmployeeDetails)
                 {
-                    Timer = 1;
-                }
-                if (timerVal == "2")
-                {
-                    Timer = 2;
-                }
-                if (timerVal == "4")
-                {
-                    Timer = 4;
-                }
-                if (timerVal == "1w")
-                {
-                    Timer = 7;
-                }
-                if (timerVal == "15")
-                {
-                    Timer = 15;
-                }
-
-                var ActivationStatusEmployeeDetails = _context.ActivationStatus.ToList();
-                foreach (var Employees in ActivationStatusEmployeeDetails)
-                {
-                    if (DateTime.Today.ToString() == Convert.ToDateTime(Employees.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Employees.ActivationDate).AddDays(16))
-
-                    {
-                        foreach (var activatedEmployee in activationEmployeeData)
+                        EmailDetails details = new EmailDetails()
                         {
-                            if (activatedEmployee.GId.ToLower() == Employees.EmployeeId.ToLower())
-                            {
-                                DateTime TimerDate = Convert.ToDateTime(Employees.TimerDate).AddDays(Timer);
-                                Employees.TimerDate = TimerDate;
-                                _context.SaveChanges();
-
-                                var emailDetails = _employeeDataOperation.GetReportingEmailIds(activatedEmployee.TeamName);
-                                EmailDetails details = new EmailDetails()
-                                {
-                                    FromEmailId = emailDetails[0],
-                                    ToEmailId = activatedEmployee.ReportingManagerEmail,
-                                    EmployeeName = activatedEmployee.FirstName + " " + activatedEmployee.LastName,
-                                    EmployeeId = activatedEmployee.GId,
-                                    ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
-                                };
-                                await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager);
-                                details.ToEmailId = activatedEmployee.EmailID;
-                                details.WfhAttachment = true;
-                                await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee);
-                            }
-                        }
-                    }
+                            FromEmailId = Employees.FromEmail,
+                            ToEmailId = Employees.ReportingManagerEmail,
+                            EmployeeName = Employees.EmployeeName,
+                            EmployeeId = Employees.EmployeeId,
+                            ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
+                        };
+                    ActivationStatus activationTask = new ActivationStatus()
+                    {
+                        UpdateConsolidateIoTResourcesList = Employees.UpdateConsolidateIoTResourcesList,
+                        BirthdayListUpdated = Employees.BirthdayListUpdated,
+                        EmailIdAddedToTeamDL = Employees.EmailIdAddedToTeamDL,
+                        MemberAddedToTimesheet = Employees.MemberAddedToTimesheet,
+                        InitiateHardwareShipmentRequest = Employees.InitiateHardwareShipmentRequest,
+                        MemberDetailsUpdatedInEDMTTool = Employees.MemberDetailsUpdatedInEDMTTool,
+                        InductionPlanAssignment = Employees.InductionPlanAssignment,
+                        InductionTrainingRecordUpdated = Employees.InductionTrainingRecordUpdated,
+                        VivekEcampusListUpdated = Employees.VivekEcampusListUpdated,
+                    };
+                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager, null, activationTask);
+                    details.ToEmailId = Employees.EmployeeEmail;
+                    details.WfhAttachment = true;
+                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee, null,null);
+                    
                 }
             }
-            catch
+            catch (Exception e)
             {
+                string fileName = @"C:\Temp\ErrorActivationTaskRemainder.txt";
 
+
+                if (File.Exists(fileName))
+
+                {
+
+                    File.Delete(fileName);
+
+                }
+
+                // Create a new file     
+
+                using (FileStream fs = File.Create(fileName))
+
+                {
+
+                    // Add some text to file    
+
+                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
+
+                    fs.Write(title, 0, title.Length);
+                    byte[] text = new UTF8Encoding(true).GetBytes("ERROR Retrive from ------------------> " + e.StackTrace);
+
+                    fs.Write(text);
+
+
+                }
             }
         }
 
 
-        private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow)
+        private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow, DeactivationStatus deactivationTask , ActivationStatus activationTask)
         {
             try
             {
@@ -428,8 +432,8 @@ namespace EmployeeDeactivation.BusinessLayer
                 if (Convert.ToInt32(typeOfWorkflow) == 2)
                 {
                     subject = "Deactivation Workflow Initiated";
-                    htmlContent = RetrieveSpecificConfiguration("DeactivationMailLastWorkingDay");
-                    if (RetrieveSpecificConfiguration("DeactivationMailLastWorkingDay").Contains("+EmployeeName+"))
+                    htmlContent = RetrieveSpecificConfiguration("DeactivationMailLastWorkingDayToSponsor");
+                    if (RetrieveSpecificConfiguration("DeactivationMailLastWorkingDayToSponsor").Contains("+EmployeeName+"))
                     {
                         htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
                     }
@@ -447,25 +451,20 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     subject = "Deactivation workflow";
                     htmlContent = RetrieveSpecificConfiguration("DeactivationWorkflowDaysBeforeRemainder");
-                    var allDeactivationWorktasks = _managerApprovalOperation.RetrieveDeactivationTasks();
-                    foreach (var item in allDeactivationWorktasks)
-                    {
-                        if (item.EmployeeId == details.EmployeeId)
-                        {
 
-                            if (item.TimesheetApproval.Trim() == "true")
+                            if (deactivationTask.TimesheetApproval.Trim() == "true")
                             {
                                 htmlContent = htmlContent.Replace("<li>Ensure timesheet is approved for exiting employee</li>\n", string.Empty);
                             }
-                            if (item.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
+                            if (deactivationTask.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
                             {
                                 htmlContent = htmlContent.Replace("<li>Raise windows account deactivation request in nexus</li>\n", string.Empty);
                             }
-                            if (item.EmployeeRemovedFromDLEmailList.Trim() == "true")
+                            if (deactivationTask.EmployeeRemovedFromDLEmailList.Trim() == "true")
                             {
                                 htmlContent = htmlContent.Replace("<li>Remove employee from DL email List</li>\n", string.Empty);
                             }
-                            if (item.HardwaresCollected.Trim() == "true")
+                            if (deactivationTask.HardwaresCollected.Trim() == "true")
                             {
                                 htmlContent = htmlContent.Replace("<li>Ensure all hardware are collected</li>\n", string.Empty);
                             }
@@ -474,9 +473,6 @@ namespace EmployeeDeactivation.BusinessLayer
                             {
                                 htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
                             }
-
-                        }
-                    }
 
                 }
                 if (Convert.ToInt32(typeOfWorkflow) == 5)
@@ -494,7 +490,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     subject = "Activation Workflow initiated";
                     string textBody = "<table border=" + 1 + " cellpadding=" + 0 + " cellspacing=" + 0 + " width = " + 400 + "><tr> <th><b>Surname</b></th> <th><b>First Name</b></th> <th><b>Audiology Display Name</b></th> <th><b>Siemens e-mail ID</b></th> <th><b>Siemens Login</b></th> <th><b>Siemens GID</b></th> <th><b>Team</b></th> <th><b>Role</b></th> <th><b>Gender</b></th> <th><b>Date of birth</b></th> <th><b>Place of birth</b></th> <th><b>Address - Street</b></th> <th><b>Address - City, Country</b></th> <th><b>Phone num</b></th> <th><b>Nationality</b></th> </tr> <tr><td>" + activationEmployeeDetails.LastName + "</td> <td>" + activationEmployeeDetails.FirstName + "</td> <td>" + details.EmployeeName + "</td> <td>" + activationEmployeeDetails.EmailID + "</td> <td>" + details.ActivatedEmployee.GId + "</td> <td>" + activationEmployeeDetails.GId + "</td> <td>" + details.ActivatedEmployee.TeamName + "</td> <td>" + activationEmployeeDetails.Role + "</td>  <td>" + activationEmployeeDetails.Gender + "</td> <td>" + activationEmployeeDetails.DateOfBirth + "</td> <td>" + activationEmployeeDetails.PlaceOfBirth + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.PhoneNo + "</td> <td>" + activationEmployeeDetails.Nationality + "</td></tr>";
                     textBody += "</table>";
-                    htmlContent = RetrieveSpecificConfiguration("ActivationMail");
+                    htmlContent = RetrieveSpecificConfiguration("ActivationMailInitiated");
                     if (htmlContent.Contains("+TeamName+"))
                     {
                         htmlContent = htmlContent.Replace("+TeamName+", details.ActivatedEmployee.TeamName);
@@ -519,6 +515,43 @@ namespace EmployeeDeactivation.BusinessLayer
                     subject = "Activation workflow";
                     htmlContent = RetrieveSpecificConfiguration("ActivationWorkFlowRemainderToManager");
 
+                    if (activationTask.UpdateConsolidateIoTResourcesList.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Update Consolidated IoT resources list <a href= 'https://teams.microsoft.com/l/file/085270FB-8157-4748-AB95-090E525B38AD?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=xlsx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FInventoryDatabase.xlsx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'>Click here</a></li> ", string.Empty);
+                    }
+                    if (activationTask.BirthdayListUpdated.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Birthday list to be updated <a href= 'https://teams.microsoft.com/l/file/6ED5BFBB-F186-41E5-A1CA-BF405FB2111F?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=docx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FWSA%20AU-Inventory.docx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'> Click here </a></li>", string.Empty);
+                    }
+                    if (activationTask.EmailIdAddedToTeamDL.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Add email id to project/ team distribution list</li>", string.Empty);
+                    }
+                    if (activationTask.MemberAddedToTimesheet.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Add member to Timesheet</li>", string.Empty);
+                    }
+                    if (activationTask.InitiateHardwareShipmentRequest.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Initiate hardware shipment request in DTS / ISE office admin form for machine and accessories or Initiate office visit request in DTS / ISE office admin form incase member travelling to office for machine pickup</li>", string.Empty);
+                    }
+                    if (activationTask.MemberDetailsUpdatedInEDMTTool.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Update member details in EDMT tool </li>", string.Empty);
+                    }
+                    if (activationTask.InductionPlanAssignment.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Induction plan assignment </li>", string.Empty);
+                    }
+                    if (activationTask.InductionTrainingRecordUpdated.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Update induction training record <a href = 'https://teams.microsoft.com/l/file/085270FB-8157-4748-AB95-090E525B38AD?tenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a&fileType=xlsx&objectUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226%2FShared%20Documents%2FGeneral%2FAUDI%2FInventoryDatabase.xlsx&baseUrl=https%3A%2F%2Fsiemensapc.sharepoint.com%2Fteams%2FAUDI226&serviceName=teams&threadId=19:fJdJXvBmz2s9CtNVZF_O_2SOUsPQAKwfeffJB7ostRs1@thread.tacv2&groupId=694fe3d1-5757-46c4-9c30-57bceec52994'> Click here </a></li>", string.Empty);
+                    }
+                    if (activationTask.VivekEcampusListUpdated.Trim() == "true")
+                    {
+                        htmlContent = htmlContent.Replace("<li> Update Vivek's ecampus list</li>", string.Empty);
+                    }
+
                     if (htmlContent.Contains("+EmployeeName+"))
                     {
                         htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
@@ -542,12 +575,11 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     subject = "Activation workflow";
                     htmlContent = RetrieveSpecificConfiguration("EmailToAssignAUdomainWBT");
-
-                    if (htmlContent.Contains("+EmployeeName+"))
-                    {
-                        htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
-                    }
-
+                    var allActivationWorktasks = _managerApprovalOperation.RetrieveActivationTasks();
+                            if (htmlContent.Contains("+EmployeeName+"))
+                            {
+                                htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
+                            }
                 }
 
 
@@ -556,7 +588,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     msg.AddCcs(emailAddress);
                 }
-                if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null)
+                if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null && details.FileName != null)
                 {
                     msg.AddAttachment(filename: details.FileName + ".pdf", Convert.ToBase64String(details.ActivatedEmployee.ActivationWorkFlowPdfAttachment));
                 }
@@ -567,6 +599,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     FileStream Wfh = new FileStream("EnablingWorkFromHomeFurther.msg", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                     msg.AddAttachment(filename: "EnablingWorkFromHomeFurther.msg", Convert.ToString(Wfh));
                 }
+                
                 _ = await sendGridClientApiKey.SendEmailAsync(msg);
             }
             catch (Exception ex)

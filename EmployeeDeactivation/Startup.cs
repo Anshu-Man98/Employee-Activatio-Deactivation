@@ -35,10 +35,10 @@ namespace EmployeeDeactivation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpsRedirection(options =>
-            {
-                options.HttpsPort = 443;
-            });
+            //services.AddHttpsRedirection(options =>
+            //{
+            //    options.HttpsPort = 443;
+            //});
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -78,9 +78,9 @@ namespace EmployeeDeactivation
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Manager", policyBuilder => policyBuilder.RequireClaim("groups", "cac297fa-e30d-4085-bf10-06e38a94b3f7"));
-                options.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim("groups", "1f6eeeba-fa1a-4d51-bbba-f0bf6b2a7d4f"));
-                options.AddPolicy("Admin&Manager", policyBuilder => policyBuilder.RequireClaim("groups", "cac297fa-e30d-4085-bf10-06e38a94b3f7", "1f6eeeba-fa1a-4d51-bbba-f0bf6b2a7d4f"));
+                options.AddPolicy("Manager", policyBuilder => policyBuilder.RequireClaim("groups", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc"));
+                options.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim("groups", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"));
+                options.AddPolicy("Admin&Manager", policyBuilder => policyBuilder.RequireClaim("groups", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"));
             });
 
 
@@ -113,7 +113,8 @@ namespace EmployeeDeactivation
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.Use((context, next) => {
+            app.Use((context, next) =>
+            {
                 context.Request.Scheme = "https";
                 return next();
             });

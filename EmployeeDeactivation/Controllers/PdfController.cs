@@ -21,6 +21,13 @@ namespace EmployeeDeactivation.Controllers
         }
 
         [HttpGet]
+        [Route("Pdf/HelperDeactivationPdf")]
+        public IActionResult HelperDeactivationPdf()
+        {
+            return Json("data:application/pdf;base64," + Convert.ToBase64String(_pdfDataOperation.HelpPdfDeactivation()));
+        }
+
+        [HttpGet]
         [Route("Pdf/CreateActivationPdf")]
         public IActionResult CreateActivationPdf(string gId)
         {

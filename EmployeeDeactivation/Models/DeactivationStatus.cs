@@ -18,6 +18,8 @@ namespace EmployeeDeactivation.Models
         public DateTime TimerDate { get; set; }
         public DateTime LastWorkingDate { get; set; }
         public string ReportingManagerEmail { get; set; }
+        public string EmployeeEmail { get; set; }
+        public string FromEmail { get; set; }
 
     }
 }

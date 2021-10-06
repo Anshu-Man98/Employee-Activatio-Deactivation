@@ -12,7 +12,6 @@ namespace EmployeeDeactivation.Data
     public class EmployeeDeactivationContext : DbContext
     {
 
-
         public EmployeeDeactivationContext(DbContextOptions<EmployeeDeactivationContext> options)
             : base(options)
         {

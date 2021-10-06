@@ -9,5 +9,6 @@ namespace EmployeeDeactivation.Interface
     {
         byte[] FillDeactivationPdfForm(string gId);
         byte[] FillActivationPdfForm(string gId);
+        byte[] HelpPdfDeactivation();
     }
 }

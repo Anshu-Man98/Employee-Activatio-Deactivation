@@ -51,6 +51,17 @@ namespace EmployeeDeactivation.BusinessLayer
             return stream.ToArray();
         }
 
+        public byte[] HelpPdfDeactivation()
+        {
+            FileStream docStream = new FileStream("DeactivationWorkflowHelper.pdf", FileMode.Open, FileAccess.Read);
+            PdfLoadedDocument loadedDocument = new PdfLoadedDocument(docStream);
+            MemoryStream stream = new MemoryStream();
+            loadedDocument.Save(stream);
+            stream.Position = 0;
+            loadedDocument.Close(true);
+            return stream.ToArray();
+        }
+
         public byte[] FillActivationPdfForm(string gId)
         {
             var activationEmployeeData = _employeeDataOperation.RetrieveActivationDataBasedOnGid(gId);

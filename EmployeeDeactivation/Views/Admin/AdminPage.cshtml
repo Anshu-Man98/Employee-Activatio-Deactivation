@@ -370,11 +370,6 @@
                     document.getElementById('sponsorLastName').focus();
                     return false;
                 }
-                if (document.getElementById('sponsorGid').value == "") {
-                    alert("Please provide Gid");
-                    document.getElementById('sponsorGid').focus();
-                    return false;
-                }
                 if (document.getElementById('sponsorEmail').value == "" || ValidateSponsorEmail() == false) {
                     alert("Please provide Sponsor Email");
                     document.getElementById('sponsorEmail').focus();
@@ -418,11 +413,6 @@
                 if (document.getElementById('editLastName').value == "" || ValidateEditLastName() == true) {
                     alert("Please provide Last Name");
                     document.getElementById('editLastName').focus();
-                    return false;
-                }
-                if (document.getElementById('editgid').value == "") {
-                    alert("Please provide Gid");
-                    document.getElementById('editgid').focus();
                     return false;
                 }
                 if (document.getElementById('editSponsorEmail').value == "" || ValidateEditSponsorEmail() == false) {
@@ -693,7 +683,7 @@
         <hr />
 
 
-            <h3>Send Email Remainder in :</h3>
+            <h3>Send Email Remainder every :</h3>
 
      
         <div class="form-group row">
@@ -704,7 +694,7 @@
                     <option value="1">1 day</option>
                     <option value="2">2 days</option>
                     <option value="4">4 days</option>
-                    <option value="1w">1 week</option>
+                    <option value="7">1 week</option>
                     <option value="15">15 days</option>
                 </select>
             </div>
@@ -749,7 +739,7 @@
                 <input type="text" placeholder="Last Name" id="sponsorLastName" name="lastname" onkeyup="ValidateLastName()" required>
 
                 <label for="gid"><b>Sponsor GID</b></label>
-                <input type="text" placeholder="GID" id="sponsorGid" name="gid" required>
+                <input type="text" placeholder="GID" id="sponsorGid" name="gid">
 
                 <div class="required">
                     <label for="email"><b>Sponsor Email Id </b></label>
@@ -762,22 +752,26 @@
                 <div class="required">
                     <label for="email"><b>Reporting Manager Email Id </b></label>
                 </div>
-                <input type="email" placeholder="Email Id" id="reportingManEmail " name="Rmemail" onkeyup="ValidateRMEmail()" required>
+                <input type="email" placeholder="Email Id" id="reportingManEmail" name="Rmemail" onkeyup="ValidateRMEmail()" required>
+
                 <div class="required">
                     <label for="email"><b>CM Email Id</b></label>
                 </div>
                 <input type="email" value="vr.arun@siemens.com" id="fromEmail" name="Fromemail" onkeyup="ValidateFromEmail()" placeholder="Email Id" required>
+                
                 <div class="required">
                     <label for="email"><b>Sivantos Activation Request Point of Contact Email ID</b></label>
                 </div>
-                    <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateToEmail()" required>
-                
-                <label for="email"><b>Cc Email Id</b></label>
-                <input type="text" placeholder="CC Email" id="ccEmail" name="Ccemail" required>
+                <input type="email" placeholder="Email Id" id="toEmail" name="Toemail" value="abc@siemens.com" onkeyup="ValidateToEmail()" required>
+
+                <div class="required">
+                    <label for="email"><b>Cc Email Id</b></label>
+                    </div>
+                   <input type="text" placeholder="CC Email" id="ccEmail" name="Ccemail" required>
 
 
-                <button type="submit" id="submit1" class="btn">Submit</button>
-                <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+                    <button type="submit" id="submit1" class="btn">Submit</button>
+                    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
 
             </form>
         </div>
@@ -797,7 +791,7 @@
                 <input type="text" placeholder="Last Name" name="lastname" onkeyup="ValidateEditLastName()" id="editLastName" required>
 
                 <label for="gid"><b>Sponsor GID</b></label>
-                <input type="text" placeholder="GID" name="gid" id="editgid" required>
+                <input type="text" placeholder="GID" name="gid" id="editgid">
 
                 <label for="email"><b>Sponsor Email Id</b></label>
                 <input type="email" placeholder="Email Id" name="email" onkeyup="ValidateEditSponsorEmail()" id="editSponsorEmail" required>

@@ -1,21 +1,23 @@
 ﻿using EmployeeDeactivation.Data;
 using EmployeeDeactivation.Interface;
 using EmployeeDeactivation.Models;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EmployeeDeactivation.BusinessLayer
 {
     public class EmployeeDataOperation : IEmployeeDataOperation
     {
-        private readonly EmployeeDeactivationContext _context;
+        private readonly EmployeeDeactivationContext ccontext;
         public EmployeeDataOperation(EmployeeDeactivationContext context)
         {
-            _context = context;
+            ccontext = context;
         }
         #region Employee Data
         public bool AddEmployeeData(EmployeeDetails employeeDetails)
@@ -30,12 +32,12 @@ namespace EmployeeDeactivation.BusinessLayer
                     {
                         if (deactivatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
                         {
-                            _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                            _context.SaveChanges();
+                            ccontext.Remove(ccontext.DeactivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                            ccontext.SaveChanges();
                         }
                     }
                     DeactivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<DeactivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                    _context.Add(employeeDetail);
+                    ccontext.Add(employeeDetail);
                 }
                 else
                 {
@@ -44,15 +46,15 @@ namespace EmployeeDeactivation.BusinessLayer
                     {
                         if (activatedEmployee.GId.ToLower() == employeeDetails.GId.ToLower())
                         {
-                            _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
-                            _context.SaveChanges();
+                           ccontext.Remove(ccontext.ActivationWorkflow.Single(a => a.GId == employeeDetails.GId));
+                            ccontext.SaveChanges();
                         }
                     }
                     ActivationEmployeeDetails employeeDetail = JsonConvert.DeserializeObject<ActivationEmployeeDetails>(JsonConvert.SerializeObject(employeeDetails));
-                    _context.Add(employeeDetail);
+                    ccontext.Add(employeeDetail);
                 }
 
-                return _context.SaveChanges() == 1;
+                return ccontext.SaveChanges() == 1;
             }
             catch
             {
@@ -60,17 +62,51 @@ namespace EmployeeDeactivation.BusinessLayer
             }
         }
 
+
         public List<EmployeeDetails> RetrieveAllDeactivatedEmployees()
         {
-
-            var deactivatedEmployees = _context.DeactivationWorkflow.ToList();
-            List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
-            foreach (var item in deactivatedEmployees)
+            try
             {
-                EmployeeDetails employeeDetail = JsonConvert.DeserializeObject<EmployeeDetails>(JsonConvert.SerializeObject(item));
-                employeeDetails.Add(employeeDetail);
+                var deactivatedEmployees = ccontext.DeactivationWorkflow.ToList();
+                List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
+                foreach (var item in deactivatedEmployees)
+                {
+                    EmployeeDetails employeeDetail = JsonConvert.DeserializeObject<EmployeeDetails>(JsonConvert.SerializeObject(item));
+                    employeeDetails.Add(employeeDetail);
+                }
+                return employeeDetails;
             }
-            return employeeDetails;
+            catch(Exception e)
+            {
+                string fileName = @"C:\Temp\LogError1.txt";
+
+
+                if (File.Exists(fileName))
+
+                {
+
+                    File.Delete(fileName);
+
+                }
+
+                // Create a new file     
+
+                using (FileStream fs = File.Create(fileName))
+
+                {
+
+                    // Add some text to file    
+
+                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
+
+                    fs.Write(title, 0, title.Length);
+                    byte[] text = new UTF8Encoding(true).GetBytes("ERROR Retrive------------------> " + e.StackTrace);
+
+                    fs.Write(text);
+                    return null;
+
+                }
+            }
         }
 
         public bool DeleteDeactivationDetails(string gId)
@@ -80,8 +116,8 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if (deactivatedEmployee.GId.ToLower() == gId.ToLower())
                 {
-                    _context.Remove(_context.DeactivationWorkflow.Single(a => a.GId == gId));
-                    _context.SaveChanges();
+                    ccontext.Remove(ccontext.DeactivationWorkflow.Single(a => a.GId == gId));
+                    ccontext.SaveChanges();
                 }
             }
             return true;
@@ -89,7 +125,7 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public List<EmployeeDetails> RetrieveAllActivationWorkFlow()
         {
-            var activatedEmployees = _context.ActivationWorkflow.ToList();
+            var activatedEmployees = ccontext.ActivationWorkflow.ToList();
             List<EmployeeDetails> employeeDetails = new List<EmployeeDetails>();
             foreach (var item in activatedEmployees)
             {
@@ -106,8 +142,8 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if (activatedEmployee.GId.ToLower() == gId.ToLower())
                 {
-                    _context.Remove(_context.ActivationWorkflow.Single(a => a.GId == gId));
-                    _context.SaveChanges();
+                    ccontext.Remove(ccontext.ActivationWorkflow.Single(a => a.GId == gId));
+                    ccontext.SaveChanges();
                 }
             }
             return true;
@@ -118,13 +154,13 @@ namespace EmployeeDeactivation.BusinessLayer
             try
             {
 
-                var activationWorkflows = _context.ActivationWorkflow.ToList();
+                var activationWorkflows = ccontext.ActivationWorkflow.ToList();
                 foreach (var activatedWorkflow in activationWorkflows)
                 {
                     if (activatedWorkflow.GId.ToLower() == gId.ToLower())
                     {
                         activatedWorkflow.ActivationWorkFlowPdfAttachment = pdf;
-                        _context.SaveChanges();
+                        ccontext.SaveChanges();
                         return true;
                     }
                 }
@@ -138,16 +174,33 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public EmployeeDetails RetrieveDeactivatedEmployeeDataBasedOnGid(string gId)
         {
-            var employeeDetails = RetrieveAllDeactivatedEmployees();
-            foreach (var employee in employeeDetails)
-            {
-                if (employee.GId.ToLower() == gId.ToLower())
+            
+                var employeeDetails = RetrieveAllDeactivatedEmployees();
+                foreach (var employee in employeeDetails)
                 {
-                    return employee;
+                    if (employee.GId.ToLower() == gId.ToLower())
+                    {
+                        return employee;
+                    }
+                }
+                return new EmployeeDetails();
+        }
+
+        public List<EmployeeDetails> RetrieveDeactivationWorkFlowBaseonDate(string Datee)
+        {
+            var EmployeesData = RetrieveAllDeactivatedEmployees();
+            List<EmployeeDetails> employeeDetailsBasedOnDate = new List<EmployeeDetails>();
+            foreach (var employeeData in EmployeesData)
+            {
+                if (Datee == employeeData.LastWorkingDate.ToString())
+                {
+                    EmployeeDetails employeeDetail = JsonConvert.DeserializeObject<EmployeeDetails>(JsonConvert.SerializeObject(employeeData));
+                    employeeDetailsBasedOnDate.Add(employeeDetail);
                 }
             }
-            return new EmployeeDetails();
+            return employeeDetailsBasedOnDate;
         }
+
         public string[] GetDeactivatedEmployeeDetails(string gid)
         {
             var deactivationDetails = RetrieveAllDeactivatedEmployees();
@@ -155,7 +208,7 @@ namespace EmployeeDeactivation.BusinessLayer
             {
                 if (item.GId.ToLower() == gid.ToLower())
                 {
-                    return new string[] { item.EmailID, item.TeamName, item.CcEmailId };
+                    return new string[] { item.EmailID, item.TeamName, item.CcEmailId, item.FromEmailId, item.SponsorEmailID};
 
                 }
 
@@ -205,7 +258,7 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             try
             {
-                return (_context.Teams.ToList());
+                return (ccontext.Teams.ToList());
             }
             catch (Exception e)
             {

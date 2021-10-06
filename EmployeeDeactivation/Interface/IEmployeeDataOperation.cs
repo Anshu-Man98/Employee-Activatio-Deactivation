@@ -20,5 +20,12 @@ namespace EmployeeDeactivation.Interface
         bool SavePdfToDatabase(byte[] pdf, string gId);
         bool DeleteDeactivationDetails(string gId);
         bool DeleteActivationDetails(string gId);
+        //Task<List<EmployeeDetails>> RetrieveDeactivatedEmployees();
+        //List<EmployeeDetails> RetrieveDeactivatedEmployeeDataBasedOnGidAsync(string gId);
+        //Task<string[]> GetDeactivatedEmployeeDetails1(string gid);
+        //Task<EmployeeDetails> RetrieveDeactivatedEmployeeDataBasedOnGid11(string gId);
+        //Task<List<EmployeeDetails>> RetrieveAllDeactivatedEmployees1();
+
+        List<EmployeeDetails> RetrieveDeactivationWorkFlowBaseonDate(string Datee);
     }
 }

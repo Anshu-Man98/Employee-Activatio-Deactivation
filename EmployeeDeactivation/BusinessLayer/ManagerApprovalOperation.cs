@@ -13,9 +13,11 @@ namespace EmployeeDeactivation.BusinessLayer
     public class ManagerApprovalOperation : IManagerApprovalOperation
     {
         private readonly EmployeeDeactivationContext _context;
-        public ManagerApprovalOperation(EmployeeDeactivationContext context)
+
+        public ManagerApprovalOperation(EmployeeDeactivationContext context )
         {
             _context = context;
+            
         }
 
         public void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus)
@@ -61,6 +63,8 @@ namespace EmployeeDeactivation.BusinessLayer
                 TimerDate = deactivationStatus.TimerDate,
                 LastWorkingDate = deactivationStatus.LastWorkingDate,
                 ReportingManagerEmail = deactivationStatus.ReportingManagerEmail,
+                EmployeeEmail=deactivationStatus.EmployeeEmail,
+                FromEmail = deactivationStatus.FromEmail
             };
             if (deactivationStatus.TimesheetApproval.Trim() == "true" && deactivationStatus.EmployeeRemovedFromDLEmailList.Trim() == "true" && deactivationStatus.HardwaresCollected.Trim() == "true" && deactivationStatus.RaisedWindowsDeactivationRequestNexus.Trim() == "true")
             {
@@ -100,6 +104,8 @@ namespace EmployeeDeactivation.BusinessLayer
                 ReportingManagerEmail = activationStatus.ReportingManagerEmail,
                 TimerDate = activationStatus.ActivationDate,
                 ActivationDate = activationStatus.ActivationDate,
+                EmployeeEmail= activationStatus.EmployeeEmail,
+                FromEmail = activationStatus.FromEmail
             };
             if (activationStatus.UpdateConsolidateIoTResourcesList.Trim() == "true" && activationStatus.BirthdayListUpdated.Trim() == "true" && activationStatus.EmailIdAddedToTeamDL.Trim() == "true" && activationStatus.MemberAddedToTimesheet.Trim() == "true" && activationStatus.InitiateHardwareShipmentRequest.Trim() == "true" && activationStatus.MemberDetailsUpdatedInEDMTTool.Trim() == "true" && activationStatus.InductionPlanAssignment.Trim() == "true" && activationStatus.InductionTrainingRecordUpdated.Trim() == "true" && activationStatus.VivekEcampusListUpdated.Trim() == "true")
             {
@@ -285,14 +291,103 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             _ = new List<DeactivationStatus>();
             return _context.DeactivationStatus.ToList();
+        }
+
+        private string TimerValue()
+        {
+            var config = _context.Tokens.ToList();
+            foreach (var token in config)
+            {
+                if (token.TokenName == "EmailTimer")
+                {
+                    return token.TokenValue;
+                }
+            }
+            return null;
+        }
+
+        public List<DeactivationStatus> RetrieveDeactivationTasksBasedOnDate()
+        {
+            try
+            {
+                int Timer = Int16.Parse(TimerValue());
+                var DeactivationTasksBasedOnDate = _context.DeactivationStatus.ToList();
+                List<DeactivationStatus> DeactivationTaskDetails = new List<DeactivationStatus>();
+
+                foreach (var Details in DeactivationTasksBasedOnDate)
+                {
+                    if (DateTime.Today.ToString() == Convert.ToDateTime(Details.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Details.LastWorkingDate))
+                    {
+                        DateTime TimerDate = Convert.ToDateTime(Details.TimerDate).AddDays(Timer);
+                        Details.TimerDate = TimerDate;
+
+                        DeactivationTaskDetails.Add(Details);
+                    }
+                }
+                _context.SaveChanges();
+                
+                return DeactivationTaskDetails;
+            }
+            catch
+            {
+                return null;
+            }
 
         }
+
+        public List<ActivationStatus> RetrieveActivationTasksBasedOnDate()
+        {
+            try
+            {
+                int Timer = Int16.Parse(TimerValue());
+                var ActivationTasksBasedOnDate = _context.ActivationStatus.ToList();
+                List<ActivationStatus> ActivationTaskDetails = new List<ActivationStatus>();
+
+                foreach (var Details in ActivationTasksBasedOnDate)
+                {
+                    if (DateTime.Today.ToString() == Convert.ToDateTime(Details.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Details.ActivationDate).AddDays(16))
+                    {
+                        DateTime TimerDate = Convert.ToDateTime(Details.TimerDate).AddDays(Timer);
+                        Details.TimerDate = TimerDate;
+                        ActivationTaskDetails.Add(Details);
+                    }
+                }
+                _context.SaveChanges();
+
+                return ActivationTaskDetails;
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
+
+
 
         public List<ActivationStatus> RetrieveActivationTasks()
         {
             _ = new List<ActivationStatus>();
             return _context.ActivationStatus.ToList();
 
+        }
+
+        public List<ManagerApprovalStatus> RetrieveDeactivatedEmployeeDataBasedLastWorkingDate(DateTime LastworkingDate)
+        {
+            List<ManagerApprovalStatus> TodaysApprovedEmployeeData = new List<ManagerApprovalStatus>();
+            var employeeDetails = GetAllApprovedDeactivationWorkflows();
+            foreach (var employee in employeeDetails)
+            {
+                
+                if (DateTime.Parse(employee.EmployeeLastWorkingDate) == LastworkingDate)
+                {
+                    
+                    TodaysApprovedEmployeeData.Add(employee);
+                }
+              
+            }
+            
+            return TodaysApprovedEmployeeData;
         }
 
     }
