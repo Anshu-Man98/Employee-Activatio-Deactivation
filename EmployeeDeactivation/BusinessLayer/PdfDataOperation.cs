@@ -53,7 +53,7 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public byte[] HelpPdfDeactivation()
         {
-            FileStream docStream = new FileStream("DeactivationWorkflowHelper.pdf", FileMode.Open, FileAccess.Read);
+            FileStream docStream = new FileStream("EMPLOYEE ACTIVATION-DEACTIVATION WORKFLOW.pdf", FileMode.Open, FileAccess.Read);
             PdfLoadedDocument loadedDocument = new PdfLoadedDocument(docStream);
             MemoryStream stream = new MemoryStream();
             loadedDocument.Save(stream);

@@ -168,8 +168,8 @@ namespace EmployeeDeactivation.BusinessLayer
             if (isActivationPdf)
             {
                 details.FromEmailId = emailDetails[0];
-                details.ToEmailId = "1by16cs072@bmsit.in";
-                details.CcEmailId ="anshumansunil98@gmail.com";
+                details.ToEmailId = "nadisha.kumar@siemens.com";
+                details.CcEmailId = "vivekanand.biradar@siemens.com";
                 details.FileName = null;
                 _ = SendEmailAsync(details, TypeOfWorkflow.EmailToVivek,null,null);
                 details.ToEmailId = emailDetails[1];
@@ -205,14 +205,11 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             //var employeeDetails = _managerApprovalOperation.GetAllPendingDeactivationWorkflows();
             var approvedEmployeeDetails = _managerApprovalOperation.GetAllApprovedDeactivationWorkflows();
-            var employeeData = _employeeDataOperation.RetrieveAllDeactivatedEmployees();
-            var activationEmployeeData = _employeeDataOperation.RetrieveAllActivationWorkFlow();
             var deactivationStatusEmployeeDetails = _managerApprovalOperation.RetrieveDeactivationTasksBasedOnDate();
             var activationStatusEmployeeDetails = _managerApprovalOperation.RetrieveActivationTasksBasedOnDate();
-            var deactTask = _managerApprovalOperation.RetrieveDeactivationTasks();
             //await SendMailToManagerOnUnapprovedDeactivationWorkflowsOnLastWorkingDay(employeeDetails);
-            //await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails);
-            //await SendReminderMailForDeactivationTask(deactivationStatusEmployeeDetails);
+            await SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(approvedEmployeeDetails);
+            await SendReminderMailForDeactivationTask(deactivationStatusEmployeeDetails);
             await SendReminderMailForActivationTask(activationStatusEmployeeDetails);
         }
 
@@ -244,32 +241,63 @@ namespace EmployeeDeactivation.BusinessLayer
 
         private async Task SendDeactivationWorkFlowMailToSponsorOnLastWorkingDay(List<ManagerApprovalStatus> approvedEmployeeDetails)
         {
-            var empdata = _employeeDataOperation.RetrieveDeactivationWorkFlowBaseonDate(DateTime.Today.ToString());
-            foreach (var DatedEmployee in empdata)
+            try
             {
-
-                foreach (var approvedEmployee in approvedEmployeeDetails)
+                var empdata = _employeeDataOperation.RetrieveDeactivationWorkFlowBaseonDate(DateTime.Today.ToString());
+                foreach (var DatedEmployee in empdata)
                 {
-                    if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).ToString())
+
+                    foreach (var approvedEmployee in approvedEmployeeDetails)
                     {
-
-                        if (DatedEmployee.GId == approvedEmployee.EmployeeGId)
+                        if (DateTime.Today.ToString() == Convert.ToDateTime(approvedEmployee.EmployeeLastWorkingDate).ToString())
                         {
-                            EmailDetails details = new EmailDetails()
 
+                            if (DatedEmployee.GId == approvedEmployee.EmployeeGId)
                             {
-                                FromEmailId = DatedEmployee.FromEmailId,
-                                ToEmailId = DatedEmployee.SponsorEmailID,
-                                CcEmailId = DatedEmployee.CcEmailId,
-                                EmployeeName = approvedEmployee.EmployeeName,
-                                ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
-                                FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
-                            };
-                            await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay,null,null);
+                                EmailDetails details = new EmailDetails()
+
+                                {
+                                    FromEmailId = DatedEmployee.FromEmailId,
+                                    ToEmailId = DatedEmployee.SponsorEmailID,
+                                    CcEmailId = DatedEmployee.CcEmailId,
+                                    EmployeeName = approvedEmployee.EmployeeName,
+                                    ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
+                                    FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
+                                };
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay, null, null);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                string fileName = @"C:\Temp\ErrorSponsorRemainder.txt";
+
+
+                if (File.Exists(fileName))
+
+                {
+
+                    File.Delete(fileName);
+
+                }
+
+
+                using (FileStream fs = File.Create(fileName))
+
+                {
+                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
+
+                    fs.Write(title, 0, title.Length);
+                    byte[] text = new UTF8Encoding(true).GetBytes("ERROR Retrive from ------------------> " + e.StackTrace);
+
+                    fs.Write(text);
+
+
+                }
+            }
+
         }
 
         private async Task SendReminderMailForDeactivationTask(List<DeactivationStatus> deactivationStatusEmployeeDetails)
@@ -313,15 +341,11 @@ namespace EmployeeDeactivation.BusinessLayer
                     File.Delete(fileName);
 
                 }
-
-                // Create a new file     
+ 
 
                 using (FileStream fs = File.Create(fileName))
 
                 {
-
-                    // Add some text to file    
-
                     Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
 
                     fs.Write(title, 0, title.Length);
@@ -382,13 +406,9 @@ namespace EmployeeDeactivation.BusinessLayer
 
                 }
 
-                // Create a new file     
-
                 using (FileStream fs = File.Create(fileName))
 
                 {
-
-                    // Add some text to file    
 
                     Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
 
@@ -602,9 +622,36 @@ namespace EmployeeDeactivation.BusinessLayer
                 
                 _ = await sendGridClientApiKey.SendEmailAsync(msg);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw ex;
+                string fileName = @"C:\Temp\ErrorSendEmailAsync.txt";
+
+
+                if (File.Exists(fileName))
+
+                {
+
+                    File.Delete(fileName);
+
+                }
+
+                // Create a new file     
+
+                using (FileStream fs = File.Create(fileName))
+
+                {
+
+                    // Add some text to file    
+
+                    Byte[] title = new UTF8Encoding(true).GetBytes("New Text File");
+
+                    fs.Write(title, 0, title.Length);
+                    byte[] text = new UTF8Encoding(true).GetBytes("ERROR Retrive from ------------------> " + e.StackTrace);
+
+                    fs.Write(text);
+
+
+                }
             }
         }
     }

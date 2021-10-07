@@ -51,8 +51,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link href="~/css/EmployeeDeactivationForm.css" rel="stylesheet" />
     <script src="~/js/bootbox.js"></script>
+
     <script type="text/javascript">
             var sponsorFirstName = "";
             var sponsorLastName = "";
@@ -94,7 +95,7 @@
             })
         }
 
-        var x = setInterval(Reminder, 120000);
+        var x = setInterval(Reminder, 86400000);
             function Reminder() {
                 $.ajax({
                     type: "GET",
@@ -257,7 +258,7 @@
                                                                                 fileData.append('RaisedWindowsDeactivationRequestNexus', "false");
                                                                                 fileData.append('TimerDate', new Date().toLocaleDateString());
                                                                                 fileData.append('LastWorkingDate', $('#employeeLastWorkingdate').val());
-                                                                                fileData.append('FromEmail', $('#fromEmailId').val());
+                                                                                fileData.append('FromEmail', $('#fromEmailId').val()); fromEmailId
                                                                                 fileData.append('EmployeeEmail', $('#employeeEmail').val());
                                                                                 fileData.append('ReportingManagerEmail', $('#reportingManagerEmail').val());
                                                                             $.ajax({
@@ -399,200 +400,7 @@
                 }
             });
         });
-
-
-
     </script>
-
-    <style>
-        #header {
-            padding: 15px;
-            padding-bottom:9px;
-            margin-bottom: 17px;
-            background-color: black;
-        }
-
-        #headerText {
-            text-align: center;
-            font-size: 30px;
-            color: white;
-            position: absolute;
-            margin-left: 35%;
-            margin-top: 5px;
-        }
-
-        .loader-wrapper {
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: rgba(1,1,1,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loader {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            position: relative;
-            border: 4px solid white;
-            animation: loader 2s infinite ease;
-        }
-
-        .loader-inner {
-            vertical-align: top;
-            display: inline-block;
-            width: 100%;
-            background-color: azure;
-            animation: loader-inner 2s infinite ease-in;
-        }
-
-        body {
-            overflow-x: hidden;
-        }
-
-        @@keyframes loader {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            25% {
-                transform: rotate(180deg);
-            }
-
-            50% {
-                transform: rotate(180deg);
-            }
-
-            75% {
-                transform: rotate(360deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @@keyframes loader-inner {
-            0% {
-                height: 0%;
-            }
-
-            25% {
-                height: 0%;
-            }
-
-            50% {
-                height: 100%;
-            }
-
-            75% {
-                height: 100%;
-            }
-
-            100% {
-                height: 0%;
-            }
-        }
-
-
-        #Helper{
-            position:sticky;
-            left:1%;
-            color:azure;
-            margin-top:2px;
-            width:10%;
-        }
-        #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton, #activationStatusButton {
-            
-            color: white;
-        }
-
-
-            #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover, #activationStatusButton:hover {
-                
-                color: darkgrey;
-                cursor: default;
-            }
-
-
-        .form {
-            margin-top: 32px;
-            margin-left: 33%;
-        }
-
-        #TextField {
-            white-space: nowrap;
-            padding-left: 0px;
-        }
-
-        #pages {
-            width: 7%;
-            position: relative;
-            left: 90%;
-            white-space: nowrap;
-        }
-
-        #hello {
-            color: blue;
-            font-size: 17px;
-            text-align: center;
-        }
-
-        #inputTextbox {
-            margin-left: 70px;
-            width: 400px;
-        }
-        #Helper{
-            cursor:pointer;
-        }
-
-        .ErrorView {
-            color: red;
-            margin-left: 183px;
-        }
-
-        .regular-field {
-            text-align: center;
-        }
-
-        .radio-but1 {
-            margin-right: 5px;
-        }
-
-        #radio-1-txt {
-            margin-right: 10px;
-        }
-
-        .form-group.required .control-label:after {
-            content: "*";
-            color: red;
-        }
-
-        @@media only screen and (max-width:880px) {
-            #header {
-                width: 100%;
-            }
-
-            #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton, #activationStatusButton {
-                font-size: 70%;
-            }
-
-            .ErrorView {
-                margin-left: 80px;
-            }
-
-            #submitButton {
-                position: center;
-            }
-            #headerText {
-                font-size: 110%;
-            }
-        }
-    </style>
 
 </head>
 
@@ -616,7 +424,7 @@
             </div>
         </div>
         <div id="Helper">
-            Help <i class="fa fa-question-circle" style="color: grey;"></i>
+            Help <i class="fa fa-question-circle" style="color:grey;"></i>
         </div>
     </nav>
 

@@ -1,5 +1,4 @@
-﻿
-@using System.Security.Claims
+﻿@using System.Security.Claims
 @if (User.Identity.IsAuthenticated)
 
 
@@ -20,21 +19,22 @@
         adminDisplay = "block";
 
     }
-    <head>
+<head>
 
 
-        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script scr="jquery-2.1.4.js"></script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-        <script src="~/js/bootbox.js"></script>
-        <script type="text/javascript">
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script scr="jquery-2.1.4.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.8.0.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.22/jquery-ui.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/css/EmployeeActivationForm.css" rel="stylesheet" />
+    <script src="~/js/bootbox.js"></script>
+    <script type="text/javascript">
             var sponsorFirstName = "";
             var sponsorLastName = "";
             var sponsorName = "";
@@ -96,6 +96,21 @@
                 }
             })
         });
+
+                    $(document).on("click", "#Helper", function (e) {
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("HelperDeactivationPdf", "Pdf")',
+                dataType: "json",
+                success: function (response) {
+                    pdfWindow = window.open("", "width=400,height=400,top=100,left=400", '_self')
+                    pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
+                }
+            });
+
+                    });
+
+
             var clicked = true;
             var preview = false;
             let pdfPreviewWindow = null;
@@ -411,165 +426,10 @@
             });
         });
 
-        </script>
-
-        <style>
-
-            #header {
-                padding: 15px;
-                margin-bottom: 36px;
-                background-color: black;
-            }
-
-            #headerText {
-                text-align: center;
-                font-size: 30px;
-                color: white;
-                position: absolute;
-                margin-left: 35%;
-                margin-top: 5px;
-            }
-
-            .loader-wrapper {
-                width: 100%;
-                height: 100%;
-                position: fixed;
-                top: 0;
-                left: 0;
-                background-color: rgba(1,1,1,0.7);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .loader{
-                display: inline-block;
-                width:30px;
-                height:30px;
-                position: relative;
-                border: 4px solid white;
-                animation: loader 2s infinite ease;
-            }
-            .loader-inner{
-                vertical-align:top;
-                display:inline-block;
-                width:100%;
-                background-color:azure;
-                animation: loader-inner 2s infinite ease-in;
-            }
-
-            .form-group.required .control-label:after {
-                content: "*";
-                color: red;
-            }
-
-            body {
-                overflow-x: hidden;
-            }
-
-            @@keyframes loader {
-              0% { transform: rotate(0deg);}
-              25% { transform: rotate(180deg);}
-              50% { transform: rotate(180deg);}
-              75% { transform: rotate(360deg);}
-              100% { transform: rotate(360deg);}
-            }
-            @@keyframes loader-inner {
-              0% { height: 0%;}
-              25% { height: 0%;}
-              50% { height: 100%;}
-              75% { height: 100%;}
-              100% { height: 0%;}
-            }
+    </script>
 
 
-            #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton, #activationStatusButton {
-                margin-left: 89%;
-                color: white;
-            }
-
-
-                #configureButton:hover, #sponsorDetailsButton:hover, #viewReportButton:hover, #workflowButton:hover, #deactivationStatusButton:hover, #activationStatusButton:hover{
-                    color: darkgrey;
-                    cursor: default;
-                }
-
-            .regular-field {
-                text-align: center;
-            }
-
-            .form {
-                margin-top: 32px;
-                margin-left: 33%;
-            }
-
-            #TextField {
-                white-space: nowrap;
-                padding-left: 0px;
-            }
-
-            #hello {
-                color: blue;
-                font-size: 17px;
-                text-align: center;
-            }
-            #pages {
-                width: 7%;
-                position: relative;
-                left: 85%;
-                white-space: nowrap;
-            }
-
-            #inputTextbox {
-                margin-left: 70px;
-                width: 400px;
-            }
-
-            .ErrorView {
-                color: red;
-                margin-left: 183px;
-            }
-
-            #radio-1-txt {
-                margin-right: 10px;
-            }
-
-            .regular-field {
-                text-align: center;
-            }
-
-            .radio-but1 {
-                margin-right: 5px;
-            }
-
-            #radio-1-txt {
-                margin-right: 10px;
-            }
-
-            @@media only screen and (max-width:880px) {
-                #header {
-                    width: 100%;
-                }
-
-                #configureButton, #sponsorDetailsButton, #viewReportButton, #workflowButton, #deactivationStatusButton, #activationStatusButton {
-                    font-size: 70%;
-                }
-
-                .ErrorView {
-                    margin-left: 80px;
-                }
-
-                #submitButton {
-                    position: center;
-                }
-
-                #headerText {
-                    font-size: 110%;
-                }
-            }
-        </style>
-
-
-    </head>
+</head>
 
     <body>
         <nav class="navbar navbar sticky-top" id="header">
@@ -590,7 +450,10 @@
                 <div>
                     <div id="activationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ActivationStatus", "ManagerApproval")','_self')">Activation Status</div>
                 </div>
-                </div>
+            </div>
+            <div id="Helper">
+                Help <i class="fa fa-question-circle" style="color:gray;"></i>
+            </div>
         </nav>
 
             <div class="regular-field">
@@ -602,6 +465,7 @@
 
             </div>
             <div class="form">
+
                 <form class="form-group required" action="Create">
 
                     <div class="form-group row">
