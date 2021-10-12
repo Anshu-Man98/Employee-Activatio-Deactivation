@@ -55,7 +55,7 @@
                         }
                         if (item.tokenName == "EmailTimer") {
                             $("#emailTimer").val(item.tokenValue)
-                        }                       
+                        }
                     });
                 }
             })
@@ -172,27 +172,33 @@
 
 
         $(document).on("click", "#addButton", function (e) {
+            e.preventDefault();
             openForm();
             $(document).on("click", "#submit1", function (e) {
+                e.preventDefault();
                 $("#loader-wrapper").show();
-                fileData = new FormData();
-                fileData.append('TeamName', $('#teamName').val());
-                fileData.append('SponsorFirstName', $('#sponsorFirstName').val());
-                fileData.append('SponsorLastName', $('#sponsorLastName').val());
-                fileData.append('SponsorEmailID', $('#sponsorEmail').val());
-                fileData.append('SponsorGID', $('#sponsorGid').val());
-                fileData.append('Department', $('#sponsorDepartment').val());
-                fileData.append('ReportingManagerEmailID', $('#reportingManEmail').val());
-                fileData.append('CmEmailID', $('#fromEmail').val());
-                fileData.append('SivantosPointEmailID', $('#toEmail').val());
-                fileData.append('CcEmailID', $('#ccEmail').val());
+                var formData = new FormData();
+                formData.append('TeamName', $('#teamName').val().toString());
+                formData.append('SponsorFirstName', $('#sponsorFirstName').val().toString());
+                formData.append('SponsorLastName', $('#sponsorLastName').val().toString());
+                formData.append('SponsorEmailID', $('#sponsorEmail').val().toString());
+                formData.append('SponsorGID', $('#sponsorGid').val().toString());
+                formData.append('Department', $('#sponsorDepartment').val().toString());
+                formData.append('ReportingManagerEmailID', $('#reportingManEmail').val().toString());
+                formData.append('CmEmailID', $('#fromEmail').val().toString());
+                formData.append('SivantosPointEmailID', $('#toEmail').val().toString());
+                formData.append('CcEmailID', $('#ccEmail').val().toString());
+                for (var value of formData.values()) {
+                    console.log(value);
+                }
                 $.ajax({
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+                    data: formData,
                     type: "POST",
                     url: '@Url.Action("AddSponsorDetailsToDatabase", "Admin")',
-                    dataType: "json",
-                    data:  fileData ,
-                    processData: false,
-                    contentType:false,
                     success: function (response)
                     {
                         $("#loader-wrapper").hide();
@@ -523,7 +529,7 @@
             <form class="form-container">
                 <h3>Add Sponsor Details</h3>
                 <div class="required">
-                    <label for="Team"><b>Team Name</b></label>
+                    <label for="text"><b>Team Name</b></label>
                 </div>
                 <input type="text" placeholder="Team Name" id="teamName" name="team" onkeyup="ValidateTeamName()" required>
 
@@ -565,7 +571,7 @@
                 <div class="required">
                     <label for="email"><b>Cc Email Id</b></label>
                     </div>
-                   <input type="text" placeholder="CC Email" id="ccEmail" name="Ccemail" required>
+                   <input type="email" placeholder="CC Email" id="ccEmail" name="Ccemail" required>
 
 
                     <button type="submit" id="submit1" class="btn">Submit</button>
@@ -607,7 +613,7 @@
                 <input type="email" id="editToEmail" name="Toemail" onkeyup="ValidateEditToEmail()" required>
 
                 <label for="email"><b>Cc Email Id</b></label>
-                <input type="text" id="editCcEmail" name="Ccemail" required>
+                <input type="email" id="editCcEmail" name="Ccemail" required>
 
 
                 <button type="submit" id="submit2" class="btn">Submit</button>
