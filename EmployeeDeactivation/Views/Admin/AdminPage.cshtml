@@ -158,14 +158,13 @@
                         function (response) {
                             $("#loader-wrapper").hide();
                             if (response == true) {
+                                alert("Team details edited sucessfully")
                                 window.location.reload();
                             }
                             else {
                                 alert("data could not be updated. Try again")
                             }
                     }
-
-
                 });
             });
         });
@@ -203,7 +202,7 @@
                     {
                         $("#loader-wrapper").hide();
                         if (response == true) {
-
+                            alert("New team added")
                             window.location.reload();
                         }
                         else {

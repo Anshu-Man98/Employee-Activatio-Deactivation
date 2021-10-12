@@ -40,6 +40,10 @@ namespace EmployeeDeactivation.BusinessLayer
         public bool AddSponsorData(Teams team)
         {
         try{
+                if(team == null)
+                {
+                    return false;
+                }
             bool databaseUpdateStatus = false;
             var teamDetails = _context.Teams.ToList();
             foreach (var teams in teamDetails)
