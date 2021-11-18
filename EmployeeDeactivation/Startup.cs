@@ -66,7 +66,8 @@ namespace EmployeeDeactivation
         [System.Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
-            try {
+            try
+            {
                 //services.AddHttpsRedirection(options =>
                 //{
                 //    options.HttpsPort = 443;
@@ -103,11 +104,11 @@ namespace EmployeeDeactivation
                 services.AddScoped<IManagerApprovalOperation, ManagerApprovalOperation>();
                 services.AddScoped<IEmailOperation, EmailOperations>();
                 services.Configure<OpenIdConnectOptions>(AzureADDefaults.OpenIdScheme, options =>
-                 {
-                     options.Authority = options.Authority + "/v2.0/";
-                     options.TokenValidationParameters.ValidateIssuer = false;
-                     options.RequireHttpsMetadata = true;
-                 });
+                {
+                    options.Authority = options.Authority + "/v2.0/";
+                    options.TokenValidationParameters.ValidateIssuer = false;
+                    options.RequireHttpsMetadata = true;
+                });
 
                 services.AddAuthorization(options =>
                 {
@@ -173,38 +174,38 @@ namespace EmployeeDeactivation
             try
             {
                 if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+                else
+                {
+                    app.UseExceptionHandler("/Home/Error");
+                    app.UseHsts();
+                }
+
+                app.UseHttpsRedirection();
+                app.UseStaticFiles();
+                app.Use((context, next) =>
+                {
+                    context.Request.Scheme = "https";
+                    return next();
+                });
+                app.UseAuthentication();
+                app.UseCookiePolicy();
+
+                app.UseRouting();
+
+                app.UseAuthorization();
+
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Employees}/{action=EmployeeDeactivationForm}/{id?}");
+                });
+
+
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.Use((context, next) =>
-            {
-                context.Request.Scheme = "https";
-                return next();
-            });
-            app.UseAuthentication();
-            app.UseCookiePolicy();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Employees}/{action=EmployeeDeactivationForm}/{id?}");
-            });
-
-
-        }
             catch (Exception e)
             {
                 string fileName = @"C:\Temp\ErrorConfigure.txt";

@@ -2,8 +2,11 @@
 @if (User.Identity.IsAuthenticated)
 
 
+
 {
     var identity = User.Identity as ClaimsIdentity;
+
+
     var managerDisplay = "none";
     var adminDisplay = "none";
 
@@ -19,6 +22,7 @@
         adminDisplay = "block";
 
     }
+
 <head>
 
 
@@ -97,7 +101,7 @@
             })
         });
 
-                    $(document).on("click", "#Helper", function (e) {
+           $(document).on("click", "#Helper", function (e) {
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("HelperDeactivationPdf", "Pdf")',
@@ -108,7 +112,25 @@
                 }
             });
 
-                    });
+           });
+
+                $(document).on("click", "#excelButton", function (e) {
+             $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ExcelOperation", "Employees")',
+                    dataType: "json",
+                 data: { "name": "Amnshuman", "gid": "ffff", "bithday": "21-32-21", "email": "amshu@ff.com"},
+                 success: function (response) {
+                     if (response == true) {
+                         window.location.reload();
+                         alert("Mail Configuration updated");
+                     } else {
+                         alert("data could not be updated. Try again")
+                     }
+                 }
+             });
+                });
+
 
 
             var clicked = true;
@@ -657,6 +679,7 @@
                         <br />
                         <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
                         <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
+                        <input type="button" value="Excel" class="btn btn-success" id="excelButton" />
                     </div>
 
                     <div class="loader-wrapper" id="loader-wrapper">

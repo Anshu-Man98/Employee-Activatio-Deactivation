@@ -26,7 +26,7 @@ namespace EmployeeDeactivation.Controllers
         [Route("Email/AddConfigurationToDatabase")]
         public JsonResult AddConfigurationToDatabase(string SendGrid, string EmailTimer)
         {
-
+            
             return Json(_emailOperation.AddMailConfigurationData(SendGrid, EmailTimer));
         }
 
@@ -46,6 +46,13 @@ namespace EmployeeDeactivation.Controllers
            { ActivationWorkFlowPdfAttachment = pdfFileArray, TeamName = teamName, GId = siemensGID },
                EmployeeName = employeeName
            }, isActivationPDf));
+        }
+
+        [HttpPost]
+        [Route("Email/SendWelcomeEmail")]
+        public JsonResult SendWelcomeEmail(WelcomeCard welcomeCardInfo)
+        {
+            return Json(_emailOperation.SendWelcomeEmail(welcomeCardInfo));
         }
 
         [HttpGet]

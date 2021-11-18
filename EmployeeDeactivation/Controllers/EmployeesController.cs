@@ -54,5 +54,14 @@ namespace EmployeeDeactivation.Controllers
         {
             return Json(_employeeDataOperation.DeleteActivationDetails(gId));
         }
+
+        [HttpPost]
+        [Route("Employees/ExcelOperation")]
+        public JsonResult ExcelOperation( string name, string gid, string bithday, string email)
+        {
+            return Json(_employeeDataOperation.AddInfoToExcel( name, gid, bithday, email));
+        }
+
+
     }
 }

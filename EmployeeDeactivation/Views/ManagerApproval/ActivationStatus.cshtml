@@ -12,9 +12,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="~/js/croppie.js"></script>
-    <link href="~/css/croppie.css" rel="stylesheet" />
+    <script src="https://github.com/niklasvh/html2canvas/releases/download/0.4.1/html2canvas.js"></script>
+    <script src="~/js/cropper.js"></script>
+    <link href="~/css/cropper.css" rel="stylesheet" />
     <script src="~/js/bootbox.js"></script>
+    <link href="~/css/ActivationStatusPage.css" rel="stylesheet" />
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -119,7 +121,7 @@
                         }
 
 
-                        card += "<div class='card'><h3 id='emp" + item.employeeId + "' value='" + item.employeeName + "'>" + item.employeeName + "</h3><ul id='myUL' style='text-align:left'><li>Updated Consolidate IoT Resources List <input class='form-check-input'  type='checkbox' onchange='handleChange1(this)' " + check1 + " " + disable1 + "  id='defaultCheck1" + item.employeeId + "' style='margin-left:80px;'></li><li>Employee Birthday List Updated<input class='form-check-input' type='checkbox' onchange='handleChange2(this)'  " + check2 + " " + disable2 + "  id='defaultCheck2" + item.employeeId + "' style='margin-left:135px;'></li><li>Email-Id added to team/project distribution list <input class='form-check-input' type='checkbox' onchange='handleChange3(this)'  " + check3 + " " + disable3 + "  id='defaultCheck3" + item.employeeId + "' style='margin-left:48px;'></li><li>Member added to timesheet <input class='form-check-input' type='checkbox' onchange='handleChange4(this)'  " + check4 + " " + disable4 + "  id='defaultCheck4" + item.employeeId + "' style='margin-left:157px;'></li><li>Initiated hardware shipment request <input class='form-check-input'  type='checkbox' onchange='handleChange5(this)' " + check5 + " " + disable5 + "  id='defaultCheck5" + item.employeeId + "' style='margin-left:108px;'></li> <li>Member details Updated in EDMT tool <input class='form-check-input'  type='checkbox' onchange='handleChange6(this)' " + check6 + " " + disable6 + "  id='defaultCheck6" + item.employeeId + "' style='margin-left:94px;'></li> <li>Induction plan assignment <input class='form-check-input'  type='checkbox' onchange='handleChange7(this)' " + check7 + " " + disable7 + "  id='defaultCheck7" + item.employeeId + "' style='margin-left:168px;'></li>  <li>Induction training record updated <input class='form-check-input'  type='checkbox' onchange='handleChange8(this)' " + check8 + " " + disable8 + "  id='defaultCheck8" + item.employeeId + "' style='margin-left:126px;'></li>  <li>Ecampus list updated <input class='form-check-input'  type='checkbox' onchange='handleChange9(this)' " + check9 + " " + disable9 + "  id='defaultCheck9" + item.employeeId + "' style='margin-left:196px;'></li> </ul><input type='button' value='submit' class='btn btn-primary'  style='margin-right:5px' id='" + item.employeeId + "' onclick='submit(this.id)'/><input type='hidden' value ='" + item.employeeName + "' id='empName" + item.employeeId + "'><input type='hidden' value ='" + item.timerDate + "' id='timer" + item.employeeId + "'></input><input type='hidden' value ='" + item.activationDate + "' id='actDate" + item.employeeId + "'></input><input type='hidden' value ='" + item.reportingManagerEmail + "' id='reportingEmail" + item.employeeId + "'><input type='hidden' value ='" + item.employeeEmail + "' id='empEmail" + item.employeeId + "'></input><input type='hidden' value ='" + item.fromEmail + "' id='fromEmail" + item.employeeId + "'></input></input></input><input type='hidden' value ='" + item.employeeId + "' id='empId" + item.employeeId + "'></input><input type='hidden' value ='" + item.updateConsolidateIoTResourcesList + "' id='checkbox1" + item.employeeId + "'></input><input type='hidden' value ='" + item.birthdayListUpdated + "' id='checkbox2" + item.employeeId + "'></input><input type='hidden' value ='" + item.emailIdAddedToTeamDL + "' id='checkbox3" + item.employeeId + "'></input><input type='hidden' value ='" + item.memberAddedToTimesheet + "' id='checkbox4" + item.employeeId + "'></input> <input type='hidden' value ='" + item.initiateHardwareShipmentRequest + "' id='checkbox5" + item.employeeId + "'></input> <input type='hidden' value ='" + item.memberDetailsUpdatedInEDMTTool + "' id='checkbox6" + item.employeeId + "'></input> <input type='hidden' value ='" + item.inductionPlanAssignment + "' id='checkbox7" + item.employeeId + "'></input> <input type='hidden' value ='" + item.inductionTrainingRecordUpdated + "' id='checkbox8" + item.employeeId + "'></input> <input type='hidden' value ='" + item.vivekEcampusListUpdated + "' id='checkbox9" + item.employeeId + "'></input></div>";
+                        card += "<div class='card'><h3 id='emp" + item.employeeId + "' value='" + item.employeeName + "'>" + item.employeeName + "</h3><ul id='myUL' style='text-align:left'><li>Updated Consolidate IoT Resources List <input class='form-check-input'  type='checkbox' onchange='handleChange1(this)' " + check1 + " " + disable1 + "  id='defaultCheck1" + item.employeeId + "' style='margin-left:80px;'></li><li>Employee Birthday List Updated<input class='form-check-input' type='checkbox' onchange='handleChange2(this)'  " + check2 + " " + disable2 + "  id='defaultCheck2" + item.employeeId + "' style='margin-left:135px;'></li><li>Email-Id added to team/project distribution list <input class='form-check-input' type='checkbox' onchange='handleChange3(this)'  " + check3 + " " + disable3 + "  id='defaultCheck3" + item.employeeId + "' style='margin-left:48px;'></li><li>Member added to timesheet <input class='form-check-input' type='checkbox' onchange='handleChange4(this)'  " + check4 + " " + disable4 + "  id='defaultCheck4" + item.employeeId + "' style='margin-left:157px;'></li><li>Initiated hardware shipment request <input class='form-check-input'  type='checkbox' onchange='handleChange5(this)' " + check5 + " " + disable5 + "  id='defaultCheck5" + item.employeeId + "' style='margin-left:108px;'></li> <li>Member details Updated in EDMT tool <input class='form-check-input'  type='checkbox' onchange='handleChange6(this)' " + check6 + " " + disable6 + "  id='defaultCheck6" + item.employeeId + "' style='margin-left:94px;'></li> <li>Induction plan assignment <input class='form-check-input'  type='checkbox' onchange='handleChange7(this)' " + check7 + " " + disable7 + "  id='defaultCheck7" + item.employeeId + "' style='margin-left:168px;'></li>  <li>Induction training record updated <input class='form-check-input'  type='checkbox' onchange='handleChange8(this)' " + check8 + " " + disable8 + "  id='defaultCheck8" + item.employeeId + "' style='margin-left:126px;'></li>  <li>Ecampus list updated <input class='form-check-input'  type='checkbox' onchange='handleChange9(this)' " + check9 + " " + disable9 + "  id='defaultCheck9" + item.employeeId + "' style='margin-left:196px;'></li> </ul><input type='button' value='submit' class='btn btn-primary'  style='margin-right:5px' id='" + item.employeeId + "' onclick='submit(this.id)'/> <input type='button' value='Welcome Email' class='btn btn-success'  style='margin-right:5px' id='" + item.employeeId + "' onclick='Welcomeemailbutton(this.id)'/><input type='hidden' value ='" + item.employeeName + "' id='empName" + item.employeeId + "'><input type='hidden' value ='" + item.timerDate + "' id='timer" + item.employeeId + "'></input><input type='hidden' value ='" + item.activationDate + "' id='actDate" + item.employeeId + "'></input><input type='hidden' value ='" + item.reportingManagerEmail + "' id='reportingEmail" + item.employeeId + "'><input type='hidden' value ='" + item.employeeEmail + "' id='empEmail" + item.employeeId + "'></input><input type='hidden' value ='" + item.fromEmail + "' id='fromEmail" + item.employeeId + "'></input></input></input><input type='hidden' value ='" + item.employeeId + "' id='empId" + item.employeeId + "'></input><input type='hidden' value ='" + item.updateConsolidateIoTResourcesList + "' id='checkbox1" + item.employeeId + "'></input><input type='hidden' value ='" + item.birthdayListUpdated + "' id='checkbox2" + item.employeeId + "'></input><input type='hidden' value ='" + item.emailIdAddedToTeamDL + "' id='checkbox3" + item.employeeId + "'></input><input type='hidden' value ='" + item.memberAddedToTimesheet + "' id='checkbox4" + item.employeeId + "'></input> <input type='hidden' value ='" + item.initiateHardwareShipmentRequest + "' id='checkbox5" + item.employeeId + "'></input> <input type='hidden' value ='" + item.memberDetailsUpdatedInEDMTTool + "' id='checkbox6" + item.employeeId + "'></input> <input type='hidden' value ='" + item.inductionPlanAssignment + "' id='checkbox7" + item.employeeId + "'></input> <input type='hidden' value ='" + item.inductionTrainingRecordUpdated + "' id='checkbox8" + item.employeeId + "'></input> <input type='hidden' value ='" + item.vivekEcampusListUpdated + "' id='checkbox9" + item.employeeId + "'></input></div>";
 
 
                     });
@@ -130,7 +132,7 @@
         });
 
 
-  
+
 
         var checkbox1 = "";
         var checkbox2 = "";
@@ -206,6 +208,44 @@
             }
         }
 
+
+        function openWelcomeMailPopup() {
+            document.getElementById("welcomeMailPopup").style.display = "block";
+            document.getElementById("hiddenManagerEmail").style.display = "none";
+
+        }
+
+        function closeWelcomeMailPopup() {
+            document.getElementById("welcomeMailPopup").style.display = "none";
+            document.getElementById("hiddenManagerEmail").style.display = "none";
+
+        }
+
+        function openPreviewWelcomeMailCard() {
+            document.getElementById("PreviewAndSendPopUp").style.display = "block";
+
+        }
+
+        function closePreviewWelcomeMailCard() {
+            document.getElementById("PreviewAndSendPopUp").style.display = "none";
+
+        }
+
+
+
+        function Welcomeemailbutton(clicked) {
+            var empName = $('#empName' + clicked).val();
+            var reportingManager = $('#reportingEmail' + clicked).val();
+            var EmpfirstName = empName.split(" ")[0];
+            $("#EmployeeFullName").val(empName);
+            $("#EmployeeName1").val(EmpfirstName);
+            $("#EmployeeName2").val(EmpfirstName);
+            $("#EmployeeName3").val(EmpfirstName);
+            $("#EmployeeName4").val(EmpfirstName);
+            $("#EmployeeName5").val(EmpfirstName);
+            $("#hiddenManagerEmail").val(reportingManager);
+            openWelcomeMailPopup();
+        }
 
 
 
@@ -300,55 +340,6 @@
 
     </script>
 
-    <style>
-        .header {
-            width: 100%;
-            margin-top: 0px;
-            padding: 20px;
-            margin-bottom: 5px;
-            text-align: center;
-            background-color: black;
-            color: white;
-            font-size: 30px;
-        }
-
-        .div2 {
-            width: 300px;
-            height: 300px;
-            padding: 50px;
-            border: 1px solid red;
-            align-content: center;
-            margin-left: 35%;
-        }
-
-        body {
-            background-color: whitesmoke;
-            text-align: center;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 2px;
-            display: inline-block;
-            height: 350px;
-            margin: 1rem;
-            position: relative;
-            width: 400px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-        }
-
-            .card:hover {
-                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-            }
-
-        #backButton {
-            margin-left: 55px;
-            background-color: gray;
-            color: whitesmoke;
-        }
-    </style>
-
 
 </head>
 
@@ -357,4 +348,249 @@
         <h2>Activation Status</h2>
     </div>
 </body>
+
+
+<div id="welcomeMailPopup">
+    <main class="page">
+        <h2 id="welcomeEmailHeader">Welcome Email Configuration</h2>
+        <!-- input file -->
+        <div class="box-1">
+            <input type="file" class="form-control-file" id="input" value="Select picture of employee">
+        </div>
+        <div id="selectpictureInfo">Browse and select employee picture for welcome card</div>
+        <!-- leftbox -->
+        <div class="box-2">
+            <div class="result"></div>
+        </div>
+        <!--rightbox-->
+        <div class="box-2 img-result hide">
+            <!-- result of crop -->
+            <img id="employeePicture" class="cropped" src="" alt="">
+        </div>
+        <!-- input file -->
+        <div class="box">
+            <div class="options hide">
+                <label> Width</label>
+                <input type="number" class="img-w" value="700" min="100" max="1200" />
+            </div>
+            <!-- save btn -->
+            <button class="btn save hide" id="saveImageButton">Save</button>
+            <!-- download btn -->
+            <a href="" class="btn download hide" id="downloadImageButton">Download</a>
+        </div>
+        <input type="text" id="hiddenManagerEmail" readonly />
+        <div class="form-group" id="empInfo">
+            <h3 for="exampleFormControlTextarea1">Welcome Mail Employee Infomation:</h3>
+            <div id="WelcomeInfoLine1">Please join me in Welcoming <input type="text" id="EmployeeFullName"/> to <input type="text" id="EmployeeDepartment" placeholder="Department" />.</div>
+            <div id="WelcomeInfoLine2"><input type="text" id="EmployeeName1"  size="10" /> has joined us <input type="text" id="EmployeePreviousInfo" />.</div>
+            <div id="WelcomeInfoLine3"><input type="text" id="EmployeeName2"  size="10" /> area of expertise include <input type="text" id="EmployeeExpertise" placeholder="Expertise" />.</div>
+            <div id="WelcomeInfoLine4"><input type="text" id="EmployeeName3"  size="10" /> has worked with <input type="text" id="EmployeeExperience" placeholder="Previous company" /> before joining us.</div>
+            <div id="WelcomeInfoLine5">At a personal level <input type="text" id="EmployeeName4"  size="10" /> is <input type="text" id="EmployeeStatus" />.</div>
+            <div id="WelcomeInfoLine6"><input type="text" id="EmployeeName5"  size="10" /> hobbies include <input type="text" id="EmployeeHobbies" placeholder="Hobbies" />.</div>
+        </div>
+        <div id="WelcomeConfigurationPopupButtons">
+            @*<button class="btn btn-success" onclick="sendWelcomecomeEmail()" id="sendWelcomecomeEmailButton"></button>*@
+            <button class="btn btn-success" onclick="previewAndSendWelcomeCard()" id="previewWelcomeCardButton">Send and Preview Welcome Email</button>
+            <button class="btn btn-danger" onclick="closeWelcomeMailPopup()" id="closeWelcomeMailPopupButton">Close</button>
+
+        </div>
+    </main>
+
+    <script type="text/javascript">
+    // vars
+    // vars
+    let result = document.querySelector('.result'),
+        img_result = document.querySelector('.img-result'),
+        img_w = document.querySelector('.img-w'),
+        img_h = document.querySelector('.img-h'),
+        options = document.querySelector('.options'),
+        save = document.querySelector('.save'),
+        cropped = document.querySelector('.cropped'),
+        dwn = document.querySelector('.download'),
+        upload = document.querySelector('#input'),
+        cropper = '';
+
+    // on change show image with crop options
+    upload.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            document.getElementById("selectpictureInfo").style.display = "none";
+            // start file reader
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (e.target.result) {
+                    // create new image
+                    let img = document.createElement('img');
+                    img.id = 'image';
+                    img.src = e.target.result
+                    // clean result before
+                    result.innerHTML = '';
+                    // append new image
+                    result.appendChild(img);
+                    // show save btn and options
+                    save.classList.remove('hide');
+                    // init cropper
+                    cropper = new Cropper(img);
+                }
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
+    // save on click
+    save.addEventListener('click', (e) => {
+        e.preventDefault();
+        // get result to data uri
+        let imgSrc = cropper.getCroppedCanvas({
+            width: img_w.value // input value
+        }).toDataURL();
+        // remove hide class of img
+        cropped.classList.remove('hide');
+        img_result.classList.remove('hide');
+        // show image cropped
+        cropped.src = imgSrc;
+        dwn.classList.remove('hide');
+        dwn.download = 'imagename.png';
+        dwn.setAttribute('href', imgSrc);
+    });
+
+        function previewAndSendWelcomeCard(clicked) {
+
+            var imagedata = document.getElementById("employeePicture").src;
+            var previewEmployeeFullName = document.getElementById("EmployeeFullName").value;
+            var PreviewLine1 = "Please join me in Welcoming " + document.getElementById("EmployeeFullName").value + " to " + document.getElementById("EmployeeDepartment").value + ".";
+            var PreviewLine2 = document.getElementById("EmployeeName1").value + " has joined us " + document.getElementById("EmployeePreviousInfo").value + ".";
+            var PreviewLine3 = document.getElementById("EmployeeName1").value + "'s area of expertise include " + document.getElementById("EmployeeExpertise").value + ".";
+            var PreviewLine4 = document.getElementById("EmployeeName1").value + " has worked with " + document.getElementById("EmployeeExperience").value + " before joining us.";
+            var PreviewLine5 = "At a personal level " + document.getElementById("EmployeeName1").value + " is " + document.getElementById("EmployeeStatus").value + ".";
+            var PreviewLine6 = document.getElementById("EmployeeName1").value + "'s hobbies include " + document.getElementById("EmployeeHobbies").value + ".";
+            var PreviewFooter = "Lets all welcome " + document.getElementById("EmployeeName1").value + "! ALL THE BEST!";
+
+            if (document.getElementById("employeePicture").height == "0" || document.getElementById("EmployeeDepartment").value == '' || document.getElementById("EmployeePreviousInfo").value == '' || document.getElementById("EmployeeExpertise").value == '' || document.getElementById("EmployeeExperience").value == '' || document.getElementById("EmployeeStatus").value == '' || document.getElementById("EmployeeHobbies").value == '') {
+                alert("Please select or fill welcome email Image or textfield to view preview");
+            }
+            else {
+
+                document.getElementById("previewImage").src = imagedata;
+                document.getElementById("previewEmployeeFullName").innerText = previewEmployeeFullName;
+                document.getElementById("PreviewWelcomeInfoLine1").innerText = PreviewLine1;
+                document.getElementById("PreviewWelcomeInfoLine2").innerText = PreviewLine2;
+                document.getElementById("PreviewWelcomeInfoLine3").innerText = PreviewLine3;
+                document.getElementById("PreviewWelcomeInfoLine4").innerText = PreviewLine4;
+                document.getElementById("PreviewWelcomeInfoLine5").innerText = PreviewLine5;
+                document.getElementById("PreviewWelcomeInfoLine6").innerText = PreviewLine6;
+                document.getElementById("previewWelcomeFooter").innerText = PreviewFooter;
+
+                openPreviewWelcomeMailCard();
+            }
+        }
+
+        @*function sendWelcomecomeEmail() {
+            var image = document.getElementById("employeePicture");
+            var imageData = image.src;
+            var welcomeEmployeeFullName = document.getElementById("EmployeeFullName").value;
+            var welcomeLine1 = "Please join me in Welcoming " + document.getElementById("EmployeeFullName").value + " to " + document.getElementById("EmployeeDepartment").value + ".";
+            var welcomeLine2 = document.getElementById("EmployeeName1").value + " has joined us " + document.getElementById("EmployeePreviousInfo").value + ".";
+            var welcomeLine3 = document.getElementById("EmployeeName1").value + "'s area of expertise include " + document.getElementById("EmployeeExpertise").value + ".";
+            var welcomeLine4 = document.getElementById("EmployeeName1").value + " has worked with " + document.getElementById("EmployeeExperience").value + " before joining us.";
+            var welcomeLine5 = "At a personal level " + document.getElementById("EmployeeName1").value + " is " + document.getElementById("EmployeeStatus").value + ".";
+            var welcomeLine6 = document.getElementById("EmployeeName1").value + "'s hobbies include " + document.getElementById("EmployeeHobbies").value + ".";
+            var welcomeFooter = "Lets all welcome " + document.getElementById("EmployeeName1").value + "! ALL THE BEST!";
+            var reportingManagerEmail = document.getElementById("hiddenManagerEmail").value;
+            if (image.height == "0" || document.getElementById("EmployeeDepartment").value == '' || document.getElementById("EmployeePreviousInfo").value == '' || document.getElementById("EmployeeExpertise").value == '' || document.getElementById("EmployeeExperience").value == '' || document.getElementById("EmployeeStatus").value == '' || document.getElementById("EmployeeHobbies").value == '') {
+                alert("Please select or fill welcome email Image or textfield");
+            }
+            else {
+                fileData = new FormData();
+
+                fileData.append('WelcomeImageData', imageData);
+                fileData.append('WelcomeEmployeeFullName', welcomeEmployeeFullName);
+                fileData.append('WelcomeCardLine1', welcomeLine1);
+                fileData.append('WelcomeCardLine2', welcomeLine2);
+                fileData.append('WelcomeCardLine3', welcomeLine3);
+                fileData.append('WelcomeCardLine4', welcomeLine4);
+                fileData.append('WelcomeCardLine5', welcomeLine5);
+                fileData.append('WelcomeCardLine6', welcomeLine6);
+                fileData.append('WelcomeCardFooter', welcomeFooter);
+                fileData.append('ReportingManagerEmail', reportingManagerEmail);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SendWelcomeEmail", "Email")',
+                data: fileData,
+                processData: false,
+                contentType: false,
+                success: function (stream) {
+                    window.location.reload();
+                    bootbox.alert("Welcome Email Sent Successfully");
+
+                }
+            });
+
+            }
+
+        }*@
+
+
+    </script>
+
+</div>
+
+<div class="PreviewPopup" id="PreviewAndSendPopUp">
+    <main id="PreviewAndSendWindow">
+        <div id="html-content-holder" style="background-color: #19FBED; width: 920px; height: 570px; border-radius: 10px; ">
+            <p id="previewWelcomeheader">We Have a New Joinee!</p>
+            <img class="profile-img" id="previewImage">
+            <div class="text-container">
+                <p class="title-text" id="previewEmployeeFullName"></p>
+                <div id="PreviewWelcomeInfoLine1"></div>
+                <div id="PreviewWelcomeInfoLine2"></div>
+                <div id="PreviewWelcomeInfoLine3"></div>
+                <div id="PreviewWelcomeInfoLine4"></div>
+                <div id="PreviewWelcomeInfoLine5"></div>
+                <div id="PreviewWelcomeInfoLine6"></div>
+            </div>
+            <p id="previewWelcomeFooter"></p>
+        </div>
+        <div id="PopUpButtons">
+            <button class="btn btn-success" onclick="sendWelcomecomeEmail()" id="sendWelcomecomeEmailButton">Send Welcome Email</button>
+            <button class="btn btn-danger" onclick="closePreviewWelcomeMailCard()" id="previewClose">close preview</button>
+
+        </div>
+    </main>
+
+
+    <script>
+        function sendWelcomecomeEmail() {
+        var element = $("#html-content-holder"); // global variable
+        var getCanvas; // global variable
+
+
+        html2canvas(element, {
+            onrendered: function (canvas) {
+                getCanvas = canvas;
+                var imgageData = getCanvas.toDataURL("image/png");
+                            fileData = new FormData();
+
+            fileData.append('WelcomeImageData', imgageData);
+            fileData.append('WelcomeEmployeeFullName', "Abhi Rao");
+            fileData.append('ReportingManagerEmail', "name");
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SendWelcomeEmail", "Email")',
+                data: fileData,
+                processData: false,
+                contentType: false,
+                success: function (stream) {
+                    window.location.reload();
+                    bootbox.alert("Welcome Email Sent Successfully");
+
+                }
+            });
+
+            }
+        });
+
+    }
+    </script>
+</div>
+
 

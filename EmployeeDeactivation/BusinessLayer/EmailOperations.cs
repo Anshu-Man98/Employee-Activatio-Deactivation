@@ -162,7 +162,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 details.ToEmailId = emailDetails[0];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowInitiated,null,null);
+                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowInitiated,null,null,null);
 
             }
             if (isActivationPdf)
@@ -171,13 +171,28 @@ namespace EmployeeDeactivation.BusinessLayer
                 details.ToEmailId = "nadisha.kumar@siemens.com";
                 details.CcEmailId = "vivekanand.biradar@siemens.com";
                 details.FileName = null;
-                _ = SendEmailAsync(details, TypeOfWorkflow.EmailToVivek,null,null);
+                _ = SendEmailAsync(details, TypeOfWorkflow.EmailToVivek,null,null,null);
                 details.ToEmailId = emailDetails[1];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                _ = SendEmailAsync(details, TypeOfWorkflow.Activation,null,null);
+                _ = SendEmailAsync(details, TypeOfWorkflow.Activation,null,null,null);
             }
             return true;
+        }
+
+        public bool SendWelcomeEmail(WelcomeCard welcomeCardInfo)
+        {
+            EmailDetails details = new EmailDetails()
+            {
+                FromEmailId = "amnshuman1998@gmail.com",
+                ToEmailId = "amnshuman.sunil@siemens.com",
+                ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
+                FileName = null
+            };
+            _ = SendEmailAsync(details, TypeOfWorkflow.WelcomeEmail, null, null, welcomeCardInfo);
+
+            return true;
+
         }
         //public async Task SendEmailDeclined(string gId, string employeeName)
         //{
@@ -264,7 +279,7 @@ namespace EmployeeDeactivation.BusinessLayer
                                     ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = approvedEmployee.DeactivationWorkFlowPdfAttachment, TeamName = String.Empty },
                                     FileName = "DeactivationWorkflow_" + approvedEmployee.EmployeeName
                                 };
-                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay, null, null);
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowLastWorkingDay, null, null, null);
                             }
                         }
                     }
@@ -323,10 +338,10 @@ namespace EmployeeDeactivation.BusinessLayer
                                     HardwaresCollected = Employees.HardwaresCollected,
                                     RaisedWindowsDeactivationRequestNexus = Employees.RaisedWindowsDeactivationRequestNexus,
                                  };
-                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay, deactivationTask,null);
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderManagerTwoDaysBeforeLastWorkingDay, deactivationTask,null,null);
                                 details.ToEmailId = Employees.EmployeeEmail;
                                 details.CcEmailId = Employees.ReportingManagerEmail;
-                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee, null,null);
+                                await SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee, null,null,null);
                 }
             }
             catch (Exception e)
@@ -386,10 +401,10 @@ namespace EmployeeDeactivation.BusinessLayer
                         InductionTrainingRecordUpdated = Employees.InductionTrainingRecordUpdated,
                         VivekEcampusListUpdated = Employees.VivekEcampusListUpdated,
                     };
-                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager, null, activationTask);
+                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager, null, activationTask, null);
                     details.ToEmailId = Employees.EmployeeEmail;
                     details.WfhAttachment = true;
-                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee, null,null);
+                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee, null,null,null);
                     
                 }
             }
@@ -423,7 +438,7 @@ namespace EmployeeDeactivation.BusinessLayer
         }
 
 
-        private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow, DeactivationStatus deactivationTask , ActivationStatus activationTask)
+        private async Task SendEmailAsync(EmailDetails details, Enum typeOfWorkflow, DeactivationStatus deactivationTask , ActivationStatus activationTask, WelcomeCard welcomeCardInfo)
         {
             try
             {
@@ -520,6 +535,21 @@ namespace EmployeeDeactivation.BusinessLayer
                         htmlContent = htmlContent.Replace("+textBody+", textBody);
                     }
                 }
+
+                if (Convert.ToInt32(typeOfWorkflow) == 11)
+                {
+                    var empName = welcomeCardInfo.WelcomeEmployeeFullName;
+                    subject = "Welcome " + empName;
+                    string textBody = "<img src='"+ welcomeCardInfo.WelcomeImageData +"'>";
+                    htmlContent = RetrieveSpecificConfiguration("WelcomeEmail");
+                    if (htmlContent.Contains("+textBody+"))
+
+                    {
+                        htmlContent = htmlContent.Replace("+textBody+", textBody);
+                    }
+
+                }
+
                 if (Convert.ToInt32(typeOfWorkflow) == 7)
                 {
                     subject = "Deactivation workflow declined";
@@ -601,6 +631,8 @@ namespace EmployeeDeactivation.BusinessLayer
                                 htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
                             }
                 }
+
+                
 
 
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);

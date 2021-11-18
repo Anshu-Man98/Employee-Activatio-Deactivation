@@ -27,5 +27,7 @@ namespace EmployeeDeactivation.Interface
         //Task<List<EmployeeDetails>> RetrieveAllDeactivatedEmployees1();
 
         List<EmployeeDetails> RetrieveDeactivationWorkFlowBaseonDate(string Datee);
+
+        Task<string> AddInfoToExcel( string name, string gid, string bithday, string email);
     }
 }
