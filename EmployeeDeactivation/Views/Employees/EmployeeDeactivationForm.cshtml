@@ -1,8 +1,7 @@
 ﻿
 @using System.Security.Claims
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @if (User.Identity.IsAuthenticated)
-
-
 {
     var identity = User.Identity as ClaimsIdentity;
     var managerDisplay = "none";
@@ -19,7 +18,7 @@
         lastName = split[1];
     }
 
-    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("48b47645-cabb-4ca9-8749-5e1e79b1a9dc"))) == true)
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("2dc589b5-96a0-4453-b8dc-eb4b372b1092"))) == true)
     {
         adminDisplay = "block";
         lastName = null;
@@ -28,7 +27,7 @@
         managerAdminApprove = "approve";
 
     }
-    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"))) == true)
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("7ffec22d-7987-493b-aa3b-e24ca29ba04b"))) == true)
     {
         managerDisplay = "block";
         adminDisplay = "block";
@@ -142,8 +141,8 @@
                 url: '@Url.Action("HelperDeactivationPdf", "Pdf")',
                 dataType: "json",
                 success: function (response) {
-                    pdfWindow = window.open("", "width=400,height=400,top=100,left=400", '_self')
-                    pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
+                    pdfWindow = window.open("", "width=400,height=400,top=100,left=400", '_self');
+                    pdfWindow.document.write("<title>Deactivation/Activation Helper PDF</title><iframe width='100%' height='100%' src='" + response +"'></iframe>");
                 }
             });
 
@@ -228,7 +227,7 @@
                                                         $.ajax({
                                                             type: "POST",
                                                             url: '@Url.Action("PdfAttachmentEmail", "Email")',
-                                                            data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false },
+                                                            data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#employeeFirstName').val() + " " + $('#employeeLastName').val(), 'teamName': $('#teamNames').val(), 'sponsorGID': "", 'isActivationPDf': false, 'employeeEmail': $('#employeeEmail').val() },
                                                             dataType: "json",
                                                             success: function (result) {
                                                                 if (result) {
@@ -405,6 +404,12 @@
 </head>
 
 <body>
+    @{
+               if(bool.Parse(Configuration["InBeta"]))
+            {
+        <h1>Beta Mode</h1>
+            }
+    }
     <nav class="navbar navbar sticky-top" id="header">
         <a class="navbar-brand" id="headerText">Employee Deactivation Form</a>
         <div id="Pages">
@@ -414,8 +419,8 @@
                 <div id="viewReportButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("AccountDeactivationDatePage", "Admin")','_self')">View Report</div>
             </div>
             @*<div>
-                <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
-            </div>*@
+                    <div id="workflowButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("ManagerApprovalPage", "ManagerApproval")','_self')">Workflow</div>
+                </div>*@
             <div>
                 <div id="deactivationStatusButton" style="display:@adminDisplay" onclick="window.open('@Url.Action("DeactivationStatus", "ManagerApproval")','_self')">Deactivation Status</div>
             </div>
@@ -439,7 +444,7 @@
         <label for="radio-seven">Activation Form</label>
 
     </div>
-    
+
     <div class="form">
         <form class="form-group required" action="Create">
 
@@ -454,6 +459,7 @@
             <div class="form-group row">
                 <label id="employeeFNameError" hidden class="ErrorView">only Alphabets are allowed</label>
             </div>
+
 
             <div class="form-group row">
                 <label class="control-label col-sm-1" id="TextField">

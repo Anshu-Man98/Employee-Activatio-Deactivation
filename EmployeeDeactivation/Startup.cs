@@ -97,7 +97,6 @@ namespace EmployeeDeactivation
                 options.UseSqlServer(Configuration.GetConnectionString("EmployeeDeactivationContext")));
                 //options.UseSqlServer($"Server={server},{port};Initial Catalog={database};User ID ={user};Password={password}"));
 
-
                 services.AddScoped<IEmployeeDataOperation, EmployeeDataOperation>();
                 services.AddScoped<IPdfDataOperation, PdfDataOperation>();
                 services.AddScoped<IAdminDataOperation, AdminDataOperation>();
@@ -112,9 +111,9 @@ namespace EmployeeDeactivation
 
                 services.AddAuthorization(options =>
                 {
-                    options.AddPolicy("Manager", policyBuilder => policyBuilder.RequireClaim("groups", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc"));
-                    options.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim("groups", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"));
-                    options.AddPolicy("Admin&Manager", policyBuilder => policyBuilder.RequireClaim("groups", "48b47645-cabb-4ca9-8749-5e1e79b1a9dc", "c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"));
+                    options.AddPolicy("Manager", policyBuilder => policyBuilder.RequireClaim("groups", "2dc589b5-96a0-4453-b8dc-eb4b372b1092"));
+                    options.AddPolicy("Admin", policyBuilder => policyBuilder.RequireClaim("groups", "7ffec22d-7987-493b-aa3b-e24ca29ba04b"));
+                    options.AddPolicy("Admin&Manager", policyBuilder => policyBuilder.RequireClaim("groups", "7ffec22d-7987-493b-aa3b-e24ca29ba04b", "2dc589b5-96a0-4453-b8dc-eb4b372b1092"));
                 });
 
 

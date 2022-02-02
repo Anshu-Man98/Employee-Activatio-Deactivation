@@ -34,7 +34,8 @@ namespace EmployeeDeactivation.BusinessLayer
             (form.Fields[10] as PdfLoadedTextBoxField).ReadOnly = true;
             (form.Fields[12] as PdfLoadedTextBoxField).Text = EmailandGId;
             (form.Fields[12] as PdfLoadedTextBoxField).ReadOnly = true;
-            (form.Fields[4] as PdfLoadedTextBoxField).Text = employeeData.LastWorkingDate.ToString() ?? "";
+            var LastWorkingDate = employeeData.LastWorkingDate.Day + " / " + employeeData.LastWorkingDate.Month + " / " +employeeData.LastWorkingDate.Year;
+            (form.Fields[4] as PdfLoadedTextBoxField).Text = LastWorkingDate ?? "";
             (form.Fields[4] as PdfLoadedTextBoxField).ReadOnly = true;
             (form.Fields[16] as PdfLoadedTextBoxField).Text = employeeData.SponsorLastName ?? "";
             (form.Fields[16] as PdfLoadedTextBoxField).ReadOnly = false;
@@ -76,7 +77,8 @@ namespace EmployeeDeactivation.BusinessLayer
                     loadedListBox.SelectedValue = activationEmployeeData.Gender;
                 }
             }
-            (form.Fields[9] as PdfLoadedTextBoxField).Text = activationEmployeeData.DateOfBirth.ToString()??"";
+            var DateOfBirth = activationEmployeeData.DateOfBirth.Day + " / " + activationEmployeeData.DateOfBirth.Month + " / " + activationEmployeeData.DateOfBirth.Year;
+            (form.Fields[9] as PdfLoadedTextBoxField).Text = DateOfBirth ?? "";
             (form.Fields[9] as PdfLoadedTextBoxField).ReadOnly = true;
             (form.Fields[10] as PdfLoadedTextBoxField).Text = activationEmployeeData.LastName ?? "";
             (form.Fields[10] as PdfLoadedTextBoxField).ReadOnly = true;

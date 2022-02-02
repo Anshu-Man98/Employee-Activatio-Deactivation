@@ -10,13 +10,13 @@
     var managerDisplay = "none";
     var adminDisplay = "none";
 
-    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("48b47645-cabb-4ca9-8749-5e1e79b1a9dc"))) == true)
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("2dc589b5-96a0-4453-b8dc-eb4b372b1092"))) == true)
     {
         adminDisplay = "block";
 
 
     }
-    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("c9b7fa80-eb0a-4f65-8aca-59e8712c6f02"))) == true)
+    if ((identity.Claims.Any(c => c.Type == "groups" && c.Value.Equals("7ffec22d-7987-493b-aa3b-e24ca29ba04b"))) == true)
     {
         managerDisplay = "block";
         adminDisplay = "block";
@@ -109,27 +109,11 @@
                 success: function (response) {
                     pdfWindow = window.open("", "width=400,height=400,top=100,left=400", '_self')
                     pdfWindow.document.write("<title>Deactivation Form PDF</title><iframe width='100%' height='100%' src='" + response + "'></iframe>")
+                 
                 }
             });
 
            });
-
-                $(document).on("click", "#excelButton", function (e) {
-             $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("ExcelOperation", "Employees")',
-                    dataType: "json",
-                 data: { "name": "Amnshuman", "gid": "ffff", "bithday": "21-32-21", "email": "amshu@ff.com"},
-                 success: function (response) {
-                     if (response == true) {
-                         window.location.reload();
-                         alert("Mail Configuration updated");
-                     } else {
-                         alert("data could not be updated. Try again")
-                     }
-                 }
-             });
-                });
 
 
 
@@ -218,7 +202,7 @@
                                                                 $.ajax({
                                                                     type: "POST",
                                                                     url: '@Url.Action("PdfAttachmentEmail", "Email")',
-                                                                    data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'siemensGID': $('#siemensGid').val(), 'isActivationPDf': true },
+                                                                    data: { 'pdfFileArray': response.toString().replace('data:application/pdf;base64,', ''), 'employeeName': $('#siemensFirstName').val() + " " + $('#siemensLastName').val(), 'teamName': $('#teamNames').val(), 'siemensGID': $('#siemensGid').val(), 'employeeEmail': $('#siemensEmail').val(),'isActivationPDf': true },
                                                                     success: function (response) {
                                                                             fileData = new FormData();
                                                                         fileData.append('EmployeeId', $('#siemensGid').val());
@@ -679,7 +663,6 @@
                         <br />
                         <input type="button" value="Preview Pdf" class="btn btn-primary" style="margin-right:5px" id="previewButton" />
                         <input type="button" value="Submit" class="btn btn-success" id="submitButton" />
-                        <input type="button" value="Excel" class="btn btn-success" id="excelButton" />
                     </div>
 
                     <div class="loader-wrapper" id="loader-wrapper">

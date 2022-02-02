@@ -9,6 +9,8 @@ namespace EmployeeDeactivation.Models
     {
         public string WelcomeImageData { get; set; }
         public string WelcomeEmployeeFullName { get; set; }
+        public string ReportingManagerName { get; set; }
         public string ReportingManagerEmail { get; set; }
+        public string EmployeeId { get; set; }
     }
 }

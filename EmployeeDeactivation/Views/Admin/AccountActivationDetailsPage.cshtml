@@ -72,11 +72,6 @@
 
             });
 
-            // end of on select change
-
-
-
-            // END OF PAGINATION
         }
 
         function deactivationPage() { 
@@ -102,7 +97,7 @@
             $('#Tabla tr').each(function (i, tr) {
 
                 var val = $(tr).find("td:nth-child(7)").text();
-                var dateVal = moment(val, "DD/MM/YYYY");
+                var dateVal = moment(val, "MM/DD/YYYY");
                 var visible = (dateVal.isBetween(dateFrom, dateTo, null, [])) ? "" : "none";
                 $(tr).css('display', visible);
             });
@@ -128,12 +123,12 @@
             </select>
         </div>
         <div class="col-md-3">
-            <h5>DOB from:</h5>
-            <input type="date" class="form-control" id="datefilterfrom" data-date-split-input="true" onchange="filterRows()">
+            <h5>Activation date from:</h5>
+            <input class="form-control" id="datefilterfrom" type="date" placeholder="YYYY-MM-DD" data-date-split-input="true" onchange="filterRows()">
         </div>
         <div class="col-md-3">
-            <h5>DOB to:</h5>
-            <input type="date" class="form-control" id="datefilterto" data-date-split-input="true" onchange="filterRows()">
+            <h5>Activation date to:</h5>
+            <input class="form-control" id="datefilterto" type="date" placeholder="YYYY-MM-DD" data-date-split-input="true" onchange="filterRows()">
         </div>
         <div class="col-md-3">
             <h5>Workflow:</h5>
@@ -163,11 +158,12 @@
                             <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(4)')" style="cursor:pointer">Team</th>
                             <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(5)')" style="cursor:pointer">Role</th>
                             <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(6)')" style="cursor:pointer">Gender</th>
-                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(7)')" style="cursor:pointer">Date Of Birth</th>
-                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Place of Birth</th>
-                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Address</th>
-                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Phone No.</th>
-                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Nationality</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(7)')" style="cursor:pointer">Activation date(M/D/Y)</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(8)')" style="cursor:pointer">Date Of Birth(M/D/Y)</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(9)')" style="cursor:pointer">Place of Birth</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(10)')" style="cursor:pointer">Address</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(11)')" style="cursor:pointer">Phone No.</th>
+                            <th scope="col" onclick="w3.sortHTML('#testTable', '.item', 'td:nth-child(12)')" style="cursor:pointer">Nationality</th>
                         </tr>
                     </thead>
                     @foreach (EmployeeDetails details in Model)
@@ -181,8 +177,9 @@
                                 <td>@details.GId <span class="hidden-xs"></span></td>
                                 <td>@details.TeamName <span class="hidden-xs"></span></td>
                                 <td>@details.Role <span class="hidden-xs"></span></td>
-                                <td>@details.Gender</td>
-                                <td>@details.DateOfBirth.Day - @details.DateOfBirth.Month - @details.DateOfBirth.Year  <span class="hidden-xs"></span></td>
+                                <td>@details.Gender </td>
+                                <td>@details.ActivationDate<span class="hidden-xs"></span></td>
+                                <td>@details.DateOfBirth.Month/@details.DateOfBirth.Day/@details.DateOfBirth.Year  <span class="hidden-xs"></span></td>
                                 <td>@details.PlaceOfBirth <span class="hidden-xs"></span></td>
                                 <td>@details.Address <span class="hidden-xs"></span></td>
                                 <td>@details.PhoneNo <span class="hidden-xs"></span></td>

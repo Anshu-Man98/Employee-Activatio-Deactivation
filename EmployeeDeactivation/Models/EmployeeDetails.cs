@@ -34,5 +34,6 @@ namespace EmployeeDeactivation.Models
         public byte[] ActivationWorkFlowPdfAttachment { get; set; }
         public bool isDeactivatedWorkFlow { get; set; }
         public string ActivationDate { get; set; }
+
     }
 }

@@ -23,7 +23,7 @@ namespace EmployeeDeactivation.BusinessLayer
         public void AddPendingDeactivationRequestToDatabase(ManagerApprovalStatus managerApprovalStatus)
         {
             var count = 0;
-            ManagerApprovalStatus ManagerApprovalStatus = new ManagerApprovalStatus()
+            var ManagerApprovalStatus = new ManagerApprovalStatus()
             {
                 EmployeeName = managerApprovalStatus.EmployeeName,
                 EmployeeGId = managerApprovalStatus.EmployeeGId,
@@ -45,14 +45,14 @@ namespace EmployeeDeactivation.BusinessLayer
             }
             if (count == 0)
             {
-                _context.Add(ManagerApprovalStatus);
+                _context.ManagerApprovalStatus.Add(ManagerApprovalStatus);
                 _context.SaveChanges();
             }
         }
 
         public bool AddDeactivationTaskToDatabase(DeactivationStatus deactivationStatus)
         {
-            DeactivationStatus DeactivationStatus = new DeactivationStatus()
+            var DeactivationStatus = new DeactivationStatus()
             {
                 EmployeeId = deactivationStatus.EmployeeId,
                 EmployeeName = deactivationStatus.EmployeeName,
@@ -88,7 +88,7 @@ namespace EmployeeDeactivation.BusinessLayer
 
         public bool AddActivationTaskToDatabase(ActivationStatus activationStatus)
         {
-            ActivationStatus ActivationStatus = new ActivationStatus()
+            var ActivationStatus = new ActivationStatus()
             {
                 EmployeeId = activationStatus.EmployeeId,
                 EmployeeName = activationStatus.EmployeeName,
@@ -126,6 +126,7 @@ namespace EmployeeDeactivation.BusinessLayer
             _context.SaveChanges();
             return true;
         }
+                
 
         public List<ManagerApprovalStatus> GetPendingDeactivationWorkflowForParticularManager(string userEmail)
         {
@@ -266,6 +267,20 @@ namespace EmployeeDeactivation.BusinessLayer
 
         }
 
+        public string GetFromActivationEmailBasedOnGid(string gid)
+        {
+            var allDeactivationWorkflow = GetAllApprovedDeactivationWorkflows();
+            foreach (var item in allDeactivationWorkflow)
+            {
+                if (gid.ToLower() == item.EmployeeGId.ToLower())
+                {
+                    return item.ReportingManagerEmail;
+                }
+            }
+            return null;
+
+        }
+
         public List<ManagerApprovalStatus> GetAllDeclinedDeactivationWorkflows()
         {
             List<ManagerApprovalStatus> declinedDeactivationWorkflows = new List<ManagerApprovalStatus>();
@@ -316,7 +331,7 @@ namespace EmployeeDeactivation.BusinessLayer
 
                 foreach (var Details in DeactivationTasksBasedOnDate)
                 {
-                    if (DateTime.Today.ToString() == Convert.ToDateTime(Details.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Details.LastWorkingDate))
+                    if (DateTime.Today.ToString() == Convert.ToDateTime(Details.TimerDate).AddDays(Timer).ToString() && DateTime.Today < Convert.ToDateTime(Details.LastWorkingDate).AddDays(16))
                     {
                         DateTime TimerDate = Convert.ToDateTime(Details.TimerDate).AddDays(Timer);
                         Details.TimerDate = TimerDate;

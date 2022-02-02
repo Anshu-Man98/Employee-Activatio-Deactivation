@@ -19,5 +19,6 @@ namespace EmployeeDeactivation.Models
         public string SivantosPointEmailID { get; set; }
         public string CmEmailID { get; set; }
         public string CcEmailID { get; set; }
+        public string SivantosPointName { get; set; }
     }
 }

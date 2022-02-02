@@ -9,8 +9,8 @@ namespace EmployeeDeactivation.Interface
     {
         Task SendReminderEmail();
         //Task SendEmailDeclined(string gId, string employeeName);
-        bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf);
-        bool AddMailConfigurationData(string SendGrid, string EmailTimer);
+        bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf, string employeeEmail);
+        bool AddMailConfigurationData(string SendGrid, string EmailTimer, string ToEmailAUDomain, string ContactNameAUDomain, string CCEmailAUDomain, string WelcomeEmailSender);
         //string RetrieveSpecificConfiguration(string key);
         List<Tokens> RetrieveAllMailContent();
         bool AddMailContentData(string ActivationMailInitiated, string DeactivationMailInitiated, string DeactivationMailLastWorkingDayToSponsor, string DeactivationWorkflowDaysBeforeRemainder, string DeactivationWorkflowToEmployeeRemainder, string ActivationWorkFlowRemainderToManager, string ActivationWorkFlowRemainderToEmployee, string EmailToAssignAUdomainWBT /*, string DeclinedMail, string DeactivationMailLastWorkingDayToManager*/);

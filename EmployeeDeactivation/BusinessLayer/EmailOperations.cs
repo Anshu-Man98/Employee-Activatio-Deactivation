@@ -18,15 +18,17 @@ namespace EmployeeDeactivation.BusinessLayer
 
         private readonly IEmployeeDataOperation _employeeDataOperation;
         private readonly IManagerApprovalOperation _managerApprovalOperation;
+        private readonly IAdminDataOperation _adminDataOperation;
         private readonly EmployeeDeactivationContext _context;
-        private readonly SendGridClient sendGridClientApiKey;
+        private readonly SendGridClient sendGridClientApiKey; 
         private readonly List<Tokens> configurations;
 
-        public EmailOperations(IEmployeeDataOperation employeeDataOperation, IManagerApprovalOperation managerApprovalOperation, EmployeeDeactivationContext context)
+        public EmailOperations(IEmployeeDataOperation employeeDataOperation, IManagerApprovalOperation managerApprovalOperation, IAdminDataOperation adminDataOperation, EmployeeDeactivationContext context)
         {
             _employeeDataOperation = employeeDataOperation;
             _managerApprovalOperation = managerApprovalOperation;
-            _context = context;
+            _adminDataOperation = adminDataOperation;
+            _context = context; 
             configurations = RetrieveAllMailContent();
             sendGridClientApiKey = new SendGridClient(RetrieveSpecificConfiguration("SendGrid"));
         }
@@ -47,29 +49,43 @@ namespace EmployeeDeactivation.BusinessLayer
             return (_context.Tokens.ToList());
         }
 
-        public bool AddMailConfigurationData(string SendGrid, string EmailTimer)
+        public bool AddMailConfigurationData(string SendGrid, string EmailTimer, string ToEmailAUDomain, string ContactNameAUDomain, string CCEmailAUDomain , string WelcomeEmailSender)
         {
             try
             {
-                bool databaseUpdateStatus = false;
-                var ConfigDetails = _context.Tokens.ToList();
-                foreach (var Config in ConfigDetails)
+                var configDetails = _context.Tokens.ToList();
+                foreach (var config in configDetails)
                 {
-
-                    if (Config.TokenName == "SendGrid")
+                    switch (config.TokenName)
                     {
-                        Config.TokenValue = SendGrid;
-                        _context.SaveChanges();
-                    }
-                    if (Config.TokenName == "EmailTimer")
-                    {
-                        Config.TokenValue = EmailTimer;
-                        _context.SaveChanges();
+                        case "SendGrid":
+                            config.TokenValue = SendGrid;
+                            _context.SaveChanges();
+                            break;
+                        case "EmailTimer":
+                            config.TokenValue = EmailTimer;
+                            _context.SaveChanges();
+                            break;
+                        case "ToEmailAUDomain":
+                            config.TokenValue = ToEmailAUDomain;
+                            _context.SaveChanges();
+                            break;
+                        case "ContactNameAUDomain":
+                            config.TokenValue = ContactNameAUDomain;
+                            _context.SaveChanges();
+                            break;
+                        case "CCEmailAUDomain":
+                            config.TokenValue = CCEmailAUDomain;
+                            _context.SaveChanges();
+                            break;
+                        case "WelcomeEmailSender":
+                            config.TokenValue = WelcomeEmailSender;
+                            _context.SaveChanges();
+                            break;
                     }
 
                 }
-                databaseUpdateStatus = true;
-                return databaseUpdateStatus;
+                return true;
             }
             catch (Exception ex)
             {
@@ -81,51 +97,44 @@ namespace EmployeeDeactivation.BusinessLayer
         {
             try
             {
-                bool databaseUpdateStatus = false;
-                var ConfigDetails = _context.Tokens.ToList();
-                foreach (var Config in ConfigDetails)
+                var configDetails = _context.Tokens.ToList();
+                foreach (var config in configDetails)
                 {
 
-                    if (Config.TokenName == "ActivationMailInitiated")
+                    switch (config.TokenName)
                     {
-                        Config.TokenValue = ActivationMailInitiated;
-                        _context.SaveChanges();
-                    }
-                    if (Config.TokenName == "DeactivationMailInitiated")
-                    {
-                        Config.TokenValue = DeactivationMailInitiated;
-                        _context.SaveChanges();
-                    }
-                    if (Config.TokenName == "DeactivationMailLastWorkingDayToSponsor")
-                    {
-                        Config.TokenValue = DeactivationMailLastWorkingDayToSponsor;
-                        _context.SaveChanges();
-                    }
-
-                    if (Config.TokenName == "DeactivationWorkflowToEmployeeRemainder")
-                    {
-                        Config.TokenValue = DeactivationWorkflowToEmployeeRemainder;
-                        _context.SaveChanges();
-                    }
-                    if (Config.TokenName == "DeactivationWorkflowDaysBeforeRemainder")
-                    {
-                        Config.TokenValue = DeactivationWorkflowDaysBeforeRemainder;
-                        _context.SaveChanges();
-                    }
-                    if (Config.TokenName == "ActivationWorkFlowRemainderToManager")
-                    {
-                        Config.TokenValue = ActivationWorkFlowRemainderToManager;
-                        _context.SaveChanges();
-                    }
-                    if (Config.TokenName == "ActivationWorkFlowRemainderToEmployee")
-                    {
-                        Config.TokenValue = ActivationWorkFlowRemainderToEmployee;
-                        _context.SaveChanges();
-                    }
-                    if (Config.TokenName == "EmailToAssignAUdomainWBT")
-                    {
-                        Config.TokenValue = EmailToAssignAUdomainWBT;
-                        _context.SaveChanges();
+                        case "ActivationMailInitiated":
+                            config.TokenValue = ActivationMailInitiated;
+                            _context.SaveChanges();
+                            break;
+                        case "DeactivationMailInitiated":
+                            config.TokenValue = DeactivationMailInitiated;
+                            _context.SaveChanges();
+                            break;
+                        case "DeactivationMailLastWorkingDayToSponsor":
+                            config.TokenValue = DeactivationMailLastWorkingDayToSponsor;
+                            _context.SaveChanges();
+                            break;
+                        case "DeactivationWorkflowToEmployeeRemainder":
+                            config.TokenValue = DeactivationWorkflowToEmployeeRemainder;
+                            _context.SaveChanges();
+                            break;
+                        case "DeactivationWorkflowDaysBeforeRemainder":
+                            config.TokenValue = DeactivationWorkflowDaysBeforeRemainder;
+                            _context.SaveChanges();
+                            break;
+                        case "ActivationWorkFlowRemainderToManager":
+                            config.TokenValue = ActivationWorkFlowRemainderToManager;
+                            _context.SaveChanges();
+                            break;
+                        case "ActivationWorkFlowRemainderToEmployee":
+                            config.TokenValue = ActivationWorkFlowRemainderToEmployee;
+                            _context.SaveChanges();
+                            break;
+                        case "EmailToAssignAUdomainWBT":
+                            config.TokenValue = EmailToAssignAUdomainWBT;
+                            _context.SaveChanges();
+                            break;
                     }
                     //if (Config.TokenName == "DeactivationMailLastWorkingDayToManager")
                     //{
@@ -139,8 +148,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     //}
 
                 }
-                databaseUpdateStatus = true;
-                return databaseUpdateStatus;
+                return true;
             }
             catch (Exception ex)
             {
@@ -148,7 +156,7 @@ namespace EmployeeDeactivation.BusinessLayer
             }
         }
         #endregion
-        public bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf)
+        public bool SendPDfAsEmailAttachment(EmailDetails details, bool isActivationPdf, string employeeEmail)
         {
             var fileName = isActivationPdf ? "Activation workflow_" : "Deactivation workflow_";
             var emailDetails = _employeeDataOperation.GetReportingEmailIds(details.ActivatedEmployee.TeamName);
@@ -162,30 +170,42 @@ namespace EmployeeDeactivation.BusinessLayer
                 details.ToEmailId = emailDetails[0];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
-                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowInitiated,null,null,null);
+                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowInitiated, null, null, null);
+                details.ToEmailId = employeeEmail;
+                details.CcEmailId = emailDetails[3];
+                details.ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty };
+                details.FileName = null;
+                _ = SendEmailAsync(details, TypeOfWorkflow.DeactivationWorkFlowReminderEmployee, null, null, null);
 
             }
             if (isActivationPdf)
             {
                 details.FromEmailId = emailDetails[0];
-                details.ToEmailId = "nadisha.kumar@siemens.com";
-                details.CcEmailId = "vivekanand.biradar@siemens.com";
+                details.ToEmailId = RetrieveSpecificConfiguration("ToEmailAUDomain");
+                details.CcEmailId = RetrieveSpecificConfiguration("CCEmailAUDomain");
                 details.FileName = null;
-                _ = SendEmailAsync(details, TypeOfWorkflow.EmailToVivek,null,null,null);
+                _ = SendEmailAsync(details, TypeOfWorkflow.AUdomainEmail, null,null,null);
+                details.ToEmailId = employeeEmail;
+                details.CcEmailId = emailDetails[3];
+                details.WfhAttachment = true;
+                _ = SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee, null, null, null);
                 details.ToEmailId = emailDetails[1];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
+                details.WfhAttachment = false;
                 _ = SendEmailAsync(details, TypeOfWorkflow.Activation,null,null,null);
+                
             }
             return true;
         }
+
 
         public bool SendWelcomeEmail(WelcomeCard welcomeCardInfo)
         {
             EmailDetails details = new EmailDetails()
             {
-                FromEmailId = "amnshuman1998@gmail.com",
-                ToEmailId = "amnshuman.sunil@siemens.com",
+                FromEmailId = RetrieveSpecificConfiguration("WelcomeEmailSender"),
+                ToEmailId = welcomeCardInfo.ReportingManagerEmail,
                 ActivatedEmployee = new ActivationEmployeeDetails() { ActivationWorkFlowPdfAttachment = null, TeamName = String.Empty },
                 FileName = null
             };
@@ -402,9 +422,7 @@ namespace EmployeeDeactivation.BusinessLayer
                         VivekEcampusListUpdated = Employees.VivekEcampusListUpdated,
                     };
                     await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToManager, null, activationTask, null);
-                    details.ToEmailId = Employees.EmployeeEmail;
-                    details.WfhAttachment = true;
-                    await SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee, null,null,null);
+                    
                     
                 }
             }
@@ -525,29 +543,22 @@ namespace EmployeeDeactivation.BusinessLayer
                     subject = "Activation Workflow initiated";
                     string textBody = "<table border=" + 1 + " cellpadding=" + 0 + " cellspacing=" + 0 + " width = " + 400 + "><tr> <th><b>Surname</b></th> <th><b>First Name</b></th> <th><b>Audiology Display Name</b></th> <th><b>Siemens e-mail ID</b></th> <th><b>Siemens Login</b></th> <th><b>Siemens GID</b></th> <th><b>Team</b></th> <th><b>Role</b></th> <th><b>Gender</b></th> <th><b>Date of birth</b></th> <th><b>Place of birth</b></th> <th><b>Address - Street</b></th> <th><b>Address - City, Country</b></th> <th><b>Phone num</b></th> <th><b>Nationality</b></th> </tr> <tr><td>" + activationEmployeeDetails.LastName + "</td> <td>" + activationEmployeeDetails.FirstName + "</td> <td>" + details.EmployeeName + "</td> <td>" + activationEmployeeDetails.EmailID + "</td> <td>" + details.ActivatedEmployee.GId + "</td> <td>" + activationEmployeeDetails.GId + "</td> <td>" + details.ActivatedEmployee.TeamName + "</td> <td>" + activationEmployeeDetails.Role + "</td>  <td>" + activationEmployeeDetails.Gender + "</td> <td>" + activationEmployeeDetails.DateOfBirth + "</td> <td>" + activationEmployeeDetails.PlaceOfBirth + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.Address + "</td> <td>" + activationEmployeeDetails.PhoneNo + "</td> <td>" + activationEmployeeDetails.Nationality + "</td></tr>";
                     textBody += "</table>";
+                    var TeamDetails = _adminDataOperation.RetrieveSponsorDetailsAccordingToTeamName(details.ActivatedEmployee.TeamName);
+                    var SivantosContactName = TeamDetails.SivantosPointName;
                     htmlContent = RetrieveSpecificConfiguration("ActivationMailInitiated");
+                    if (htmlContent.Contains("+ActivationSenderName+"))
+                    {
+                        htmlContent = htmlContent.Replace("+ActivationSenderName+", SivantosContactName);
+                    }
                     if (htmlContent.Contains("+TeamName+"))
                     {
                         htmlContent = htmlContent.Replace("+TeamName+", details.ActivatedEmployee.TeamName);
                     }
+                    
                     if (htmlContent.Contains("+textBody+"))
                     {
                         htmlContent = htmlContent.Replace("+textBody+", textBody);
                     }
-                }
-
-                if (Convert.ToInt32(typeOfWorkflow) == 11)
-                {
-                    var empName = welcomeCardInfo.WelcomeEmployeeFullName;
-                    subject = "Welcome " + empName;
-                    string textBody = "<img src='"+ welcomeCardInfo.WelcomeImageData +"'>";
-                    htmlContent = RetrieveSpecificConfiguration("WelcomeEmail");
-                    if (htmlContent.Contains("+textBody+"))
-
-                    {
-                        htmlContent = htmlContent.Replace("+textBody+", textBody);
-                    }
-
                 }
 
                 if (Convert.ToInt32(typeOfWorkflow) == 7)
@@ -625,14 +636,28 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     subject = "Activation workflow";
                     htmlContent = RetrieveSpecificConfiguration("EmailToAssignAUdomainWBT");
+                    var ContactName = RetrieveSpecificConfiguration("ContactNameAUDomain");
                     var allActivationWorktasks = _managerApprovalOperation.RetrieveActivationTasks();
-                            if (htmlContent.Contains("+EmployeeName+"))
+                    if (htmlContent.Contains("+AUContactName+"))
+                    {
+                        htmlContent = htmlContent.Replace("+AUContactName+", ContactName);
+                    }
+                    if (htmlContent.Contains("+EmployeeName+"))
                             {
                                 htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
                             }
                 }
 
-                
+                if (Convert.ToInt32(typeOfWorkflow) == 11)
+                {
+                    var empName = welcomeCardInfo.WelcomeEmployeeFullName;
+                    var managerName = welcomeCardInfo.ReportingManagerName;
+                    subject = "Welcome " + empName;
+                    string welcomeCard = "<img src='" + welcomeCardInfo.WelcomeImageData + "'>";
+                    htmlContent = RetrieveSpecificConfiguration("WelcomeEmail");
+                    htmlContent = htmlContent.Replace("+welcomeCard+", welcomeCard);
+                    htmlContent = htmlContent.Replace("+reportingManager+", managerName);
+                }
 
 
                 var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
@@ -640,7 +665,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     msg.AddCcs(emailAddress);
                 }
-                if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null && details.FileName != null)
+                 if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null && details.FileName != null)
                 {
                     msg.AddAttachment(filename: details.FileName + ".pdf", Convert.ToBase64String(details.ActivatedEmployee.ActivationWorkFlowPdfAttachment));
                 }
@@ -651,7 +676,7 @@ namespace EmployeeDeactivation.BusinessLayer
                     FileStream Wfh = new FileStream("EnablingWorkFromHomeFurther.msg", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
                     msg.AddAttachment(filename: "EnablingWorkFromHomeFurther.msg", Convert.ToString(Wfh));
                 }
-                
+
                 _ = await sendGridClientApiKey.SendEmailAsync(msg);
             }
             catch (Exception e)
