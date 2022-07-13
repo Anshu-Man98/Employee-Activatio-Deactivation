@@ -189,7 +189,7 @@
                                                     }
                                                 },
                                                 callback: function (result) {
-                                                    if (result) {
+                                                    if (result == true) {
                                                         if (preview) {
                                                             pdfPreviewWindow.window.close();
                                                         }
@@ -253,6 +253,9 @@
 
                                                     }
                                                     if (result == false) {
+                                                        if (preview) {
+                                                            pdfPreviewWindow.window.close();
+                                                        }
                                                       $.ajax({
                                                         type: "POST",
                                                         url: '@Url.Action("DeleteActivationDetails", "Employees")',

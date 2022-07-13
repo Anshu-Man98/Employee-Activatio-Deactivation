@@ -218,7 +218,7 @@
                                                 },
                                                 callback: function (result) {
 
-                                                    if (result) {
+                                                    if (result == true) {
                                                         if (preview) {
                                                             pdfWindow.window.close();
                                                         }
@@ -288,6 +288,9 @@
                                                         });
                                                     }
                                                     if (result == false) {
+                                                        if (preview) {
+                                                            pdfWindow.window.close();
+                                                        }
                                                       $.ajax({
                                                         type: "POST",
                                                         url: '@Url.Action("DeleteDeactivationDetails", "Employees")',
