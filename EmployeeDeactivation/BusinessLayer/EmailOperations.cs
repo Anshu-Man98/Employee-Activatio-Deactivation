@@ -185,10 +185,10 @@ namespace EmployeeDeactivation.BusinessLayer
                 details.CcEmailId = RetrieveSpecificConfiguration("CCEmailAUDomain");
                 details.FileName = null;
                 _ = SendEmailAsync(details, TypeOfWorkflow.AUdomainEmail, null,null,null);
-                details.ToEmailId = employeeEmail;
+              /*details.ToEmailId = employeeEmail;
                 details.CcEmailId = emailDetails[3];
                 details.WfhAttachment = true;
-                _ = SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee, null, null, null);
+                _ = SendEmailAsync(details, TypeOfWorkflow.ActivationWorkFlowRemainderToEmployee, null, null, null);*/
                 details.ToEmailId = emailDetails[1];
                 details.CcEmailId = emailDetails[2];
                 details.FileName = fileName + details.EmployeeName;
@@ -620,7 +620,7 @@ namespace EmployeeDeactivation.BusinessLayer
 
                 }
 
-                if (Convert.ToInt32(typeOfWorkflow) == 9)
+               /* if (Convert.ToInt32(typeOfWorkflow) == 9)
                 {
                     subject = "Activation workflow";
                     htmlContent = RetrieveSpecificConfiguration("ActivationWorkFlowRemainderToEmployee");
@@ -630,7 +630,7 @@ namespace EmployeeDeactivation.BusinessLayer
                         htmlContent = htmlContent.Replace("+EmployeeName+", details.EmployeeName);
                     }
 
-                }
+                }*/
 
                 if (Convert.ToInt32(typeOfWorkflow) == 10)
                 {
@@ -665,7 +665,7 @@ namespace EmployeeDeactivation.BusinessLayer
                 {
                     msg.AddCcs(emailAddress);
                 }
-                 if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null && details.FileName != null)
+                if (details.ActivatedEmployee.ActivationWorkFlowPdfAttachment != null && details.FileName != null)
                 {
                     msg.AddAttachment(filename: details.FileName + ".pdf", Convert.ToBase64String(details.ActivatedEmployee.ActivationWorkFlowPdfAttachment));
                 }
